@@ -1,3 +1,4 @@
+import '../demo_accounts.dart';
 import 'socratic.dart';
 
 /// "Derslerim" listesindeki bir ders kartı. İki kaynaktan gelir: uygulamayla paketlenen
@@ -82,4 +83,8 @@ class LessonCatalog {
 
   /// Öğretmenin dersleri üstte, hazır dersler altta (K50).
   List<LessonEntry> merge(List<LessonEntry> teacherLessons) => [...teacherLessons, ...lessons];
+
+  /// Bir sınıfın "Derslerim" listesi: hazır dersler yalnızca demo sınıfında (K52).
+  List<LessonEntry> forClass(String classId, List<LessonEntry> teacherLessons) =>
+      DemoAccounts.isDemoClass(classId) ? merge(teacherLessons) : teacherLessons;
 }

@@ -64,6 +64,7 @@ Future<void> _seed() async {
     'email': DemoAccounts.studentEmail,
     'role': 'student',
     'learningStyle': DemoAccounts.studentLearningStyle,
+    'classIds': [DemoAccounts.classId],
     'kvkkConsent': true,
     'createdAt': FieldValue.serverTimestamp(),
   });

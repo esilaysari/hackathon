@@ -79,7 +79,9 @@ abstract final class AppStrings {
   static const readingSupportOn = 'Okuma desteği açık';
 
   // Sınıf ve İçerik (DESIGN.md §8.3)
-  static const createClassTitle = 'Sınıfını oluştur';
+  static const createClassTitle = 'Yeni sınıf oluştur';
+  static const firstClassTitle = 'İlk sınıfını oluştur';
+  static const newClass = '+ Yeni Sınıf';
   static const className = 'Sınıf adı';
   static const createClassButton = 'Sınıfı Oluştur';
   static const classCreatedTitle = 'Sınıfın hazır';
@@ -93,6 +95,7 @@ abstract final class AppStrings {
   static const joinClassHint = 'Öğretmeninin paylaştığı 6 haneli kodu yaz.';
   static const classCodeField = 'Sınıf kodu';
   static const joinButton = 'Katıl';
+  static const joinAnotherClass = 'Sınıfa Katıl';
   static const invalidClassCode = 'Kod 6 karakter olmalı (harf ve rakam).';
   static const classNotFound = 'Bu kodla bir sınıf bulunamadı; kodu kontrol et.';
   static const working = 'Bekle…';
@@ -126,6 +129,10 @@ abstract final class AppStrings {
       'Bazı sorular eksik: her soruda metin, 3-4 dolu şık ve işaretli doğru cevap olmalı.';
   static const lessonSent = 'Ders gönderildi; öğrencilerin Derslerim listesinde.';
   static const slidesTitle = 'Slaytlar';
+  static const generatedHintsTitle = 'Üretilen Sokratik ipuçları';
+  static const readingHintsLabel = 'Okuma ekranı ipuçları';
+  static String questionHintsLabel(int n) => 'Soru $n ipuçları';
+  static const noGeneratedHints = 'Metinde eşleşme bulunamadı; genel ipuçları kullanılacak.';
   static const pdfNoText = "Bu PDF'ten metin okunamadı (taranmış olabilir). Metni yapıştırarak devam edebilirsin.";
   static const pptNotSupported = 'Eski .ppt biçimi desteklenmiyor. Lütfen .pptx olarak kaydedin.';
   static const pptxImagesSkipped = 'Slaytlardaki görseller aktarılmadı.';
@@ -136,6 +143,8 @@ abstract final class AppStrings {
   // Derslerim
   static const myLessonsTitle = 'Derslerim';
   static const myLessonsLoading = 'Dersler yükleniyor…';
+  static const noLessonsInClass = 'Bu sınıfta henüz ders yok.';
+  static const noClassesYet = 'Henüz bir sınıfa katılmadın. Öğretmeninin kodunu girerek katılabilirsin.';
   static String estimatedMinutes(int minutes) => '~$minutes dk';
   static const teacherLessonBadge = 'Öğretmeninden';
   static String lessonOpenFailed(Object error) => 'Ders açılamadı: $error';
@@ -171,6 +180,16 @@ abstract final class AppStrings {
   static const notUnderstood = 'Anlamadım';
   static const understood = 'Anladım';
   // Baloncuğun diğer cümleleri lessons/index.json → socraticMessages bölümünden gelir.
+
+  // Yüklenen derslerde ders metninden üretilen ipuçları (services/hint_generator.dart).
+  static String hintRecall(String concept) => "Metinde $concept ile ilgili kısmı hatırla. Orada ne anlatılıyordu?";
+  static String hintPurpose(String concept) =>
+      '$concept ne işe yarıyordu, ya da neyi değiştiriyordu? Soruda sana ne soruluyor, onunla karşılaştır.';
+  static String hintLookAgain(String sentence) => "Şu cümleye tekrar bak: '$sentence'";
+  static String readingHintWhy(String concept) => 'Bu derste $concept neden önemli olabilir?';
+  static String readingHintRelation(String a, String b) => '$a ile $b arasında nasıl bir ilişki var?';
+  static String readingHintExplain(String concept) =>
+      '$concept kavramını kendi cümlelerinle bir arkadaşına nasıl anlatırdın?';
 
   // Öğretmen Paneli ve Acil Müdahale (DESIGN.md §8.7, §8.8)
   static const panelLoading = 'Sınıf yükleniyor…';

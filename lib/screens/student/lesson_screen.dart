@@ -218,15 +218,13 @@ class _LessonScreenState extends State<LessonScreen> {
 
   // --- Story ve Sokratik Rehber -----------------------------------------
 
-  /// Takılınan ekranın zinciri: okuma → `reading`, soru → soru id'si (K46).
+  /// Takılınan ekranın zinciri: okuma → `reading`, soru → soru id'si (K46). Sorunun
+  /// zinciri yoksa (yüklenen derste eşleşme bulunamadı) okuma zinciri değil genel zincir.
   SocraticChain get _currentChain {
     final lesson = _lesson!;
-    final questionId = _stage >= 0 && _stage < lesson.questions.length
-        ? lesson.questions[_stage].id
-        : null;
-    return lesson.socratic[questionId] ??
-        lesson.socratic['reading'] ??
-        widget.fallbackChain;
+    final onQuestion = _stage >= 0 && _stage < lesson.questions.length;
+    final chain = onQuestion ? lesson.socratic[lesson.questions[_stage].id] : lesson.socratic['reading'];
+    return chain ?? widget.fallbackChain;
   }
 
   /// "Basitleştir" ile gelinirse ([automatic] false) Firestore'a hiçbir şey yazılmaz.

@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../services/firestore_service.dart';
-import '../../services/session.dart';
 import '../../strings.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_buttons.dart';
 import '../../widgets/class_code_view.dart';
 import '../../widgets/form_widgets.dart';
 
-/// Öğretmenin henüz sınıfı yoksa: ad gir → kod ve davet linki (DESIGN.md §8.3).
+/// Sınıf oluşturma: ad gir → kod ve davet linki (DESIGN.md §8.3). Hiç sınıfı olmayan
+/// öğretmene panel yerine "İlk sınıfını oluştur" olarak, sonrakiler için "+ Yeni Sınıf"
+/// ile açılır (K52). "Panele Git" [onDone]'u yeni sınıfın id'siyle çağırır.
 class CreateClassScreen extends StatefulWidget {
-  const CreateClassScreen({super.key});
+  const CreateClassScreen({super.key, required this.teacherId, required this.onDone, this.first = false});
+
+  final String teacherId;
+  final ValueChanged<String> onDone;
+  final bool first;
 
   @override
   State<CreateClassScreen> createState() => _CreateClassScreenState();
@@ -40,7 +44,7 @@ class _CreateClassScreenState extends State<CreateClassScreen> {
       _error = null;
     });
     try {
-      final created = await FirestoreService.createClass(context.read<Session>().user!.uid, name);
+      final created = await FirestoreService.createClass(widget.teacherId, name);
       if (mounted) setState(() => _created = created);
     } catch (e) {
       if (mounted) setState(() => _error = AppStrings.errorGeneric(e));
@@ -54,10 +58,17 @@ class _CreateClassScreenState extends State<CreateClassScreen> {
     final created = _created;
     return Scaffold(
       backgroundColor: AppColors.creamBase,
+      appBar: widget.first
+          ? null
+          : AppBar(backgroundColor: AppColors.creamBase, foregroundColor: AppColors.grey900),
       body: CenteredColumn(
         children: created == null
             ? [
-                const Text(AppStrings.createClassTitle, style: AppTextStyles.taskTitle, textAlign: TextAlign.center),
+                Text(
+                  widget.first ? AppStrings.firstClassTitle : AppStrings.createClassTitle,
+                  style: AppTextStyles.taskTitle,
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: AppSpacing.lg),
                 SurfaceCard(
                   child: TextField(
@@ -92,7 +103,7 @@ class _CreateClassScreenState extends State<CreateClassScreen> {
                 const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(
                   label: AppStrings.goToPanel,
-                  onPressed: () => context.read<Session>().setActiveClass(created.classId),
+                  onPressed: () => widget.onDone(created.classId),
                 ),
               ],
       ),

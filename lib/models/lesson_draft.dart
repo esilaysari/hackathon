@@ -1,3 +1,4 @@
+import '../services/hint_generator.dart';
 import '../services/story_splitter.dart';
 import 'lesson.dart';
 
@@ -44,6 +45,24 @@ class LessonDraft {
 
   int get cardCount => storyCards?.length ?? 1 + splitIntoStoryCards(content).length;
 
+  /// Ders metninden üretilen Sokratik ipuçları: `reading` + eşleşen soruların id'leri.
+  /// Eşleşmeyen soru yazılmaz; öğrenci ekranında genel zincir kullanılır.
+  Map<String, List<String>> get generatedHints {
+    final source = content.trim().isNotEmpty || storyCards == null
+        ? content
+        : [for (final c in storyCards!) '${c.text}\n${c.subtitle ?? ''}'].join('\n');
+    final generator = HintGenerator(source);
+    return {
+      'reading': ?generator.readingHints(),
+      for (var i = 0; i < questions.length; i++)
+        'q${i + 1}': ?generator.questionHints(
+          text: questions[i].text,
+          options: questions[i].options,
+          correctIndex: questions[i].correctIndex,
+        ),
+    };
+  }
+
   /// `classes/{classId}/lessons/{id}` belgesi; `topicKey` belge id'si (uyarı ve skor anahtarı).
   Map<String, dynamic> toFirestore(String topicKey) => {
         'title': title.trim(),
@@ -54,5 +73,9 @@ class LessonDraft {
             for (final c in storyCards!) {'text': c.text, 'subtitle': ?c.subtitle},
           ],
         'questions': [for (var i = 0; i < questions.length; i++) questions[i].toJson('q${i + 1}')],
+        // Kontrol sorusu yok: "Anladım" doğrudan Odakta'ya döndürür.
+        'socratic': {
+          for (final e in generatedHints.entries) e.key: {'hints': e.value, 'check': null},
+        },
       };
 }

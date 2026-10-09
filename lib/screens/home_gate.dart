@@ -5,15 +5,14 @@ import '../services/session.dart';
 import '../strings.dart';
 import '../theme/tokens.dart';
 import 'auth_screen.dart';
-import 'classroom/create_class_screen.dart';
 import 'classroom/join_class_screen.dart';
 import 'student/learning_style_test_screen.dart';
 import 'student/my_lessons_screen.dart';
 import 'teacher/teacher_panel_screen.dart';
 
 /// `/` ve `/join`: oturuma göre ekran seçer (TRD §4.4). Giriş yoksa Giriş/Kayıt;
-/// öğretmen → sınıfı yoksa sınıf oluşturma, varsa panel; öğrenci → test → sınıfa katılma
-/// (davet linkiyle gelindiyse kod dolu) → "Derslerim".
+/// öğretmen → panel (sınıfı yoksa panel "İlk sınıfını oluştur"u gösterir); öğrenci → test →
+/// hiç sınıfı yoksa ya da davet linkiyle gelindiyse sınıfa katılma → "Derslerim" (K52).
 class HomeGate extends StatelessWidget {
   const HomeGate({super.key});
 
@@ -28,14 +27,11 @@ class HomeGate extends StatelessWidget {
       );
     }
     if (user == null) return const AuthScreen();
-    final classId = user.activeClassId;
-    if (user.role == UserRole.teacher) {
-      return classId == null ? const CreateClassScreen() : TeacherPanelScreen(classId: classId);
+    if (user.role == UserRole.teacher) return TeacherPanelScreen(teacherId: user.uid);
+    if (user.learningStyle == null) return LearningStyleTestScreen(user: user);
+    if (user.classIds.isEmpty || session.pendingJoinCode != null) {
+      return JoinClassScreen(uid: user.uid, initialCode: session.pendingJoinCode);
     }
-    if (user.learningStyle == null) return LearningStyleTestScreen(user: user, classId: classId);
-    if (classId == null || session.pendingJoinCode != null) {
-      return JoinClassScreen(initialCode: session.pendingJoinCode);
-    }
-    return MyLessonsScreen(uid: user.uid, classId: classId);
+    return MyLessonsScreen(uid: user.uid);
   }
 }

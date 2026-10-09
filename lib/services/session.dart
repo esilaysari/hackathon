@@ -16,7 +16,7 @@ class AppUser {
     required this.lastName,
     required this.role,
     this.learningStyle,
-    this.activeClassId,
+    this.classIds = const [],
   });
 
   factory AppUser.fromJson(String uid, Map<String, dynamic> data) {
@@ -27,10 +27,17 @@ class AppUser {
       lastName: data['lastName'] as String? ?? '',
       role: data['role'] == 'teacher' ? UserRole.teacher : UserRole.student,
       learningStyle: style == null ? null : LearningStyle.fromJson(style),
-      // Faz 5b öncesi demo hesaplarında alan yok: demo sınıfı (K41).
-      activeClassId: data['activeClassId'] as String? ??
-          (DemoAccounts.isDemoEmail(data['email'] as String?) ? DemoAccounts.classId : null),
+      classIds: parseClassIds(data),
     );
+  }
+
+  /// `users/{uid}.classIds`. Eski belgelerde tek `activeClassId` vardı. Demo öğrencisi her
+  /// zaman demo sınıfındadır (Altın Senaryo, K52).
+  static List<String> parseClassIds(Map<String, dynamic> data) {
+    final legacy = data['activeClassId'] as String?;
+    final ids = (data['classIds'] as List?)?.cast<String>() ?? [?legacy];
+    final isDemoStudent = data['email'] == DemoAccounts.studentEmail;
+    return isDemoStudent && !ids.contains(DemoAccounts.classId) ? [DemoAccounts.classId, ...ids] : ids;
   }
 
   final String uid;
@@ -41,22 +48,23 @@ class AppUser {
   /// null → öğrenci testi henüz çözmedi.
   final LearningStyle? learningStyle;
 
-  /// Öğretmenin sınıfı ya da öğrencinin katıldığı sınıf; null → oluştur / katıl ekranı.
-  final String? activeClassId;
+  /// Öğrencinin katıldığı sınıflar; boşsa katılma ekranı. Öğretmenin sınıfları
+  /// `classes` içinde `teacherId` ile sorgulanır.
+  final List<String> classIds;
 
   String get fullName => '$firstName $lastName'.trim();
 
-  AppUser copyWith({LearningStyle? learningStyle, String? activeClassId}) => AppUser(
+  AppUser copyWith({LearningStyle? learningStyle, List<String>? classIds}) => AppUser(
         uid: uid,
         firstName: firstName,
         lastName: lastName,
         role: role,
         learningStyle: learningStyle ?? this.learningStyle,
-        activeClassId: activeClassId ?? this.activeClassId,
+        classIds: classIds ?? this.classIds,
       );
 }
 
-/// Giriş yapan kullanıcı ve aktif sınıf (K34, TRD T7). Firestore verisi StreamBuilder'da kalır.
+/// Giriş yapan kullanıcı ve katıldığı sınıflar (K34, K52, TRD T7). Firestore verisi StreamBuilder'da kalır.
 class Session extends ChangeNotifier {
   AppUser? _user;
   bool _restoring = true;
@@ -65,8 +73,6 @@ class Session extends ChangeNotifier {
 
   /// Sayfa açılışında Firebase Auth oturumu geri yükleniyor mu.
   bool get restoring => _restoring;
-
-  String? get activeClassId => _user?.activeClassId;
 
   /// Davet linkiyle (`#/join?code=…`) gelinen kod; katılınca temizlenir.
   String? pendingJoinCode;
@@ -112,12 +118,13 @@ class Session extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Sınıf oluşturuldu ya da katılındı (`users/{uid}.activeClassId` yazıldıktan sonra).
-  void setActiveClass(String classId) {
+  /// Öğrenci sınıfa katıldı (`users/{uid}.classIds` yazıldıktan sonra).
+  void addClass(String classId) {
     final user = _user;
-    if (user == null) return;
-    _user = user.copyWith(activeClassId: classId);
     pendingJoinCode = null;
+    if (user != null && !user.classIds.contains(classId)) {
+      _user = user.copyWith(classIds: [...user.classIds, classId]);
+    }
     notifyListeners();
   }
 }

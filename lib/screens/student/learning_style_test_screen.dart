@@ -14,12 +14,9 @@ import '../../widgets/option_tile.dart';
 /// Öğrenme stili testi ve sonuç ekranı (DESIGN.md §8.2). Sorular, ölçek, aşama etiketleri
 /// ve sonuç metinleri `learning_style_test.json`'dan aynen gelir.
 class LearningStyleTestScreen extends StatefulWidget {
-  const LearningStyleTestScreen({super.key, required this.user, this.classId});
+  const LearningStyleTestScreen({super.key, required this.user});
 
   final AppUser user;
-
-  /// Öğrenci henüz bir sınıfa katılmadıysa null.
-  final String? classId;
 
   @override
   State<LearningStyleTestScreen> createState() => _LearningStyleTestScreenState();
@@ -42,7 +39,7 @@ class _LearningStyleTestScreenState extends State<LearningStyleTestScreen> {
       _error = null;
     });
     try {
-      await FirestoreService.saveTestResult(widget.user.uid, widget.classId, widget.user.fullName, result);
+      await FirestoreService.saveTestResult(widget.user.uid, widget.user.classIds, widget.user.fullName, result);
       if (mounted) setState(() => _result = result);
     } catch (e) {
       debugPrint('Test sonucu kaydedilemedi: $e');

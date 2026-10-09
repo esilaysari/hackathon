@@ -209,6 +209,8 @@ class _LessonUploadScreenState extends State<LessonUploadScreen> {
                     style: AppTextStyles.bodyLg.copyWith(fontWeight: FontWeight.w700),
                   ),
                   for (final note in _notes) Text(note, style: AppTextStyles.bodyLg),
+                  if (draft.content.trim().isNotEmpty || draft.questions.isNotEmpty)
+                    _GeneratedHints(hints: draft.generatedHints, questionCount: draft.questions.length),
                 ],
               ),
             ),
@@ -332,6 +334,40 @@ class _SlideList extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
+      ],
+    );
+  }
+}
+
+/// Ders metninden üretilen ipuçları; öğretmen yalnızca görür, düzenlemez.
+class _GeneratedHints extends StatelessWidget {
+  const _GeneratedHints({required this.hints, required this.questionCount});
+
+  final Map<String, List<String>> hints;
+  final int questionCount;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget group(String label, List<String>? list) => Padding(
+          padding: const EdgeInsets.only(top: AppSpacing.sm),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: AppTextStyles.bodyLg.copyWith(fontWeight: FontWeight.w700)),
+              if (list == null)
+                const Text(AppStrings.noGeneratedHints, style: AppTextStyles.bodyLg)
+              else
+                for (var i = 0; i < list.length; i++) Text('${i + 1}. ${list[i]}', style: AppTextStyles.bodyLg),
+            ],
+          ),
+        );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: AppSpacing.sm),
+        const Text(AppStrings.generatedHintsTitle, style: AppTextStyles.subheading),
+        group(AppStrings.readingHintsLabel, hints['reading']),
+        for (var i = 0; i < questionCount; i++) group(AppStrings.questionHintsLabel(i + 1), hints['q${i + 1}']),
       ],
     );
   }

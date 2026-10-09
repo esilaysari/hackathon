@@ -5,6 +5,7 @@ import '../models/class_code.dart';
 import '../models/learning_style_test.dart';
 import '../models/lesson_draft.dart';
 import '../models/lesson.dart';
+import 'session.dart' show AppUser;
 import 'telemetry.dart';
 
 /// Firestore okuma/yazma (TRD T2, §3.1). Ham telemetri yazılmaz; yalnızca durum
@@ -23,6 +24,14 @@ abstract final class FirestoreService {
 
   static Stream<DocumentSnapshot<Map<String, dynamic>>> watchClass(String classId) =>
       _class(classId).snapshots();
+
+  /// Öğretmenin sınıfları (K52); sıralama istemcide (bileşik indeks gerekmesin).
+  static Stream<QuerySnapshot<Map<String, dynamic>>> watchTeacherClasses(String teacherId) =>
+      _db.collection('classes').where('teacherId', isEqualTo: teacherId).snapshots();
+
+  /// Öğrencinin `classIds` listesi canlı izlenir; "Sınıfa Katıl" sonrası Derslerim güncellenir.
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> watchUser(String uid) =>
+      _db.collection('users').doc(uid).snapshots();
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> watchMembers(String classId) =>
       _members(classId).snapshots();
@@ -74,24 +83,25 @@ abstract final class FirestoreService {
       });
 
   /// Test sonucu: `learningStyle` sunum profili, ayrıca öğrencinin stili ve okuma desteği.
-  /// Öğrenci bir sınıftaysa aynı alanlar üyelik belgesine kopyalanır; öğretmen detayda görür.
-  static Future<void> saveTestResult(String uid, String? classId, String displayName, TestResult result) async {
+  /// Öğrencinin katıldığı her sınıfın üyelik belgesine aynı alanlar kopyalanır; öğretmen detayda görür.
+  static Future<void> saveTestResult(String uid, List<String> classIds, String displayName, TestResult result) async {
     final fields = {
       'learningStyle': result.profile.name,
       'studentStyle': result.studentStyle,
       'readingSupport': result.readingSupport,
     };
     await _db.collection('users').doc(uid).set(fields, SetOptions(merge: true));
-    if (classId == null) return;
-    await _safe('üyelik → $classId', () => _members(classId).doc(uid).set({
-          ...fields,
-          'displayName': displayName,
-        }, SetOptions(merge: true)));
+    for (final classId in classIds) {
+      await _safe('üyelik → $classId', () => _members(classId).doc(uid).set({
+            ...fields,
+            'displayName': displayName,
+          }, SetOptions(merge: true)));
+    }
   }
 
   // --- Sınıf (DESIGN.md §8.3, TRD §4.4) ----------------------------------
 
-  /// Benzersiz kodla sınıf oluşturur, öğretmenin aktif sınıfı yapar; classId döner.
+  /// Benzersiz kodla sınıf oluşturur; classId döner. Öğretmenin sınıfları `teacherId` ile bulunur.
   static Future<({String classId, String code})> createClass(String teacherId, String name) async {
     var code = ClassCode.generate();
     for (var i = 0; i < 5 && (await _classIdByCode(code)) != null; i++) {
@@ -106,7 +116,6 @@ abstract final class FirestoreService {
       'activeLessonId': null,
       'createdAt': FieldValue.serverTimestamp(),
     });
-    await _db.collection('users').doc(teacherId).set({'activeClassId': ref.id}, SetOptions(merge: true));
     return (classId: ref.id, code: code);
   }
 
@@ -115,7 +124,7 @@ abstract final class FirestoreService {
     return query.docs.isEmpty ? null : query.docs.first.id;
   }
 
-  /// Kodla sınıfa katılır: üyelik belgesi (profil kopyası, Odakta, boş skor) + aktif sınıf.
+  /// Kodla sınıfa katılır: üyelik belgesi (profil kopyası, Odakta, boş skor) + `classIds`'e ekleme.
   /// Kod bulunamazsa null döner. Daha önce katıldıysa durum ve skorlar korunur.
   static Future<String?> joinClass(String uid, String code) async {
     final classId = await _classIdByCode(code);
@@ -136,7 +145,10 @@ abstract final class FirestoreService {
         'joinedAt': FieldValue.serverTimestamp(),
       },
     }, SetOptions(merge: true));
-    await _db.collection('users').doc(uid).set({'activeClassId': classId}, SetOptions(merge: true));
+    // Eski tek `activeClassId` de listeye taşınır (K52).
+    await _db.collection('users').doc(uid).set({
+      'classIds': FieldValue.arrayUnion([...AppUser.parseClassIds(user), classId]),
+    }, SetOptions(merge: true));
     return classId;
   }
 

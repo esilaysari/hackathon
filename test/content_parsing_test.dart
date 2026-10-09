@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:eduswarm/demo_accounts.dart';
 import 'package:eduswarm/models/lesson.dart';
 import 'package:eduswarm/models/lesson_catalog.dart';
 import 'package:eduswarm/services/story_splitter.dart';
@@ -85,6 +86,13 @@ void main() {
     expect(entry.summary, 'İlk cümle burada.');
     expect(entry.isTeacherLesson, isTrue);
     expect(catalog.merge([entry]).first.firestoreId, 'abc', reason: 'Öğretmenin dersleri üstte');
+  });
+
+  test('Hazır dersler yalnızca demo sınıfında listelenir (K52)', () {
+    final entry = LessonEntry.fromFirestore('abc', {'title': 'Yüklenen', 'topicKey': 'abc', 'content': 'Metin.'});
+    expect(catalog.forClass(DemoAccounts.classId, [entry]).length, catalog.lessons.length + 1);
+    expect(catalog.forClass('baska_sinif', [entry]).map((e) => e.firestoreId), ['abc']);
+    expect(catalog.forClass('baska_sinif', const []), isEmpty);
   });
 
   test('optionsAreCode: şık başına liste, tek bool veya yok', () {

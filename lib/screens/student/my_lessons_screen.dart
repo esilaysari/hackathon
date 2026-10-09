@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
+import '../../demo_accounts.dart';
 import '../../models/lesson_catalog.dart';
 import '../../services/content_service.dart';
 import '../../services/firestore_service.dart';
 import '../../services/lesson_repository.dart';
+import '../../services/session.dart';
 import '../../strings.dart';
 import '../../theme/tokens.dart';
+import '../../widgets/app_buttons.dart';
+import '../classroom/join_class_screen.dart';
 import 'lesson_screen.dart';
 
-/// "Derslerim" (K50): uygulamayla gelen hazır dersler + öğretmenin Firestore'a yüklediği
-/// dersler tek listede. Ders sayısı sabit değildir; iki kaynaktan ne gelirse o gösterilir.
+/// "Derslerim" (K50, K52): yalnızca öğrencinin katıldığı sınıfların dersleri, sınıf adı
+/// başlığı altında gruplanmış. Hazır dersler yalnızca demo sınıfında görünür.
+/// `users/{uid}.classIds` canlı izlenir; "Sınıfa Katıl" sonrası liste kendiliğinden güncellenir.
 class MyLessonsScreen extends StatefulWidget {
-  const MyLessonsScreen({super.key, required this.uid, required this.classId});
+  const MyLessonsScreen({super.key, required this.uid});
 
   final String uid;
-  final String classId;
 
   @override
   State<MyLessonsScreen> createState() => _MyLessonsScreenState();
@@ -22,7 +26,7 @@ class MyLessonsScreen extends StatefulWidget {
 
 class _MyLessonsScreenState extends State<MyLessonsScreen> {
   late final Future<LessonCatalog> _catalog = ContentService.loadCatalog();
-  late final _teacherLessons = FirestoreService.watchLessons(widget.classId);
+  late final _user = FirestoreService.watchUser(widget.uid);
 
   @override
   Widget build(BuildContext context) {
@@ -36,24 +40,35 @@ class _MyLessonsScreenState extends State<MyLessonsScreen> {
       body: FutureBuilder(
         future: _catalog,
         builder: (context, catalogSnap) => StreamBuilder(
-          stream: _teacherLessons,
-          builder: (context, lessonsSnap) {
+          stream: _user,
+          builder: (context, userSnap) {
             final catalog = catalogSnap.data;
-            if (catalog == null) {
+            if (catalog == null || !userSnap.hasData) {
               return const Center(child: Text(AppStrings.myLessonsLoading, style: AppTextStyles.bodyLg));
             }
-            // Firestore henüz yanıt vermediyse ya da hata verdiyse hazır dersler yine görünür.
-            final entries = catalog.merge([
-              for (final doc in lessonsSnap.data?.docs ?? const []) LessonEntry.fromFirestore(doc.id, doc.data()),
-            ]);
+            final classIds = AppUser.parseClassIds(userSnap.data!.data() ?? const {});
             return Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: AppLayout.studentMaxWidth),
-                child: ListView.separated(
+                child: ListView(
                   padding: const EdgeInsets.all(AppSpacing.lg),
-                  itemCount: entries.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.md),
-                  itemBuilder: (context, i) => _LessonCard(entry: entries[i], onTap: () => _open(entries[i], catalog)),
+                  children: [
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: SecondaryButton(label: AppStrings.joinAnotherClass, onPressed: _joinClass),
+                    ),
+                    if (classIds.isEmpty) ...[
+                      const SizedBox(height: AppSpacing.lg),
+                      const Text(AppStrings.noClassesYet, style: AppTextStyles.bodyLg, textAlign: TextAlign.center),
+                    ],
+                    for (final classId in classIds)
+                      _ClassSection(
+                        key: ValueKey(classId),
+                        classId: classId,
+                        catalog: catalog,
+                        onOpen: (entry) => _open(entry, classId, catalog),
+                      ),
+                  ],
                 ),
               ),
             );
@@ -63,16 +78,21 @@ class _MyLessonsScreenState extends State<MyLessonsScreen> {
     );
   }
 
-  Future<void> _open(LessonEntry entry, LessonCatalog catalog) async {
+  void _joinClass() => Navigator.push(
+        context,
+        MaterialPageRoute<void>(builder: (_) => JoinClassScreen(uid: widget.uid)),
+      );
+
+  Future<void> _open(LessonEntry entry, String classId, LessonCatalog catalog) async {
     try {
-      final lesson = await LessonRepository.load(entry, widget.classId);
+      final lesson = await LessonRepository.load(entry, classId);
       if (!mounted) return;
       await Navigator.push(
         context,
         MaterialPageRoute<void>(
           builder: (_) => LessonScreen(
             uid: widget.uid,
-            classId: widget.classId,
+            classId: classId,
             lesson: lesson,
             socraticMessages: catalog.socraticMessages,
             fallbackChain: catalog.defaultSocratic,
@@ -88,6 +108,57 @@ class _MyLessonsScreenState extends State<MyLessonsScreen> {
         ),
       );
     }
+  }
+}
+
+/// Bir sınıfın başlığı (sınıf adı) ve dersleri: öğretmenin dersleri üstte; demo sınıfında
+/// altında hazır dersler.
+class _ClassSection extends StatefulWidget {
+  const _ClassSection({super.key, required this.classId, required this.catalog, required this.onOpen});
+
+  final String classId;
+  final LessonCatalog catalog;
+  final ValueChanged<LessonEntry> onOpen;
+
+  @override
+  State<_ClassSection> createState() => _ClassSectionState();
+}
+
+class _ClassSectionState extends State<_ClassSection> {
+  late final _class = FirestoreService.watchClass(widget.classId);
+  late final _lessons = FirestoreService.watchLessons(widget.classId);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: _class,
+      builder: (context, classSnap) => StreamBuilder(
+        stream: _lessons,
+        builder: (context, lessonsSnap) {
+          // Firestore henüz yanıt vermediyse ya da hata verdiyse demo sınıfının hazır dersleri yine görünür.
+          final teacherLessons = [
+            for (final doc in lessonsSnap.data?.docs ?? const []) LessonEntry.fromFirestore(doc.id, doc.data()),
+          ];
+          final entries = widget.catalog.forClass(widget.classId, teacherLessons);
+          final name = classSnap.data?.data()?['name'] as String? ??
+              (DemoAccounts.isDemoClass(widget.classId) ? DemoAccounts.className : '');
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: AppSpacing.lg),
+              Text(name, style: AppTextStyles.appBarTitle),
+              const SizedBox(height: AppSpacing.md),
+              if (entries.isEmpty && lessonsSnap.hasData)
+                const Text(AppStrings.noLessonsInClass, style: AppTextStyles.bodyLg),
+              for (final entry in entries) ...[
+                _LessonCard(entry: entry, onTap: () => widget.onOpen(entry)),
+                const SizedBox(height: AppSpacing.md),
+              ],
+            ],
+          );
+        },
+      ),
+    );
   }
 }
 

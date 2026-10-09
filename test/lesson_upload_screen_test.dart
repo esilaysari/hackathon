@@ -21,6 +21,10 @@ void main() {
     await tester.pump();
     expect(find.text(AppStrings.questionLabel(1)), findsOneWidget);
     expect(find.text(AppStrings.previewSummary(3, 1)), findsOneWidget);
+    // Boş soruda metinle eşleşme yok: öğretmen genel ipuçlarının kullanılacağını görür.
+    expect(find.text(AppStrings.generatedHintsTitle), findsOneWidget);
+    expect(find.text(AppStrings.questionHintsLabel(1)), findsOneWidget);
+    expect(find.text(AppStrings.noGeneratedHints), findsWidgets);
 
     await tester.tap(find.text(AppStrings.sendLesson));
     await tester.pump();

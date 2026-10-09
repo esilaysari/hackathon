@@ -11,9 +11,11 @@ import '../../widgets/class_code_view.dart';
 import '../../widgets/form_widgets.dart';
 
 /// Öğrenci: tek kod alanı + "Katıl"; davet linkiyle gelindiyse kod dolu gelir (DESIGN.md §8.3).
+/// Yalnızca o koddaki sınıfa katılır (K52). Derslerim'den açıldıysa katılınca geri döner.
 class JoinClassScreen extends StatefulWidget {
-  const JoinClassScreen({super.key, this.initialCode});
+  const JoinClassScreen({super.key, required this.uid, this.initialCode});
 
+  final String uid;
   final String? initialCode;
 
   @override
@@ -42,12 +44,14 @@ class _JoinClassScreenState extends State<JoinClassScreen> {
       _error = null;
     });
     final session = context.read<Session>();
+    final navigator = Navigator.of(context);
     try {
-      final classId = await FirestoreService.joinClass(session.user!.uid, code);
+      final classId = await FirestoreService.joinClass(widget.uid, code);
       if (classId == null) {
         if (mounted) setState(() => _error = AppStrings.classNotFound);
       } else {
-        session.setActiveClass(classId);
+        session.addClass(classId);
+        if (navigator.canPop()) navigator.pop();
       }
     } catch (e) {
       if (mounted) setState(() => _error = AppStrings.errorGeneric(e));
@@ -60,6 +64,9 @@ class _JoinClassScreenState extends State<JoinClassScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.creamBase,
+      appBar: Navigator.canPop(context)
+          ? AppBar(backgroundColor: AppColors.creamBase, foregroundColor: AppColors.grey900)
+          : null,
       body: CenteredColumn(
         children: [
           const Text(AppStrings.joinClassTitle, style: AppTextStyles.taskTitle, textAlign: TextAlign.center),

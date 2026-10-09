@@ -1,14 +1,15 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../demo_accounts.dart';
 import '../../models/alert.dart';
 import '../../models/student_summary.dart';
 import '../../services/firestore_service.dart';
 import '../../services/mock_data_service.dart';
 import '../../strings.dart';
 import '../../theme/tokens.dart';
-import 'lesson_upload_screen.dart';
 import '../../widgets/app_buttons.dart';
 import '../../widgets/class_code_view.dart';
 import '../../widgets/form_widgets.dart';
@@ -17,21 +18,116 @@ import '../../widgets/teacher/emergency_alert_card.dart';
 import '../../widgets/teacher/panel_card.dart';
 import '../../widgets/teacher/student_detail.dart';
 import '../../widgets/teacher/summary_strip.dart';
+import '../classroom/create_class_screen.dart';
+import 'lesson_upload_screen.dart';
 
-/// Öğretmen Paneli (DESIGN.md §8.7–8.8, ROADMAP Faz 3–4). Firestore'u canlı dinler,
-/// mock öğrencileri bir kez okur ve ikisini tek listede birleştirir (K32).
-/// Saniyede bir yeniden çizilir; takılma süreleri canlı akar (K48).
+/// Öğretmen Paneli (DESIGN.md §8.7–8.8, K52): yalnızca bu öğretmenin sınıfları
+/// (`classes.teacherId == uid`). Birden fazla sınıf varsa üstte sınıf seçici; panelin
+/// tamamı seçili sınıfa göre çalışır. Hiç sınıf yoksa "İlk sınıfını oluştur".
 class TeacherPanelScreen extends StatefulWidget {
-  const TeacherPanelScreen({super.key, required this.classId});
+  const TeacherPanelScreen({super.key, required this.teacherId, this.initialClassId});
 
-  final String classId;
+  final String teacherId;
+
+  /// Açılışta seçili sınıf; yoksa demo sınıfı (varsa), o da yoksa ilk oluşturulan.
+  final String? initialClassId;
 
   @override
   State<TeacherPanelScreen> createState() => _TeacherPanelScreenState();
 }
 
 class _TeacherPanelScreenState extends State<TeacherPanelScreen> {
-  late final Future<List<Map<String, dynamic>>> _mocks = MockDataService.loadStudents();
+  late final _classes = FirestoreService.watchTeacherClasses(widget.teacherId);
+  late String? _selectedClassId = widget.initialClassId;
+
+  /// İlk sınıf oluşturulurken liste dolsa da kod ekranı "Panele Git"e kadar açık kalır.
+  bool _creatingFirst = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: _classes,
+      builder: (context, snap) {
+        if (!snap.hasData) {
+          return const Scaffold(
+            backgroundColor: AppColors.creamBase,
+            body: Center(child: Text(AppStrings.panelLoading, style: AppTextStyles.bodyLg)),
+          );
+        }
+        final docs = [...snap.data!.docs]..sort((a, b) => _createdAt(a.data()).compareTo(_createdAt(b.data())));
+        if (docs.isEmpty || _creatingFirst) {
+          _creatingFirst = true;
+          return CreateClassScreen(
+            teacherId: widget.teacherId,
+            first: true,
+            onDone: (id) => setState(() {
+              _creatingFirst = false;
+              _selectedClassId = id;
+            }),
+          );
+        }
+        final ids = [for (final d in docs) d.id];
+        final selected = ids.contains(_selectedClassId)
+            ? _selectedClassId!
+            : (ids.contains(DemoAccounts.classId) ? DemoAccounts.classId : ids.first);
+        return _ClassPanel(
+          key: ValueKey(selected),
+          classId: selected,
+          onNewClass: _newClass,
+          classSelector: docs.length < 2
+              ? null
+              : Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    for (final d in docs)
+                      SelectChip(
+                        label: d.data()['name'] as String? ?? d.id,
+                        selected: d.id == selected,
+                        onTap: () => setState(() => _selectedClassId = d.id),
+                      ),
+                  ],
+                ),
+        );
+      },
+    );
+  }
+
+  static int _createdAt(Map<String, dynamic> data) =>
+      (data['createdAt'] as Timestamp?)?.millisecondsSinceEpoch ?? 0;
+
+  void _newClass() => Navigator.push(
+        context,
+        MaterialPageRoute<void>(
+          builder: (routeContext) => CreateClassScreen(
+            teacherId: widget.teacherId,
+            onDone: (id) {
+              Navigator.pop(routeContext);
+              setState(() => _selectedClassId = id);
+            },
+          ),
+        ),
+      );
+}
+
+/// Seçili sınıfın paneli (ROADMAP Faz 3–4). Firestore'u canlı dinler; demo sınıfında mock
+/// öğrencileri bir kez okur ve gerçek üyelerle tek listede birleştirir (K32), diğer
+/// sınıflarda yalnızca gerçek üyeler (K52). Saniyede bir yeniden çizilir (K48).
+class _ClassPanel extends StatefulWidget {
+  const _ClassPanel({super.key, required this.classId, required this.classSelector, required this.onNewClass});
+
+  final String classId;
+  final Widget? classSelector;
+  final VoidCallback onNewClass;
+
+  @override
+  State<_ClassPanel> createState() => _ClassPanelState();
+}
+
+class _ClassPanelState extends State<_ClassPanel> {
+  late final Future<List<Map<String, dynamic>>> _mocks = DemoAccounts.isDemoClass(widget.classId)
+      ? MockDataService.loadStudents()
+      : Future.value(const <Map<String, dynamic>>[]);
   final DateTime _openedAt = DateTime.now();
   DateTime _now = DateTime.now();
   late final Timer _ticker;
@@ -149,6 +245,7 @@ class _TeacherPanelScreenState extends State<TeacherPanelScreen> {
                 spacing: AppSpacing.sm,
                 runSpacing: AppSpacing.sm,
                 children: [
+                  SecondaryButton(label: AppStrings.newClass, onPressed: widget.onNewClass),
                   SecondaryButton(
                     label: AppStrings.inviteTitle,
                     onPressed: () => _showInvite(classData['code'] as String),
@@ -156,6 +253,10 @@ class _TeacherPanelScreenState extends State<TeacherPanelScreen> {
                   PrimaryButton(label: AppStrings.uploadLesson, onPressed: _openUpload),
                 ],
               ),
+              if (widget.classSelector != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                widget.classSelector!,
+              ],
               const SizedBox(height: AppSpacing.md),
               summary,
               const SizedBox(height: AppSpacing.lg),

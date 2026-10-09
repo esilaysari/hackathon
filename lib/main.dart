@@ -58,11 +58,11 @@ class EduSwarmApp extends StatelessWidget {
     final Widget page = switch (uri.path) {
       AppRoutes.teacher => DemoSignInGate(
           email: DemoAccounts.teacherEmail,
-          builder: (_) => const TeacherPanelScreen(classId: DemoAccounts.classId),
+          builder: (uid) => TeacherPanelScreen(teacherId: uid, initialClassId: DemoAccounts.classId),
         ),
       AppRoutes.student => DemoSignInGate(
           email: DemoAccounts.studentEmail,
-          builder: (uid) => MyLessonsScreen(uid: uid, classId: DemoAccounts.classId),
+          builder: (uid) => MyLessonsScreen(uid: uid),
         ),
       AppRoutes.studentDemo => DemoSignInGate(
           email: DemoAccounts.studentEmail,
