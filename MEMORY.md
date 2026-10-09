@@ -18,7 +18,7 @@
 
 **Tamamlanan:** INTENT.md, DESIGN.md, CLAUDE.md, TRD.md ve bu dosya birbiriyle hizalandı (K14–K39). `mock_students.json` K24'e göre uyarlandı (42 öğrenci, K38). Proje klasöründe henüz uygulama kodu yok.
 
-**Sıradaki adım:** Kullanıcı Faz 5a + 5b'yi tarayıcıda doğrulayacak (sınıf oluştur/katıl, metin/PDF/PPTX ile ders gönder). Ardından Altın Senaryo provası. DESIGN §8.1–8.3 ve TRD §3.1/§4.4/T6 güncellemeleri sonda toplu yapılacak (Yol Günlüğü notlarına bak).
+**Sıradaki adım:** Kullanıcı K51–K53'ü tarayıcıda doğrulayacak (yüklenen derste üretilen ipuçları, çok sınıflı panel + sınıf seçici, Derslerim sınıf grupları + "Sınıfa Katıl", stil yeniden belirleme, ders silme) ve bekleyen değişiklikleri commit edecek. Ardından Altın Senaryo provası (/#/teacher + /#/student/demo). DESIGN §8.1–8.3/§8.7 ve TRD §3.1/§4.4/T6 güncellemeleri sonda toplu yapılacak (Yol Günlüğü notlarına bak).
 
 **Bekleyen kararlar:** Yok — veri saklama, anlık iletişim, durum yönetimi ve içerik yükleme TRD.md ile karara bağlandı (K31–K34).
 

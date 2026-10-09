@@ -121,6 +121,44 @@
       ],
       "correctIndex": 0,
       "type": "verbal_visual"
+    },
+    {
+      "id": "q6",
+      "text": "İki girişli bir AND kapısının doğruluk tablosunda kaç satırda çıkış 1'dir?",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "4"
+      ],
+      "correctIndex": 1,
+      "type": "verbal_visual"
+    },
+    {
+      "id": "q7",
+      "text": "Bu ifadenin sonucu kaçtır?",
+      "code": "A = 1, B = 0, C = 1\nQ = (A OR B) AND C",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "Belirsiz"
+      ],
+      "correctIndex": 1,
+      "type": "computational"
+    },
+    {
+      "id": "q8",
+      "text": "A = 1 iken bu ifadenin sonucu kaçtır?",
+      "code": "Q = NOT (NOT A)",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "Belirsiz"
+      ],
+      "correctIndex": 1,
+      "type": "computational"
     }
   ],
   "socratic": {
@@ -221,6 +259,56 @@
           "Belirsiz"
         ],
         "correctIndex": 1
+      }
+    },
+    "q6": {
+      "hints": [
+        "AND için iki girişin de 1 olması gerekiyordu. Tabloda iki girişin de 1 olduğu kaç satır var?",
+        "İki girişli tabloda toplam 4 satır vardı: 00, 01, 10 ve 11."
+      ],
+      "check": {
+        "text": "İki girişli bir OR kapısının doğruluk tablosunda kaç satırda çıkış 1'dir?",
+        "options": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        "correctIndex": 2
+      }
+    },
+    "q7": {
+      "hints": [
+        "Önce parantez içi: A OR B kaç?",
+        "Şimdi o sonucu C ile AND işlemine sok. İki değer de 1 mi?"
+      ],
+      "check": {
+        "text": "Bu ifadenin sonucu kaçtır?",
+        "code": "A = 0, B = 0, C = 1\nQ = (A OR B) AND C",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "Belirsiz"
+        ],
+        "correctIndex": 0
+      }
+    },
+    "q8": {
+      "hints": [
+        "İçteki NOT A ile başla: A = 1 ise NOT A kaç?",
+        "Şimdi o sonucu bir kez daha tersine çevir."
+      ],
+      "check": {
+        "text": "A = 0 iken bu ifadenin sonucu kaçtır?",
+        "code": "Q = NOT (NOT A)",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "Belirsiz"
+        ],
+        "correctIndex": 0
       }
     }
   }

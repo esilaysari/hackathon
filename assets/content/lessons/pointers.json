@@ -136,6 +136,44 @@
       ],
       "correctIndex": 1,
       "type": "verbal_visual"
+    },
+    {
+      "id": "q6",
+      "text": "Bu satırlardan sonra *p kaçtır?",
+      "code": "int x = 7;\nint *p = &x;",
+      "options": [
+        "7",
+        "x'in adresi",
+        "p'nin adresi",
+        "0"
+      ],
+      "correctIndex": 0,
+      "type": "verbal_visual"
+    },
+    {
+      "id": "q7",
+      "text": "Bu kod ekrana ne yazdırır?",
+      "code": "int a = 2, b = 5;\nint *p = &a;\np = &b;\n*p = 9;\nprintf(\"%d %d\", a, b);",
+      "options": [
+        "9 5",
+        "2 9",
+        "9 9",
+        "2 5"
+      ],
+      "correctIndex": 1,
+      "type": "computational"
+    },
+    {
+      "id": "q8",
+      "text": "Başlatılmamış bir pointer için (int *p;) hangisi doğrudur?",
+      "options": [
+        "Otomatik olarak NULL olur, güvenle kullanılabilir",
+        "Rastgele bir adresi gösterebilir; kullanmadan önce bir adres atanmalıdır",
+        "Her zaman 0 adresini gösterir ve 0 değerini verir",
+        "Derleyici kullanılmasına hiç izin vermez"
+      ],
+      "correctIndex": 1,
+      "type": "verbal_visual"
     }
   ],
   "socratic": {
@@ -256,6 +294,56 @@
           true,
           true,
           true
+        ],
+        "correctIndex": 0
+      }
+    },
+    "q6": {
+      "hints": [
+        "p, x'in adresini tutuyor. `*` işareti adresi mi verir, yoksa o adresteki değeri mi?",
+        "x'in kutucuğunda hangi değer duruyor?"
+      ],
+      "check": {
+        "text": "Bu satırlardan sonra *t kaçtır?",
+        "code": "int k = 12;\nint *t = &k;",
+        "options": [
+          "12",
+          "k'nin adresi",
+          "t'nin adresi",
+          "0"
+        ],
+        "correctIndex": 0
+      }
+    },
+    "q7": {
+      "hints": [
+        "p önce a'yı gösteriyor. `p = &b;` satırından sonra p hangi kutucuğu gösteriyor?",
+        "`*p = 9;` hangi değişkenin kutucuğuna yazıyor? a'nın değeri değişti mi?"
+      ],
+      "check": {
+        "text": "Bu kod ekrana ne yazdırır?",
+        "code": "int m = 1, n = 2;\nint *r = &n;\n*r = 7;\nprintf(\"%d %d\", m, n);",
+        "options": [
+          "1 2",
+          "7 2",
+          "1 7",
+          "7 7"
+        ],
+        "correctIndex": 2
+      }
+    },
+    "q8": {
+      "hints": [
+        "Bir değişkene değer vermeden tanımladığında içinde ne olur? Pointer da bir değişken.",
+        "Kutucuğunda ne olduğunu bilmediğin bir adresin içine bakmak güvenli olur mu?"
+      ],
+      "check": {
+        "text": "Bir pointer'ı güvenle kullanmadan önce ne yapılmalıdır?",
+        "options": [
+          "Geçerli bir adres ya da NULL atanmalı",
+          "Hiçbir şey yapılmasına gerek yok",
+          "printf ile yazdırılmalı",
+          "İki kez tanımlanmalı"
         ],
         "correctIndex": 0
       }

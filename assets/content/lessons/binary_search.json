@@ -120,6 +120,43 @@
       ],
       "correctIndex": 1,
       "type": "computational"
+    },
+    {
+      "id": "q6",
+      "text": "Sıralı bir dizide aranan sayı ortadaki elemandan küçükse ne yapılır?",
+      "options": [
+        "Sol yarıda aramaya devam edilir",
+        "Sağ yarıda aramaya devam edilir",
+        "Aramaya baştan başlanır",
+        "Sayının dizide olmadığına karar verilir"
+      ],
+      "correctIndex": 0,
+      "type": "verbal_visual"
+    },
+    {
+      "id": "q7",
+      "text": "Bu dizide 7 aranıyor. Sırasıyla hangi elemanlara bakılır?",
+      "code": "[4, 7, 10, 13, 16, 19, 22]",
+      "options": [
+        "13, 7",
+        "4, 7",
+        "13, 10, 7",
+        "10, 7"
+      ],
+      "correctIndex": 0,
+      "type": "computational"
+    },
+    {
+      "id": "q8",
+      "text": "1000 elemanlı sıralı bir dizide ikili arama en fazla yaklaşık kaç karşılaştırma yapar?",
+      "options": [
+        "10",
+        "100",
+        "500",
+        "1000"
+      ],
+      "correctIndex": 0,
+      "type": "computational"
     }
   ],
   "socratic": {
@@ -220,6 +257,55 @@
           "4",
           "8",
           "2"
+        ],
+        "correctIndex": 1
+      }
+    },
+    "q6": {
+      "hints": [
+        "Dizi sıralı. Ortanın sağındaki sayılar, ortadaki sayıdan büyük mü küçük mü?",
+        "Aranan sayı ortadakinden küçükse hangi yarıda olamaz?"
+      ],
+      "check": {
+        "text": "Aranan sayı ortadaki elemandan büyükse ne yapılır?",
+        "options": [
+          "Sağ yarıda aramaya devam edilir",
+          "Sol yarıda aramaya devam edilir",
+          "Aramaya baştan başlanır",
+          "Arama durdurulur"
+        ],
+        "correctIndex": 0
+      }
+    },
+    "q7": {
+      "hints": [
+        "7 elemanlı dizide ortadaki eleman hangisi? (3. indis)",
+        "7, ortadaki sayıdan küçük. Kalan sol yarı [4, 7, 10]; bunun ortası hangisi?"
+      ],
+      "check": {
+        "text": "Aynı dizide 19 aranıyor. Sırasıyla hangi elemanlara bakılır?",
+        "code": "[4, 7, 10, 13, 16, 19, 22]",
+        "options": [
+          "13, 19",
+          "16, 19",
+          "13, 16, 19",
+          "22, 19"
+        ],
+        "correctIndex": 0
+      }
+    },
+    "q8": {
+      "hints": [
+        "Her karşılaştırmada alan yarıya iner: 1000, 500, 250... Kaç adımda 1'e inersin?",
+        "2'nin kuvvetlerini düşün: 2 üzeri 10 = 1024."
+      ],
+      "check": {
+        "text": "128 elemanlı sıralı bir dizide ikili arama en fazla kaç karşılaştırma yapar?",
+        "options": [
+          "7",
+          "8",
+          "64",
+          "128"
         ],
         "correctIndex": 1
       }
