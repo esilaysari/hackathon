@@ -90,7 +90,9 @@ Bu doküman EduSwarm'ın **nasıl inşa edileceğini** tanımlar: hangi verinin 
 | `learningStyle` | Enum | `users` belgesinden kopyalanır |
 | `status` | `focused` \| `attention` \| `critical` | Odakta / Dikkat / Kritik (MEMORY K17) |
 | `stuckSince` | Timestamp \| null | Kritik olduğu an |
-| `interactionCount` | Int | Ders boyunca toplam etkileşim sayısı (yalnızca özet; durum değiştiğinde yazılır, MEMORY K23) |
+| `interactionCount` | Int | Ders boyunca toplam etkileşim sayısı (yalnızca özet; durum değiştiğinde yazılır, MEMORY K23). Kaydırma olayları sayacı sıfırlar ama sayılmaz |
+| `idleSeconds` | Int | Kritik olurken hareketsiz kalınan süre (o anki eşik, sn); yalnızca özet (K23, K43) |
+| `currentTopic`, `currentTopicTitle` | String | Öğrencinin açık dersinin konusu; ders açılınca yazılır |
 | `topicScores` | Map<String, Int> | Konu bazlı başarı skoru (0-100); kontrol sorusu doğru cevaplanınca artar. PeerSwarm için (MEMORY K22) |
 | `joinedAt` | Timestamp | |
 
@@ -104,7 +106,7 @@ Bu doküman EduSwarm'ın **nasıl inşa edileceğini** tanımlar: hangi verinin 
 | `questions` | List<Map> | `{ id, text, options[3-4], correctIndex, type }` — `type`: `verbal_visual` (30 sn) \| `computational` (60 sn); eşiği o an açık olan soru belirler (MEMORY K16) |
 | `sentAt` | Timestamp | |
 
-**`classes/{classId}/alerts/{alertId}`**
+**`classes/{classId}/alerts/{alertId}`** — `alertId` = `{studentId}_{topicKey}`: aynı öğrenci için bir derste en fazla bir açık uyarı (`seen == false`) olur; öğretmen "Gördüm" dedikten sonra aynı belge yeniden açılabilir (K43). Panel açık uyarıları `where('seen', isEqualTo: false)` ile dinler, sıralamayı istemcide yapar (bileşik indeks gerekmez).
 
 | Alan | Tip | Açıklama |
 | :--- | :--- | :--- |
@@ -275,6 +277,7 @@ Zincir konu başınadır; o konudaki tüm sorular aynı zinciri kullanır. Öğr
 
 ### 4.4 Kayıt, Test ve Sınıf
 
+0. **Geçici demo adresleri (Faz 5'e kadar, K42):** `/#/teacher` ve `/#/student` demo hesaplarıyla otomatik giriş yapar; `/` iki role bağlantı verir. Oturum sekmeye özeldir (`Persistence.SESSION`), böylece aynı tarayıcıda iki pencere iki ayrı rolde kalır.
 1. **Kayıt / Giriş:** Kayıt sekmesi → `createUserWithEmailAndPassword` → `users/{uid}` belgesi oluşturulur. Giriş sekmesi → `signInWithEmailAndPassword`. Uygulama açılışında oturum açıksa doğrudan role göre ilgili panele gidilir.
 2. **Demo girişleri:** "Demo Öğretmen" ve "Demo Öğrenci" butonları, Firebase Auth'ta önceden oluşturulmuş sabit demo hesaplarıyla giriş yapar. Demo Öğrenci'nin profili Dislektik ve demo sınıfına kayıtlıdır (MEMORY K26 yedek planı).
 3. **Öğrenme stili testi:** Öğrenci ilk girişte testi çözer → sonuç `users.learningStyle`'a yazılır.

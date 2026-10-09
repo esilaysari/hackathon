@@ -14,11 +14,11 @@
 
 ## 1. Devamlılık — Şu An Neredeyiz
 
-**Son güncelleme:** 2026-10-09 20:58
+**Son güncelleme:** 2026-10-09 21:13
 
 **Tamamlanan:** INTENT.md, DESIGN.md, CLAUDE.md, TRD.md ve bu dosya birbiriyle hizalandı (K14–K39). `mock_students.json` K24'e göre uyarlandı (42 öğrenci, K38). Proje klasöründe henüz uygulama kodu yok.
 
-**Sıradaki adım:** Seed (`flutter run -d chrome -t lib/seed.dart`), ardından ROADMAP Faz 3: Öğretmen Paneli, Acil Müdahale, canlı Sunum Modu. Faz 3'te `DevConfig` (Sunum Modu, profil) Firestore'a bağlanacak.
+**Sıradaki adım:** Kullanıcı Faz 3'ü iki pencereyle doğrulayacak (`/#/teacher` + `/#/student`). Ardından ROADMAP Faz 4: Sokratik Rehber + PeerSwarm (Eşleştir, bildirimler).
 
 **Bekleyen kararlar:** Yok — veri saklama, anlık iletişim, durum yönetimi ve içerik yükleme TRD.md ile karara bağlandı (K31–K34).
 
@@ -38,7 +38,7 @@
 | Ajan Kural Dosyaları | .claude/rules/ | ⬜ Başlanmadı |
 | Git deposu ve GitHub | github.com/esilaysari/hackathon | ✅ Kuruldu (commit'leri kullanıcı atar, K28) |
 | Öğrenci Portalı: Ağır Görev + Morphing + Story | lib/screens/student/, lib/widgets/ | ✅ Tamamlandı — 2026-10-09 (tarayıcıda doğrulandı) |
-| Öğretmen Paneli: kritik liste + Acil Müdahale + Sunum Modu | — | ⬜ Başlanmadı (**öncelik 1**) |
+| Öğretmen Paneli: kritik liste + Acil Müdahale + Sunum Modu | lib/screens/teacher/, lib/widgets/teacher/ | 🔄 Kod tamam, testler geçiyor; kullanıcının iki pencere testi bekleniyor (**öncelik 1**) |
 | Sokratik Rehber + PeerSwarm önerisi | — | ⬜ Başlanmadı (öncelik 2) |
 | Kayıt, öğrenme stili testi, sınıf kodu, içerik yükleme | — | ⬜ Başlanmadı (öncelik 3) |
 | Sunum provası (Altın Senaryo) | — | ⬜ Başlanmadı |
@@ -88,6 +88,9 @@
 | K39 | 2026-10-09 | **Yayın:** `flutter build web` + Firebase Hosting (TRD T8). | Öğrenci telefonu gerçek bir URL'den açar; ayrı sunucu yok. |
 | K40 | 2026-10-09 | **Zaman planı:** Geliştirme ROADMAP.md'deki faz sırasına göre yürür (Faz 0–7, 2026-10-09 19:20 → 2026-10-10 06:30). **04:30 kod dondurma:** bu saatten sonra yeni özellik eklenmez, yalnızca demoyu bozan hatalar düzeltilir. **HSD Bounty pop-up'ı kapsam dışıdır;** akran desteği için yerine PeerSwarm "Eşleştir" (K22) kullanılır. | Sunum öncesi en az 2 saat prova ve teslim payı bırakmak; aynı ihtiyacı karşılayan iki özellik yazmamak. |
 | K41 | 2026-10-09 | **Demo kimlikleri:** Firebase projesi `eduswarm-985b9`. Demo öğretmen "Nur Demirtaş" (demo.ogretmen@eduswarm.dev), demo öğrenci "Ayşe Yılmaz" (demo.ogrenci@eduswarm.dev, Dislektik), demo sınıfı `classes/demo_class` "Programlamaya Giriş", kod `PTR234`. E-postalar ve ortak demo şifresi yalnızca `lib/demo_accounts.dart`'ta tutulur; demo verisi `lib/seed.dart` ile yazılır. | Uydurma isimler mock veriyle çakışmaz; DESIGN §8.8 örneğindeki "Ayşe Yılmaz" ile uyumlu. Şifre tek yerde, sunumdan sonra değiştirilebilir. |
+| K42 | 2026-10-09 | **Geçici demo adresleri:** Faz 5'teki Giriş/Kayıt'a kadar `/#/teacher` demo öğretmen, `/#/student` demo öğrenci hesabıyla otomatik giriş yapar; `/` iki role bağlantı verir. Firebase Auth oturumu sekmeye özeldir (`Persistence.SESSION`). | İki rolü aynı tarayıcıda iki pencerede test edebilmek; varsayılan (LOCAL) kalıcılıkta oturum sekmeler arasında paylaşıldığı için iki pencere aynı hesaba düşerdi. |
+| K43 | 2026-10-09 | **Öğrenci → Firestore:** Her durum geçişinde `members/{uid}.status` yazılır; Kritik'te ayrıca `stuckSince`, `interactionCount`, `idleSeconds` (özet). Uyarı id'si `{uid}_{topicKey}`: bir derste en fazla bir açık uyarı. "Basitleştir" hiçbir şey yazmaz. Sunum Modu sınıf belgesinden canlı okunur, değişince sayaç yeni eşikle yeniden başlar. Profil `users/{uid}.learningStyle`'dan okunur; `DevConfig.learningStyleOverride` (varsayılan null) test için kalır. | K17, K23, K29'un teknik karşılığı; uyarı yağmurunu önlemek için sorgu yerine deterministik belge id'si. |
+| K44 | 2026-10-09 | **K34 ertelendi:** `provider` bu fazda kullanılmadı; rolü adres, uid'yi giriş katmanı veriyor. Giriş yapan kullanıcı ve aktif sınıf için `provider` Faz 5'teki Giriş/Kayıt ile eklenecek. Firestore verisi için `StreamBuilder` kullanılıyor. | Faz 3'te paylaşılacak uygulama durumu yok; gereksiz katmandan kaçınmak (Önce Basitlik). |
 
 ## 4. Bilinen Sorunlar ve Teknik Borç
 
@@ -154,3 +157,10 @@
   - Kullanıcı tarayıcıda elle doğruladı: otomatik Morphing, Story modu, "Soruya Dön", "Basitleştir" ve profiller çalışıyor.
   - S5 kapatıldı: Morphing ölçeği (0.85), Story çubuk boşluğu (4px) ve devre dışı buton eşleşmesi (Grey-400 + Grey-900) DESIGN.md'ye işlendi.
   - Soruların doğru/yanlış kontrolü bilinçli olarak Faz 4'teki kontrol sorusuna bırakıldı.
+- **2026-10-09 21:13 — ROADMAP Faz 3: Öğretmen Paneli ve Canlı Erken Uyarı**
+  - Adresler `/`, `/#/teacher`, `/#/student`; `services/auth_service.dart` demo girişi (sekmeye özel oturum), `screens/demo_sign_in_gate.dart` (K42).
+  - `services/firestore_service.dart`: sınıf, üyeler ve açık uyarılar canlı; durum, uyarı, Sunum Modu ve "Gördüm" yazımı. Öğrenci ekranı Firestore'a bağlandı; `DevConfig.presentationMode` kaldırıldı (K43).
+  - Öğretmen Paneli `screens/teacher/teacher_panel_screen.dart` + `widgets/teacher/`: özet şeridi (toplam · dikkat · kritik), Sunum Modu anahtarı, yalnızca Kritik listesi (gerçekler üstte), öğrenci detayı (yalnızca özet), stil dağılımı, Acil Müdahale kartı (400ms giriş + tek nabız, "Gördüm"). Tam ad + aynı adda ayırt edici etiket (K35).
+  - `models/student_summary.dart` (`ClassOverview`), `models/alert.dart`; `test/student_summary_test.dart` eklendi.
+  - Acil Müdahale kartında 🚨 yerine Material ikon kullanıldı (emoji yazı tipi internetten iner); DESIGN §7 ve §8.8, TRD §3.1 ve §4.4 güncellendi. K34 Faz 5'e ertelendi (K44).
+  - Doğrulama: `flutter analyze` temiz, 12 test geçti, `flutter build web` başarılı. İki pencere testi kullanıcıda.

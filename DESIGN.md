@@ -147,7 +147,7 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 | **Morphing** | 600ms Fade & Scale | Ağır Görev'den Story moduna geçiş. Eski ekran küçülerek kaybolur (Scale Down + Fade Out), yeni ekran büyüyerek belirir (Scale Up + Fade In). Ölçek 0.85 ↔ 1.0 arasında değişir. |
 | **Story kart geçişi** | 300ms CrossFade | Öğrenci dokunduğunda metin yumuşakça değişir. Ani kesme yapılmaz. |
 | **Uyarı belirmesi (SnackBar)** | Standart Slide-Up | Morphing anında alttan çıkan şeftali renkli "Biraz zorlandın gibi, içeriği kolaylaştırdım" bilgilendirmesi. |
-| **Öğretmen uyarı kartı** | 400ms Slide-In + hafif nabız | Yeni "Acil Müdahale" kartı listenin en üstüne kayarak girer ve bir kez yumuşakça büyüyüp küçülür. Sürekli yanıp sönme yapılmaz. |
+| **Öğretmen uyarı kartı** | 400ms Slide-In + hafif nabız | Yeni "Acil Müdahale" kartı listenin en üstüne kayarak girer ve bir kez yumuşakça büyüyüp küçülür (1.0 → 1.03 → 1.0, giriş 400ms + nabız 400ms). Sürekli yanıp sönme yapılmaz. |
 | **Ters Morphing** | 600ms Fade & Scale | Story sonunda "Soruya Dön" ile normal görünüme dönüş; Morphing'in tersi. |
 | **Sokratik baloncuk** | 250ms Fade + Slide-Up | Morphing tamamlandıktan sonra belirir. |
 | **Öğrenci bildirim kartı** | 300ms Slide-Down | Üstten kayarak girer, birkaç saniye sonra yukarı kayarak çıkar. |
@@ -223,7 +223,7 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 
 ### 8.8 "Acil Müdahale" Uyarı Kartı ve PeerSwarm Önerisi
 
-- **Uyarı kartı:** Warning (#FFB347) zemin, Grey-900 metin, Shadow/Warning, radius-lg. İçerik: 🚨 ikon, "Ayşe Yılmaz bu konuda zorlanıyor", konu adı, süre ve "Sistem içeriği Story moduna dönüştürdü ve destek mesajı gönderdi" bilgisi.
+- **Uyarı kartı:** Warning (#FFB347) zemin, Grey-900 metin, Shadow/Warning, radius-lg. İçerik: uyarı ikonu (Material `warning_amber_rounded`, Grey-900; emoji kullanılmaz, çünkü Flutter Web emoji yazı tipini çalışma anında internetten indirir — K29), "Ayşe Yılmaz bu konuda zorlanıyor", konu adı, süre ve "Sistem içeriği Story moduna dönüştürdü ve destek mesajı gönderdi" bilgisi.
 - **PeerSwarm önerisi:** Kartın içinde Mint-300 zeminli küçük bir alt bölüm: "Yardım edebilecek akran: Mehmet Çelik (bu konuda başarılı)" + "Eşleştir" butonu.
 - **Eylemler:** "Eşleştir" (birincil) ve küçük bir "Gördüm" metin linki. Eşleştirilen ya da "Gördüm" denen kart listeden kalkar. Öğretmen öğrenciye elle mesaj yazmaz; destek mesajlarını sistem otomatik gönderir (bkz. 8.9).
 

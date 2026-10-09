@@ -1,0 +1,164 @@
+{
+  "intro": "Bu kısa testte doğru ya da yanlış cevap yok. Her cümlenin sana ne kadar uyduğunu seç; içerikleri senin için en rahat öğrenilecek biçimde hazırlayalım.",
+  "scale": [
+    {
+      "label": "Hiç değil",
+      "value": 0,
+      "icon": "🚫"
+    },
+    {
+      "label": "Biraz",
+      "value": 1,
+      "icon": "🤏"
+    },
+    {
+      "label": "Çoğunlukla",
+      "value": 2,
+      "icon": "🌠"
+    },
+    {
+      "label": "Tam olarak",
+      "value": 3,
+      "icon": null
+    }
+  ],
+  "progress": {
+    "showPercent": true,
+    "showRemaining": true,
+    "stageLabels": [
+      {
+        "fromQuestion": 1,
+        "label": "Isınma turu"
+      },
+      {
+        "fromQuestion": 5,
+        "label": "Yarıyı geçtin"
+      },
+      {
+        "fromQuestion": 9,
+        "label": "Son etap"
+      },
+      {
+        "fromQuestion": 12,
+        "label": "Son soru"
+      }
+    ]
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "dimension": "visual",
+      "fullIcon": "👁️",
+      "text": "Yeni bir şey öğrenirken onu görebildiğimde en iyi anlarım; bir diyagram, grafik ya da resim konuyu benim için tamamen açar."
+    },
+    {
+      "id": "q2",
+      "dimension": "readwrite",
+      "fullIcon": "📖",
+      "text": "Bir şey öğrenmek istediğimde ilk işim onu okumak ve yazılı notlar almaktır."
+    },
+    {
+      "id": "q3",
+      "dimension": "kinesthetic",
+      "fullIcon": "🖐️",
+      "text": "En iyi yaparak öğrenirim; bana uygulayacağım bir şey verin, konu sonunda anlam kazanır."
+    },
+    {
+      "id": "q4",
+      "dimension": "visual",
+      "fullIcon": "🗺️",
+      "text": "Bilgiler bana yalnızca anlatıldığında değil; renk kodlu, harita gibi ya da görsel olarak düzenlendiğinde daha iyi hatırlarım."
+    },
+    {
+      "id": "q5",
+      "dimension": "readwrite",
+      "fullIcon": "✍️",
+      "text": "Bilgiyi gerçekten kalıcı hâle getirmemin yolu onu yazıya dökmektir: listeler, özetler, kendi cümlelerimle yeniden yazmak."
+    },
+    {
+      "id": "q6",
+      "dimension": "kinesthetic",
+      "fullIcon": "🛠️",
+      "text": "Saf teoriye karşı sabırsızım; hemen işe girişmeyi, hata yapmayı ve yol üzerinde çözmeyi tercih ederim."
+    },
+    {
+      "id": "q7",
+      "dimension": "visual",
+      "fullIcon": "👁️",
+      "text": "Biri bana yol tarifi verdiğinde kafamda bir harita çizerim ya da bana çizmesini isterim."
+    },
+    {
+      "id": "q8",
+      "dimension": "readwrite",
+      "fullIcon": "📘",
+      "text": "Bir demoyu izlemek ya da bana gösterilmesi yerine talimatları veya kılavuzu okumayı tercih ederim."
+    },
+    {
+      "id": "q9",
+      "dimension": "kinesthetic",
+      "fullIcon": "🏃",
+      "text": "Yeni bir beceri öğrenirken önce çalışmak yerine doğrudan uygulamaya atlarım."
+    },
+    {
+      "id": "q10",
+      "dimension": "readingComfort",
+      "fullIcon": "🔤",
+      "text": "Uzun paragrafları okurken satırları karıştırır ya da sık sık başa dönerim."
+    },
+    {
+      "id": "q11",
+      "dimension": "readingComfort",
+      "fullIcon": "🔍",
+      "text": "Sıkışık satırlar ve küçük harflerle yazılmış metinleri okumak beni çabuk yorar."
+    },
+    {
+      "id": "q12",
+      "dimension": "readingComfort",
+      "fullIcon": "🧩",
+      "text": "Bir soruyu anlamak için onu birkaç kez okumam gerekir; kelimeler bazen birbirine karışır."
+    }
+  ],
+  "scoring": {
+    "styleDimensions": [
+      "visual",
+      "readwrite",
+      "kinesthetic"
+    ],
+    "styleTieBreakOrder": [
+      "visual",
+      "kinesthetic",
+      "readwrite"
+    ],
+    "readingComfortThreshold": 6,
+    "notes": "Her stil boyutu 3 soru × en fazla 3 puan = 0-9 puan. En yüksek puanlı boyut öğrencinin öğrenme stilidir; eşitlikte styleTieBreakOrder sırası kullanılır. readingComfort toplamı (0-9) eşik değerine eşit veya büyükse sunum profili, stilden bağımsız olarak 'dyslexic' olur."
+  },
+  "presentationProfileMap": {
+    "dyslexicIfReadingComfortAtLeastThreshold": true,
+    "visual": "visual",
+    "kinesthetic": "visual",
+    "readwrite": "textual"
+  },
+  "results": {
+    "visual": {
+      "title": "Görsel Öğrenen",
+      "icon": "👁️",
+      "description": "Cevapların görsel bir stili işaret ediyor: bilgiyi şemalar, renkler ve düzenler üzerinden en iyi kavrıyorsun. İçeriklerin senin için kartlara, ikonlara ve görsel düzenlere bölünerek gösterilecek."
+    },
+    "readwrite": {
+      "title": "Okuyarak-Yazarak Öğrenen",
+      "icon": "📖",
+      "description": "Cevapların okuma-yazma odaklı bir stili işaret ediyor: düzenli metinler, notlar ve özetler senin en güçlü aracın. İçeriklerin senin için başlıklı, ayrıntılı ve düzenli bir okuma düzeninde gösterilecek."
+    },
+    "kinesthetic": {
+      "title": "Kinestetik Öğrenen",
+      "icon": "🖐️",
+      "description": "Cevapların kinestetik bir stili işaret ediyor: yaparak, deneyerek ve uygulayarak öğreniyorsun. İçeriklerin senin için kısa, etkileşimli kartlara bölünecek ve hızla uygulamaya geçebileceksin."
+    },
+    "readingSupport": {
+      "title": "Okuma desteği açık",
+      "icon": "🔤",
+      "description": "Okurken rahat etmen için geniş aralıklı, okunaklı bir yazı tipi ve kısa paragraflar senin için açıldı."
+    },
+    "footnote": "Bu sonuç, bilgiyi nasıl almayı tercih ettiğinin anlık bir görüntüsüdür; bir sınırlama ya da teşhis değildir. Çoğu insan birden fazla stili karışık kullanır."
+  }
+}

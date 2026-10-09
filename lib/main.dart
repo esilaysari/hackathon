@@ -2,8 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'demo_accounts.dart';
 import 'firebase_options.dart';
+import 'screens/demo_sign_in_gate.dart';
+import 'screens/role_chooser_screen.dart';
 import 'screens/student/lesson_screen.dart';
+import 'screens/teacher/teacher_panel_screen.dart';
 import 'services/mock_data_service.dart';
 import 'strings.dart';
 import 'theme/tokens.dart';
@@ -30,8 +34,18 @@ class EduSwarmApp extends StatelessWidget {
       title: AppStrings.appTitle,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: AppFonts.roboto, scaffoldBackgroundColor: AppColors.creamBase),
-      // Faz 5'te giriş ekranının arkasına alınacak.
-      home: const LessonScreen(),
+      // /#/teacher ve /#/student demo hesaplarıyla otomatik giriş yapar (Faz 5'e kadar).
+      routes: {
+        '/': (_) => const RoleChooserScreen(),
+        RoleChooserScreen.teacherRoute: (_) => DemoSignInGate(
+              email: DemoAccounts.teacherEmail,
+              builder: (_) => const TeacherPanelScreen(classId: DemoAccounts.classId),
+            ),
+        RoleChooserScreen.studentRoute: (_) => DemoSignInGate(
+              email: DemoAccounts.studentEmail,
+              builder: (uid) => LessonScreen(uid: uid, classId: DemoAccounts.classId),
+            ),
+      },
     );
   }
 }

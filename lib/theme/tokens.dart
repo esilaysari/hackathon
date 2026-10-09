@@ -113,6 +113,9 @@ abstract final class AppDurations {
 
   /// Morphing'de ekranın küçüldüğü / büyümeye başladığı ölçek.
   static const morphScaleBegin = 0.85;
+
+  /// Acil Müdahale kartının girişten sonraki tek "nabız" büyümesi (1.0 → 1.03 → 1.0).
+  static const alertPulseScale = 1.03;
 }
 
 /// Odak kaybı eşikleri (CLAUDE.md §4.1, MEMORY K7, K8, K16). Dikkat = eşiğin yarısı (K17).
