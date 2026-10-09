@@ -125,9 +125,15 @@ class TaskView extends StatelessWidget {
           for (var i = 0; i < paragraphs.length; i++) ...[
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
-              child: style == LearningStyle.visual
-                  ? _VisualParagraph(text: paragraphs[i], style: body)
-                  : LessonText(paragraphs[i], style: body),
+              // Öğretmenin Markdown'ındaki `#` başlıkları kalın başlık olarak gösterilir.
+              child: paragraphs[i].startsWith('#')
+                  ? LessonText(
+                      paragraphs[i].replaceFirst(RegExp(r'^#+\s*'), ''),
+                      style: body.copyWith(fontWeight: FontWeight.w700),
+                    )
+                  : style == LearningStyle.visual
+                      ? _VisualParagraph(text: paragraphs[i], style: body)
+                      : LessonText(paragraphs[i], style: body),
             ),
             // Şemalar ilgili paragrafın hemen altında (K50).
             for (final figure in lesson.figures.where((f) => f.afterParagraph == i))

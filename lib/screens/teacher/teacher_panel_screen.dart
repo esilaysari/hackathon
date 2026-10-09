@@ -8,6 +8,10 @@ import '../../services/firestore_service.dart';
 import '../../services/mock_data_service.dart';
 import '../../strings.dart';
 import '../../theme/tokens.dart';
+import 'lesson_upload_screen.dart';
+import '../../widgets/app_buttons.dart';
+import '../../widgets/class_code_view.dart';
+import '../../widgets/form_widgets.dart';
 import '../../widgets/teacher/critical_list.dart';
 import '../../widgets/teacher/emergency_alert_card.dart';
 import '../../widgets/teacher/panel_card.dart';
@@ -140,6 +144,19 @@ class _TeacherPanelScreenState extends State<TeacherPanelScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Wrap(
+                alignment: WrapAlignment.end,
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: [
+                  SecondaryButton(
+                    label: AppStrings.inviteTitle,
+                    onPressed: () => _showInvite(classData['code'] as String),
+                  ),
+                  PrimaryButton(label: AppStrings.uploadLesson, onPressed: _openUpload),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
               summary,
               const SizedBox(height: AppSpacing.lg),
               if (wide)
@@ -164,6 +181,29 @@ class _TeacherPanelScreenState extends State<TeacherPanelScreen> {
       },
     );
   }
+
+  void _showInvite(String code) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.creamSurface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
+        title: const Text(AppStrings.inviteTitle, style: AppTextStyles.appBarTitle),
+        content: SizedBox(width: AppLayout.studentMaxWidth, child: ClassCodeView(code: code)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppStrings.close, style: appLinkStyle),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _openUpload() => Navigator.push(
+        context,
+        MaterialPageRoute<void>(builder: (_) => LessonUploadScreen(classId: widget.classId)),
+      );
 
   /// PeerSwarm "Eşleştir" (K22, K47). Mock akrana bildirim yalnızca simüle edilir.
   void _match(EmergencyAlert alert, StudentSummary peer) {

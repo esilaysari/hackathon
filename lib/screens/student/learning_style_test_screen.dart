@@ -8,15 +8,18 @@ import '../../services/session.dart';
 import '../../strings.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_buttons.dart';
+import '../../widgets/form_widgets.dart';
 import '../../widgets/option_tile.dart';
 
 /// Öğrenme stili testi ve sonuç ekranı (DESIGN.md §8.2). Sorular, ölçek, aşama etiketleri
 /// ve sonuç metinleri `learning_style_test.json`'dan aynen gelir.
 class LearningStyleTestScreen extends StatefulWidget {
-  const LearningStyleTestScreen({super.key, required this.user, required this.classId});
+  const LearningStyleTestScreen({super.key, required this.user, this.classId});
 
   final AppUser user;
-  final String classId;
+
+  /// Öğrenci henüz bir sınıfa katılmadıysa null.
+  final String? classId;
 
   @override
   State<LearningStyleTestScreen> createState() => _LearningStyleTestScreenState();
@@ -88,7 +91,7 @@ class _LearningStyleTestScreenState extends State<LearningStyleTestScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _Card(child: Text(test.intro, style: AppTextStyles.bodyLg)),
+        SurfaceCard(child: Text(test.intro, style: AppTextStyles.bodyLg)),
         const SizedBox(height: AppSpacing.lg),
         PrimaryButton(label: AppStrings.testStart, onPressed: () => setState(() => _index = 0)),
       ],
@@ -105,7 +108,7 @@ class _LearningStyleTestScreenState extends State<LearningStyleTestScreen> {
       children: [
         _ProgressHeader(test: test, number: i + 1),
         const SizedBox(height: AppSpacing.md),
-        _Card(child: Text(question.text, style: AppTextStyles.bodyLg)),
+        SurfaceCard(child: Text(question.text, style: AppTextStyles.bodyLg)),
         const SizedBox(height: AppSpacing.md),
         for (final option in test.scale) ...[
           OptionTile(
@@ -118,16 +121,7 @@ class _LearningStyleTestScreenState extends State<LearningStyleTestScreen> {
         ],
         if (_error != null) ...[
           const SizedBox(height: AppSpacing.sm),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: AppColors.warningSoft,
-              borderRadius: BorderRadius.circular(AppRadius.md),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.sm),
-              child: Text(_error!, style: AppTextStyles.bodyLg),
-            ),
-          ),
+          WarningNote(_error!),
         ],
         const SizedBox(height: AppSpacing.md),
         PrimaryButton(
@@ -246,7 +240,7 @@ class _ResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Card(
+    return SurfaceCard(
       color: color,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,25 +252,6 @@ class _ResultCard extends StatelessWidget {
           Text(text.description, style: AppTextStyles.bodyLg),
         ],
       ),
-    );
-  }
-}
-
-class _Card extends StatelessWidget {
-  const _Card({required this.child, this.color = AppColors.creamSurface});
-
-  final Widget child;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        boxShadow: AppShadows.light,
-      ),
-      child: Padding(padding: const EdgeInsets.all(AppSpacing.lg), child: child),
     );
   }
 }

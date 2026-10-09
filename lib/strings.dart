@@ -79,6 +79,59 @@ abstract final class AppStrings {
   static const readingSupportOn = 'Okuma desteği açık';
 
   // Sınıf ve İçerik (DESIGN.md §8.3)
+  static const createClassTitle = 'Sınıfını oluştur';
+  static const className = 'Sınıf adı';
+  static const createClassButton = 'Sınıfı Oluştur';
+  static const classCreatedTitle = 'Sınıfın hazır';
+  static const classCodeHint = 'Öğrencilerin bu kodla ya da davet linkiyle katılır.';
+  static const copyCode = 'Kodu Kopyala';
+  static const copyLink = 'Linki Kopyala';
+  static const copied = 'Kopyalandı';
+  static const goToPanel = 'Panele Git';
+  static const inviteTitle = 'Davet';
+  static const joinClassTitle = 'Sınıfına katıl';
+  static const joinClassHint = 'Öğretmeninin paylaştığı 6 haneli kodu yaz.';
+  static const classCodeField = 'Sınıf kodu';
+  static const joinButton = 'Katıl';
+  static const invalidClassCode = 'Kod 6 karakter olmalı (harf ve rakam).';
+  static const classNotFound = 'Bu kodla bir sınıf bulunamadı; kodu kontrol et.';
+  static const working = 'Bekle…';
+  static const uploadLesson = 'Ders Gönder';
+  static const uploadTitle = 'Yeni ders';
+  static const lessonTitleField = 'Ders başlığı';
+  static const uploadDropText = 'Ders notunu veya slaytı yükle (PDF, PowerPoint, Markdown, metin)';
+  static const uploadDropHint = 'Dosya seçmek için dokun';
+  static const pasteTextField = 'Ya da metni buraya yapıştır';
+  static const removeFile = 'Kaldır';
+  static const readingFile = 'Dosya okunuyor…';
+  static const defaultTypeTitle = 'Soru tipi varsayılanı';
+  static const typeVerbalVisual = 'Sözel/Görsel (30 sn)';
+  static const typeComputational = 'İşlem (60 sn)';
+  static const questionsTitle = 'Sorular';
+  static const addQuestion = '+ Soru Ekle';
+  static String questionLabel(int n) => 'Soru $n';
+  static const questionTextField = 'Soru metni';
+  static String optionField(String letter) => 'Şık $letter';
+  static const addOption = '+ Şık ekle';
+  static const removeOption = 'Şıkkı sil';
+  static const deleteQuestion = 'Soruyu sil';
+  static const markCorrectHint = 'Doğru cevabı soldaki daireden işaretle.';
+  static const correctMissing = 'Doğru cevap işaretlenmedi';
+  static String previewSummary(int cards, int questions) => '$cards kart, $questions soru bulundu';
+  static const sendLesson = 'Dersi Gönder';
+  static const sending = 'Gönderiliyor…';
+  static const lessonTitleRequired = 'Ders başlığını yaz.';
+  static const lessonContentRequired = 'Ders metni boş; metin yapıştır ya da dosya yükle.';
+  static const questionsIncomplete =
+      'Bazı sorular eksik: her soruda metin, 3-4 dolu şık ve işaretli doğru cevap olmalı.';
+  static const lessonSent = 'Ders gönderildi; öğrencilerin Derslerim listesinde.';
+  static const slidesTitle = 'Slaytlar';
+  static const pdfNoText = "Bu PDF'ten metin okunamadı (taranmış olabilir). Metni yapıştırarak devam edebilirsin.";
+  static const pptNotSupported = 'Eski .ppt biçimi desteklenmiyor. Lütfen .pptx olarak kaydedin.';
+  static const pptxImagesSkipped = 'Slaytlardaki görseller aktarılmadı.';
+  static const pptxNoText = 'Bu sunumda okunabilir metin bulunamadı.';
+  static const unsupportedFile = 'Bu dosya türü desteklenmiyor (PDF, .pptx, .md, .txt).';
+  static String fileReadFailed(Object e) => 'Dosya okunamadı: $e';
 
   // Derslerim
   static const myLessonsTitle = 'Derslerim';

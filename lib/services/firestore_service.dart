@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
+import '../models/class_code.dart';
 import '../models/learning_style_test.dart';
+import '../models/lesson_draft.dart';
 import '../models/lesson.dart';
 import 'telemetry.dart';
 
@@ -72,20 +74,80 @@ abstract final class FirestoreService {
       });
 
   /// Test sonucu: `learningStyle` sunum profili, ayrıca öğrencinin stili ve okuma desteği.
-  /// Aynı alanlar aktif sınıftaki üyelik belgesine kopyalanır; öğretmen detayda görür.
-  static Future<void> saveTestResult(String uid, String classId, String displayName, TestResult result) async {
+  /// Öğrenci bir sınıftaysa aynı alanlar üyelik belgesine kopyalanır; öğretmen detayda görür.
+  static Future<void> saveTestResult(String uid, String? classId, String displayName, TestResult result) async {
     final fields = {
       'learningStyle': result.profile.name,
       'studentStyle': result.studentStyle,
       'readingSupport': result.readingSupport,
     };
     await _db.collection('users').doc(uid).set(fields, SetOptions(merge: true));
+    if (classId == null) return;
     await _safe('üyelik → $classId', () => _members(classId).doc(uid).set({
           ...fields,
           'displayName': displayName,
-          'status': FocusState.focused.name,
-          'joinedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true)));
+  }
+
+  // --- Sınıf (DESIGN.md §8.3, TRD §4.4) ----------------------------------
+
+  /// Benzersiz kodla sınıf oluşturur, öğretmenin aktif sınıfı yapar; classId döner.
+  static Future<({String classId, String code})> createClass(String teacherId, String name) async {
+    var code = ClassCode.generate();
+    for (var i = 0; i < 5 && (await _classIdByCode(code)) != null; i++) {
+      code = ClassCode.generate();
+    }
+    final ref = _db.collection('classes').doc();
+    await ref.set({
+      'name': name,
+      'code': code,
+      'teacherId': teacherId,
+      'presentationMode': false,
+      'activeLessonId': null,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+    await _db.collection('users').doc(teacherId).set({'activeClassId': ref.id}, SetOptions(merge: true));
+    return (classId: ref.id, code: code);
+  }
+
+  static Future<String?> _classIdByCode(String code) async {
+    final query = await _db.collection('classes').where('code', isEqualTo: code).limit(1).get();
+    return query.docs.isEmpty ? null : query.docs.first.id;
+  }
+
+  /// Kodla sınıfa katılır: üyelik belgesi (profil kopyası, Odakta, boş skor) + aktif sınıf.
+  /// Kod bulunamazsa null döner. Daha önce katıldıysa durum ve skorlar korunur.
+  static Future<String?> joinClass(String uid, String code) async {
+    final classId = await _classIdByCode(code);
+    if (classId == null) return null;
+    final user = await loadUser(uid);
+    final member = _members(classId).doc(uid);
+    final existing = await member.get();
+    await member.set({
+      'displayName': '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'.trim(),
+      'learningStyle': user['learningStyle'],
+      'studentStyle': user['studentStyle'],
+      'readingSupport': user['readingSupport'] ?? false,
+      if (!existing.exists) ...{
+        'status': FocusState.focused.name,
+        'stuckSince': null,
+        'interactionCount': 0,
+        'topicScores': <String, int>{},
+        'joinedAt': FieldValue.serverTimestamp(),
+      },
+    }, SetOptions(merge: true));
+    await _db.collection('users').doc(uid).set({'activeClassId': classId}, SetOptions(merge: true));
+    return classId;
+  }
+
+  /// "Dersi Gönder" (TRD §4.4 madde 6): ders belgesi + sınıfın `activeLessonId`'si.
+  /// Öğrencinin "Derslerim" listesi `lessons`'ı canlı dinler. Hata çağırana iletilir.
+  static Future<void> publishLesson(String classId, LessonDraft draft) async {
+    final ref = _class(classId).collection('lessons').doc();
+    final batch = _db.batch()
+      ..set(ref, {...draft.toFirestore(ref.id), 'createdAt': FieldValue.serverTimestamp()})
+      ..update(_class(classId), {'activeLessonId': ref.id});
+    await batch.commit();
   }
 
   // --- Öğrenci yazar -----------------------------------------------------

@@ -16,6 +16,7 @@ class AppUser {
     required this.lastName,
     required this.role,
     this.learningStyle,
+    this.activeClassId,
   });
 
   factory AppUser.fromJson(String uid, Map<String, dynamic> data) {
@@ -26,6 +27,9 @@ class AppUser {
       lastName: data['lastName'] as String? ?? '',
       role: data['role'] == 'teacher' ? UserRole.teacher : UserRole.student,
       learningStyle: style == null ? null : LearningStyle.fromJson(style),
+      // Faz 5b öncesi demo hesaplarında alan yok: demo sınıfı (K41).
+      activeClassId: data['activeClassId'] as String? ??
+          (DemoAccounts.isDemoEmail(data['email'] as String?) ? DemoAccounts.classId : null),
     );
   }
 
@@ -37,10 +41,19 @@ class AppUser {
   /// null → öğrenci testi henüz çözmedi.
   final LearningStyle? learningStyle;
 
+  /// Öğretmenin sınıfı ya da öğrencinin katıldığı sınıf; null → oluştur / katıl ekranı.
+  final String? activeClassId;
+
   String get fullName => '$firstName $lastName'.trim();
 
-  AppUser withLearningStyle(LearningStyle style) =>
-      AppUser(uid: uid, firstName: firstName, lastName: lastName, role: role, learningStyle: style);
+  AppUser copyWith({LearningStyle? learningStyle, String? activeClassId}) => AppUser(
+        uid: uid,
+        firstName: firstName,
+        lastName: lastName,
+        role: role,
+        learningStyle: learningStyle ?? this.learningStyle,
+        activeClassId: activeClassId ?? this.activeClassId,
+      );
 }
 
 /// Giriş yapan kullanıcı ve aktif sınıf (K34, TRD T7). Firestore verisi StreamBuilder'da kalır.
@@ -53,8 +66,10 @@ class Session extends ChangeNotifier {
   /// Sayfa açılışında Firebase Auth oturumu geri yükleniyor mu.
   bool get restoring => _restoring;
 
-  /// Sınıf kodu ile katılma gelene kadar herkes demo sınıfında (Faz 5'in sonraki adımı).
-  String get activeClassId => DemoAccounts.classId;
+  String? get activeClassId => _user?.activeClassId;
+
+  /// Davet linkiyle (`#/join?code=…`) gelinen kod; katılınca temizlenir.
+  String? pendingJoinCode;
 
   /// Sekmede açık kalan oturum varsa profili yükler (TRD §4.4: rolüne göre yönlendirme).
   Future<void> restore() async {
@@ -93,7 +108,16 @@ class Session extends ChangeNotifier {
   void applyTestResult(TestResult result) {
     final user = _user;
     if (user == null) return;
-    _user = user.withLearningStyle(result.profile);
+    _user = user.copyWith(learningStyle: result.profile);
+    notifyListeners();
+  }
+
+  /// Sınıf oluşturuldu ya da katılındı (`users/{uid}.activeClassId` yazıldıktan sonra).
+  void setActiveClass(String classId) {
+    final user = _user;
+    if (user == null) return;
+    _user = user.copyWith(activeClassId: classId);
+    pendingJoinCode = null;
     notifyListeners();
   }
 }

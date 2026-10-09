@@ -7,6 +7,7 @@ import '../services/session.dart';
 import '../strings.dart';
 import '../theme/tokens.dart';
 import '../widgets/app_buttons.dart';
+import '../widgets/form_widgets.dart';
 
 /// Giriş / Kayıt: tek kart, iki sekme, altta demo girişleri (DESIGN.md §8.1, K14).
 /// Başarılı girişte [Session] güncellenir; yönlendirmeyi `HomeGate` yapar.
@@ -93,7 +94,7 @@ class _AuthScreenState extends State<AuthScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: AppLayout.studentMaxWidth),
             child: Theme(
-              data: Theme.of(context).copyWith(inputDecorationTheme: _inputTheme),
+              data: Theme.of(context).copyWith(inputDecorationTheme: appInputTheme),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -105,13 +106,13 @@ class _AuthScreenState extends State<AuthScreen> {
                     onPressed: _busy
                         ? null
                         : () => _run((s) => s.signIn(DemoAccounts.teacherEmail, DemoAccounts.password)),
-                    child: Text(AppStrings.demoTeacher, style: _linkStyle),
+                    child: Text(AppStrings.demoTeacher, style: appLinkStyle),
                   ),
                   TextButton(
                     onPressed: _busy
                         ? null
                         : () => _run((s) => s.signIn(DemoAccounts.studentEmail, DemoAccounts.password)),
-                    child: Text(AppStrings.demoStudent, style: _linkStyle),
+                    child: Text(AppStrings.demoStudent, style: appLinkStyle),
                   ),
                 ],
               ),
@@ -121,8 +122,6 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
-
-  static final _linkStyle = AppTextStyles.caption.copyWith(fontWeight: FontWeight.w500, color: AppColors.lilac700);
 
   Widget _card() {
     return DecoratedBox(
@@ -175,16 +174,7 @@ class _AuthScreenState extends State<AuthScreen> {
               ],
               if (_error != null) ...[
                 const SizedBox(height: AppSpacing.md),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: AppColors.warningSoft,
-                    borderRadius: BorderRadius.circular(AppRadius.md),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.sm),
-                    child: Text(_error!, style: AppTextStyles.bodyLg),
-                  ),
-                ),
+                WarningNote(_error!),
               ],
               const SizedBox(height: AppSpacing.md),
               PrimaryButton(
@@ -297,7 +287,7 @@ class _AuthScreenState extends State<AuthScreen> {
               TextButton(
                 style: TextButton.styleFrom(padding: EdgeInsets.zero),
                 onPressed: _showKvkkDetails,
-                child: Text(AppStrings.kvkkDetails, style: _linkStyle),
+                child: Text(AppStrings.kvkkDetails, style: appLinkStyle),
               ),
             ],
           ),
@@ -316,7 +306,7 @@ class _AuthScreenState extends State<AuthScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(AppStrings.close, style: _linkStyle),
+            child: Text(AppStrings.close, style: appLinkStyle),
           ),
         ],
       ),
@@ -335,21 +325,4 @@ class _AuthScreenState extends State<AuthScreen> {
     if (v == null || v.isEmpty) return AppStrings.requiredField;
     return v.length < 6 ? AppStrings.shortPassword : null;
   }
-
-  /// Input'lar radius-md; hata rengi sert kırmızı yerine Warning kenarlık + Grey-900 metin (§4.2).
-  static final _inputTheme = InputDecorationTheme(
-    filled: true,
-    fillColor: AppColors.creamSurface,
-    labelStyle: AppTextStyles.bodyLg.copyWith(color: AppColors.grey600),
-    floatingLabelStyle: AppTextStyles.bodyLg.copyWith(color: AppColors.lilac700),
-    errorStyle: AppTextStyles.caption.copyWith(color: AppColors.grey900),
-    border: _border(AppColors.grey400),
-    enabledBorder: _border(AppColors.grey400),
-    focusedBorder: _border(AppColors.lilac700),
-    errorBorder: _border(AppColors.warning),
-    focusedErrorBorder: _border(AppColors.warning),
-  );
-
-  static OutlineInputBorder _border(Color color) =>
-      OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.md), borderSide: BorderSide(color: color));
 }

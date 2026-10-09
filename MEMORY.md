@@ -14,11 +14,11 @@
 
 ## 1. Devamlılık — Şu An Neredeyiz
 
-**Son güncelleme:** 2026-10-09 23:10
+**Son güncelleme:** 2026-10-10 00:20
 
 **Tamamlanan:** INTENT.md, DESIGN.md, CLAUDE.md, TRD.md ve bu dosya birbiriyle hizalandı (K14–K39). `mock_students.json` K24'e göre uyarlandı (42 öğrenci, K38). Proje klasöründe henüz uygulama kodu yok.
 
-**Sıradaki adım:** Kullanıcı Faz 5a'yı (Giriş/Kayıt + öğrenme stili testi) tarayıcıda doğrulayacak. Ardından sınıf kodu ile katılma (şimdilik herkes `demo_class`'ta) ve Faz 5b: öğretmenin ders + soru yüklemesi. DESIGN §8.1–8.2 ve TRD §3.1/§4.4 güncellemeleri sonda toplu yapılacak (aşağıdaki Yol Günlüğü notuna bak).
+**Sıradaki adım:** Kullanıcı Faz 5a + 5b'yi tarayıcıda doğrulayacak (sınıf oluştur/katıl, metin/PDF/PPTX ile ders gönder). Ardından Altın Senaryo provası. DESIGN §8.1–8.3 ve TRD §3.1/§4.4/T6 güncellemeleri sonda toplu yapılacak (Yol Günlüğü notlarına bak).
 
 **Bekleyen kararlar:** Yok — veri saklama, anlık iletişim, durum yönetimi ve içerik yükleme TRD.md ile karara bağlandı (K31–K34).
 
@@ -41,7 +41,7 @@
 | Öğretmen Paneli: kritik liste + Acil Müdahale + Sunum Modu | lib/screens/teacher/, lib/widgets/teacher/ | ✅ Tamamlandı — 2026-10-09 (iki pencereyle doğrulandı) |
 | Sokratik Rehber + PeerSwarm önerisi | lib/widgets/socratic_bubble.dart, lib/services/socratic_session.dart | ✅ Tamamlandı — 2026-10-09 |
 | Hazır dersler (3) + "Derslerim" + şemalar | assets/content/lessons/, lib/screens/student/my_lessons_screen.dart | 🔄 Kod tamam, 32 test geçiyor; kullanıcının tarayıcı testi bekleniyor |
-| Kayıt, öğrenme stili testi, sınıf kodu, içerik yükleme | lib/screens/auth_screen.dart, home_gate.dart, student/learning_style_test_screen.dart | 🔄 Faz 5a kod tamam (37 test); sınıf kodu ve içerik yükleme bekliyor |
+| Kayıt, öğrenme stili testi, sınıf kodu, içerik yükleme | lib/screens/auth_screen.dart, home_gate.dart, student/learning_style_test_screen.dart | 🔄 Faz 5a + 5b kod tamam (51 test); tarayıcı testi kullanıcıda |
 | Sunum provası (Altın Senaryo) | — | ⬜ Başlanmadı |
 
 ## 3. Karar Defteri
@@ -201,3 +201,13 @@
   - **Toplu belge güncellemesi için (DESIGN/TRD):** DESIGN §8.2 "Soru 3 / 6" → 12 soru + oyunlaştırılmış ilerleme, sonuç butonu "Sınıfıma Katıl" → "Derslerime Git", aşama etiketi Mint-300 rozet, ölçek şıklarında ikon; TRD §3.1 `users` ve `members`'a `studentStyle`, `readingSupport`; TRD §4.4 madde 0 (geçici adresler) artık demo kısayolları. Test hata metinleri Warning-Soft kutuda, input hata kenarı Warning (sert kırmızı yok).
   - Bilinen risk: test ikonları emoji; Flutter Web (CanvasKit) emoji fontunu internetten çeker, internetsiz demoda kutucuk görünebilir (T9 ile çelişki adayı).
   - Doğrulama: `flutter analyze` temiz, 37 test geçti (`learning_style_test_test.dart` yeni, `widget_test.dart` Giriş/Kayıt'a uyarlandı), `flutter build web` başarılı. Tarayıcı testi kullanıcıda.
+- **2026-10-10 00:20 — Faz 5b: Sınıf Kodu ve Öğretmenin İçerik Yüklemesi**
+  - Aktif sınıf artık `users/{uid}.activeClassId` (Session'da; demo hesaplarında alan yoksa e-postadan `demo_class`). Öğretmen sınıfsızsa `CreateClassScreen` (kod `models/class_code.dart`: 0/O, 1/I yok, çakışmada yeniden üretim), öğrenci test → `JoinClassScreen` → Derslerim. Davet linki `#/join?code=…` (`main.dart` artık `onGenerateRoute`; açılışta altına `/` yığılmıyor). Panelde "Davet" (kod + Kodu/Linki Kopyala) ve "Ders Gönder" butonları.
+  - Test sonucu artık `members`'a yalnızca öğrenci bir sınıftaysa yazılır; katılırken profil alanları üyeliğe kopyalanır (daha önce katıldıysa durum/skor korunur).
+  - `LessonUploadScreen`: başlık, kesikli yükleme alanı, yapıştırma alanı, soru tipi varsayılanı, soru kartları (3-4 şık, daire ile doğru cevap, tip çipi), önizleme "N kart, M soru bulundu" + notlar, "Dersi Gönder" → `classes/{id}/lessons/{auto}` (`topicKey` = belge id, `activeLessonId` güncellenir). Sokratik: `index.json` genel zinciri (mevcut fallback).
+  - İçe aktarma (`services/import/`): .txt/.md, PDF (`syncfusion_flutter_pdf`, saf Dart; dosya saklanmaz, metin yoksa "Bu PDF'ten metin okunamadı"), .pptx (`archive` + `xml`; slayt sırası presentation.xml'den, başlık yer tutucusu → kart başlığı, maddeler → "• " satırları, otomatik numaralar `buAutoNum`'dan üretilir, `ppt/media` varsa "Slaytlardaki görseller aktarılmadı"), .ppt → ".pptx olarak kaydedin". Soru ayıklama: `1.`/`1)` + `a)`/`A)` (yan yana da), `Cevap: B` / `Doğru cevap` / `Yanıt`, "Cevap Anahtarı" `1-B`; cevapsız soruda öğretmen önizlemede işaretler, işaretlenmeden gönderilemez.
+  - Okuma ekranı: `#` ile başlayan paragraflar kalın başlık (Markdown/PPTX dersleri için).
+  - Paylaşılan form bileşenleri `widgets/form_widgets.dart` (input teması, WarningNote, SurfaceCard, CenteredColumn, SelectChip); Auth ve test ekranı bunlara taşındı.
+  - **Toplu belge güncellemesi için:** K33 (PDF + PPTX metin olarak artık var; K15'teki "PPTX yok" kararı fiilen değişti → yeni karar satırı gerekli), TRD T6 ve §3.1 (`users.activeClassId`, ders belgesinde `storyCards` öğretmen dersinde de olabilir), DESIGN §8.3 (Davet diyaloğu, "Kodu Kopyala", varsayılan tip çipi, önizleme şeridi Mint-300, yükleme metninde PowerPoint), CLAUDE.md §2 içerik yükleme satırı.
+  - Lisans notu: `syncfusion_flutter_pdf` Syncfusion Community License gerektirir (yıllık geliri 1M USD altı, 5'ten az geliştirici); hackathon prototipi için uygun, ürünleşirse gözden geçirilmeli.
+  - Doğrulama: `flutter analyze` temiz, 51 test geçti (`class_code_test`, `lesson_import_test` — bellekte üretilen PDF/Türkçe PDF/PPTX, `lesson_upload_screen_test`), `flutter build web` başarılı. Tarayıcı testi kullanıcıda.

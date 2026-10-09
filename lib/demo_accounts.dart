@@ -17,4 +17,6 @@ abstract final class DemoAccounts {
   static const classId = 'demo_class';
   static const className = 'Programlamaya Giriş';
   static const classCode = 'PTR234'; // 0/O ve 1/I içermez (TRD §3.1).
+
+  static bool isDemoEmail(String? email) => email == teacherEmail || email == studentEmail;
 }
