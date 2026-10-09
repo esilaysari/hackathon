@@ -1,0 +1,33 @@
+{
+  "title": "C: Pointer'lar",
+  "topicKey": "pointers",
+  "content": "Bilgisayarın belleğini, her birinin kendine ait bir adresi olan küçük kutucuklar gibi düşünebilirsin. C'de bir değişken tanımladığında değeri bu kutucuklardan birinde saklanır ve o kutucuğun bir adresi vardır.\n\n`&` operatörü bir değişkenin adresini verir. `int x = 5;` tanımından sonra `&x`, x'in bellekte durduğu yerin adresidir. x'in değeri ise hâlâ 5'tir.\n\nPointer, bir adres saklamak için kullanılan değişkendir. `int *p = &x;` satırı, int türünde bir değeri gösteren p adlı bir pointer tanımlar ve ona x'in adresini atar.\n\n`*` operatörü, pointer'ın gösterdiği adresteki değere ulaşır; buna dereference denir. `*p` ifadesi 5 değerini verir. `*p = 10;` yazarsan x'in değeri de 10 olur, çünkü p doğrudan x'in kutucuğunu gösterir.\n\nHiçbir yeri göstermeyen bir pointer'a `NULL` atanır. NULL ya da başlatılmamış bir pointer'ı dereference etmek tanımsız davranıştır ve programın çökmesine yol açabilir. Bir pointer'ı kullanmadan önce geçerli bir adresi gösterdiğinden emin ol.",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "`int x = 5;` ve `int *p = &x;` satırlarından sonra p neyi saklar?",
+      "options": ["5 değerini", "x'in bellekteki adresini", "p'nin kendi adresini", "NULL değerini"],
+      "correctIndex": 1,
+      "type": "verbal_visual"
+    },
+    {
+      "id": "q2",
+      "text": "Aşağıdaki kod ekrana ne yazdırır?\n`int a = 3;`\n`int *q = &a;`\n`*q = *q + 4;`\n`printf(\"%d\", a);`",
+      "options": ["3", "4", "7", "Derleme hatası verir"],
+      "correctIndex": 2,
+      "type": "computational"
+    },
+    {
+      "id": "q3",
+      "text": "NULL değerli bir pointer'ı dereference etmek ne sonuç verir?",
+      "options": [
+        "Her zaman 0 değerini verir",
+        "Tanımsız davranıştır; program çökebilir",
+        "Pointer otomatik olarak geçerli bir adrese atanır",
+        "Derleyici bunu her zaman yakalayıp hata verir"
+      ],
+      "correctIndex": 1,
+      "type": "verbal_visual"
+    }
+  ]
+}

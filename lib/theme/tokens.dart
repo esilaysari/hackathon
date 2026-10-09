@@ -79,6 +79,7 @@ abstract final class AppLayout {
   static const desktopBreakpoint = 1024.0; // 600–1023 tablet, ≥ 1024 masaüstü.
   static const studentMaxWidth = 480.0; // Öğrenci Portalı ortalanmış sütun.
   static const storyProgressHeight = 4.0;
+  static const storyProgressGap = 4.0; // Story ilerleme çubukları arası ince boşluk.
 }
 
 /// DESIGN.md §5 — Köşe yarıçapı.
@@ -109,4 +110,15 @@ abstract final class AppDurations {
   static const teacherAlertSlideIn = Duration(milliseconds: 400);
   static const socraticBubble = Duration(milliseconds: 250);
   static const studentNotification = Duration(milliseconds: 300);
+
+  /// Morphing'de ekranın küçüldüğü / büyümeye başladığı ölçek.
+  static const morphScaleBegin = 0.85;
+}
+
+/// Odak kaybı eşikleri (CLAUDE.md §4.1, MEMORY K7, K8, K16). Dikkat = eşiğin yarısı (K17).
+abstract final class AppThresholds {
+  static const reading = Duration(seconds: 30);
+  static const verbalVisual = Duration(seconds: 30);
+  static const computational = Duration(seconds: 60);
+  static const presentationMode = Duration(seconds: 5);
 }

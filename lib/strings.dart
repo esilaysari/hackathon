@@ -12,6 +12,15 @@ abstract final class AppStrings {
   // Sınıf ve İçerik (DESIGN.md §8.3)
 
   // Ağır Görev ve Story Modu (DESIGN.md §8.4, §8.5)
+  static const lessonLoading = 'Ders yükleniyor…';
+  static const startQuestions = 'Hemen Başla';
+  static const simplify = 'Basitleştir';
+  static const nextQuestion = 'İleri';
+  static const finishQuestions = 'Bitir';
+  static String questionProgress(int current, int total) => 'Soru $current / $total';
+  static const lessonCompleted = 'Tebrikler, dersi tamamladın.';
+  static const storyTapHint = 'Devam etmek için dokun →';
+  static const storyBackToTask = 'Soruya Dön';
 
   // Sokratik Rehber (DESIGN.md §8.6)
 

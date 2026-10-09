@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
+import 'screens/student/lesson_screen.dart';
 import 'services/mock_data_service.dart';
 import 'strings.dart';
 import 'theme/tokens.dart';
@@ -28,13 +29,9 @@ class EduSwarmApp extends StatelessWidget {
     return MaterialApp(
       title: AppStrings.appTitle,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: AppFonts.roboto),
-      home: const Scaffold(
-        backgroundColor: AppColors.creamBase,
-        body: Center(
-          child: Text(AppStrings.appTitle, style: AppTextStyles.appBarTitle),
-        ),
-      ),
+      theme: ThemeData(fontFamily: AppFonts.roboto, scaffoldBackgroundColor: AppColors.creamBase),
+      // Faz 5'te giriş ekranının arkasına alınacak.
+      home: const LessonScreen(),
     );
   }
 }

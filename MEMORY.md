@@ -14,11 +14,11 @@
 
 ## 1. Devamlılık — Şu An Neredeyiz
 
-**Son güncelleme:** 2026-10-09 19:46
+**Son güncelleme:** 2026-10-09 20:58
 
 **Tamamlanan:** INTENT.md, DESIGN.md, CLAUDE.md, TRD.md ve bu dosya birbiriyle hizalandı (K14–K39). `mock_students.json` K24'e göre uyarlandı (42 öğrenci, K38). Proje klasöründe henüz uygulama kodu yok.
 
-**Sıradaki adım:** Kullanıcı seed betiğini bir kez çalıştıracak (`flutter run -d chrome -t lib/seed.dart`). Ardından ROADMAP Faz 1–2: Öğrenci çekirdeği (demo dersi, telemetri, Morphing UI, Story modu).
+**Sıradaki adım:** Seed (`flutter run -d chrome -t lib/seed.dart`), ardından ROADMAP Faz 3: Öğretmen Paneli, Acil Müdahale, canlı Sunum Modu. Faz 3'te `DevConfig` (Sunum Modu, profil) Firestore'a bağlanacak.
 
 **Bekleyen kararlar:** Yok — veri saklama, anlık iletişim, durum yönetimi ve içerik yükleme TRD.md ile karara bağlandı (K31–K34).
 
@@ -37,7 +37,7 @@
 | Görev Planı | ROADMAP.md | ✅ Tamamlandı — 2026-10-09 |
 | Ajan Kural Dosyaları | .claude/rules/ | ⬜ Başlanmadı |
 | Git deposu ve GitHub | github.com/esilaysari/hackathon | ✅ Kuruldu (commit'leri kullanıcı atar, K28) |
-| Öğrenci Portalı: Ağır Görev + Morphing + Story | — | ⬜ Başlanmadı (**öncelik 1**) |
+| Öğrenci Portalı: Ağır Görev + Morphing + Story | lib/screens/student/, lib/widgets/ | ✅ Tamamlandı — 2026-10-09 (tarayıcıda doğrulandı) |
 | Öğretmen Paneli: kritik liste + Acil Müdahale + Sunum Modu | — | ⬜ Başlanmadı (**öncelik 1**) |
 | Sokratik Rehber + PeerSwarm önerisi | — | ⬜ Başlanmadı (öncelik 2) |
 | Kayıt, öğrenme stili testi, sınıf kodu, içerik yükleme | — | ⬜ Başlanmadı (öncelik 3) |
@@ -96,6 +96,8 @@
 | S1 | 2026-10-09 | `main.dart` eski 10 sn eşiğiyle ve DESIGN.md öncesinde yazıldı; renkler, kontrast ve eşikler güncel değil. | Kapandı — K25 (kullanılmayacak) |
 | S2 | 2026-10-09 | `mock_students.json` alanlarının DESIGN.md 8.7 (profil, konu, takılma süresi, PeerSwarm için tamamlanan konular) ile uyumu kontrol edilmedi. Eski "Kırmızı Liste" ifadesi "Kritik" olarak değiştirilmeli. | Çözüldü — K38 (mevcut dosya uyarlandı) |
 | S3 | 2026-10-09 | DESIGN.md diskte eski bir sürümle değiştirilmişti (8.1, 8.3–8.9'daki K14–K22 karşılıkları kaybolmuştu). | Çözüldü — son commit'teki sürüm geri getirildi, yeni "tam ad" değişiklikleri (K35) üzerine eklendi |
+| S4 | 2026-10-09 | Faz 1–2 için widget testi yazılmadı (zaman kısıtı): "5 sn hareketsizlikte Story'ye geçiş" ve "Basitleştir Kritik üretmez" senaryoları şimdilik tarayıcıda elle test ediliyor. Yalnızca `story_splitter` ve `FocusTracker` birim testleri var. | Açık — kod dondurmadan (04:30) önce vakit kalırsa |
+| S5 | 2026-10-09 | DESIGN.md'de tanımlı olmayan üç değer tokens.dart'a eklendi: Morphing ölçek başlangıcı (0.85), Story ilerleme çubukları arası boşluk (4px) ve devre dışı birincil buton (Grey-400 zemin + Grey-900 metin, §2.3 listesinde yok; kontrast ~9.8:1). | Kapandı — DESIGN.md §2.3, §7 ve §8.5'e işlendi |
 
 ## 5. Yol Günlüğü
 
@@ -141,3 +143,14 @@
   - Roboto (unhinted, Regular/Medium/Bold) ve Lexend (Regular/Medium/Bold) resmi Google depolarından bir kez indirilip `assets/fonts/`'a gömüldü, OFL lisanslarıyla birlikte; `pubspec.yaml`'da tanımlandı.
   - `lib/demo_accounts.dart` (demo sabitleri) ve `lib/seed.dart` (demo öğretmen, demo öğrenci, demo sınıfı + üyelik) eklendi; K41.
   - Doğrulama: `flutter analyze` temiz, `flutter test` geçti, `flutter run -d chrome` → Firebase hatasız başladı, konsolda "Mock öğrenci sayısı: 42". Seed henüz çalıştırılmadı (kullanıcı çalıştıracak).
+- **2026-10-09 20:50 — ROADMAP Faz 1–2: Öğrenci Çekirdeği**
+  - İçerik: `assets/content/demo_lesson.json` (C: Pointer'lar, 5 paragraf, 3 soru: 2 Sözel/Görsel + 1 İşlem) ve `support_messages.json`.
+  - `tokens.dart`'a `AppThresholds` (30/30/60/5 sn) eklendi; geçici `lib/dev_config.dart` (Sunum Modu = true, profil = Dislektik).
+  - Model `models/lesson.dart`; servisler `content_service`, `story_splitter` (TRD §4.2), `telemetry` (`FocusTracker`: Odakta → Dikkat → Kritik, durum geçişleri konsola).
+  - Ekran `screens/student/lesson_screen.dart`: okuma → sorular, `Listener` + klavye ile telemetri, Kritik'te 600ms Fade & Scale + SnackBar, Story modu (10 kart, ilerleme çubuğu, "Soruya Dön" + ters animasyon), "Basitleştir" uyarısız geçiş; profil bazlı sunum `theme/profile_style.dart`.
+  - Kaydırma olayları sayacı sıfırlıyor ama etkileşim sayısına eklenmiyor (ilk denemede tekerlek olayları sayıyı yüzlere çıkarıyordu).
+  - Doğrulama: `flutter analyze` temiz, 8 test geçti; Chrome'da otomatik Dikkat → Kritik → Story geçişi log'da görüldü. S4, S5 eklendi.
+- **2026-10-09 20:58 — Faz 1–2 Tamamlandı**
+  - Kullanıcı tarayıcıda elle doğruladı: otomatik Morphing, Story modu, "Soruya Dön", "Basitleştir" ve profiller çalışıyor.
+  - S5 kapatıldı: Morphing ölçeği (0.85), Story çubuk boşluğu (4px) ve devre dışı buton eşleşmesi (Grey-400 + Grey-900) DESIGN.md'ye işlendi.
+  - Soruların doğru/yanlış kontrolü bilinçli olarak Faz 4'teki kontrol sorusuna bırakıldı.

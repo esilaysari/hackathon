@@ -75,6 +75,7 @@ Renk paleti, öğrencinin stresini azaltmak ve uygulamanın modern hissettirmesi
 | Lilac-500 → Mint-500 gradient | Grey-900 | Story modu kartı |
 | Warning #FFB347 | Grey-900 | Uyarı kartları, SnackBar |
 | Success #2E7D32 | Beyaz | Başarı SnackBar |
+| Grey-400 | Grey-900 | Devre dışı birincil buton (ör. şık seçilmeden "İleri"); kontrast ~9.8:1 |
 
 ## 3. Tipografi (Typography)
 
@@ -143,7 +144,7 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 
 | Durum | Efekt / Süre | Açıklama |
 | :--- | :--- | :--- |
-| **Morphing** | 600ms Fade & Scale | Ağır Görev'den Story moduna geçiş. Eski ekran küçülerek kaybolur (Scale Down + Fade Out), yeni ekran büyüyerek belirir (Scale Up + Fade In). |
+| **Morphing** | 600ms Fade & Scale | Ağır Görev'den Story moduna geçiş. Eski ekran küçülerek kaybolur (Scale Down + Fade Out), yeni ekran büyüyerek belirir (Scale Up + Fade In). Ölçek 0.85 ↔ 1.0 arasında değişir. |
 | **Story kart geçişi** | 300ms CrossFade | Öğrenci dokunduğunda metin yumuşakça değişir. Ani kesme yapılmaz. |
 | **Uyarı belirmesi (SnackBar)** | Standart Slide-Up | Morphing anında alttan çıkan şeftali renkli "Biraz zorlandın gibi, içeriği kolaylaştırdım" bilgilendirmesi. |
 | **Öğretmen uyarı kartı** | 400ms Slide-In + hafif nabız | Yeni "Acil Müdahale" kartı listenin en üstüne kayarak girer ve bir kez yumuşakça büyüyüp küçülür. Sürekli yanıp sönme yapılmaz. |
@@ -197,7 +198,7 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 
 Öğrenci tıkandığında sistemin sunduğu kurtarıcı arayüz.
 
-- **İlerleme çubuğu:** En üstte, Instagram hikâyelerindeki gibi yan yana ince çubuklar (height: 4px, radius-sm). Aktif: Lilac-700; pasif: Lilac-100.
+- **İlerleme çubuğu:** En üstte, Instagram hikâyelerindeki gibi yan yana ince çubuklar (height: 4px, radius-sm, çubuklar arası 4px boşluk). Aktif: Lilac-700; pasif: Lilac-100.
 - **Ana kart:** Büyük kart (radius-xl), Lilac-500 → Mint-500 **linear gradient** zemin, Shadow/Colored.
 - **Metin:** Kartın ortasında Story Display (32px, Bold), **Grey-900**. Dislektik profilde Lexend kullanılır.
 - **Etkileşim:** Ekrana dokunulduğunda metin değişir, ilerleme çubuğu bir adım ilerler. Altta "Devam etmek için dokun →" (Grey-600).
