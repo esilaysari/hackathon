@@ -78,7 +78,7 @@ Renk paleti, öğrencinin stresini azaltmak ve uygulamanın modern hissettirmesi
 
 ## 3. Tipografi (Typography)
 
-**Font ailesi:** Roboto (genel arayüz). **Lexend** (Dislektik mod; okuma kolaylığı için tasarlanmış, Google Fonts üzerinden `google_fonts` paketiyle kullanılabilir).
+**Font ailesi:** Roboto (genel arayüz). **Lexend** (Dislektik mod; okuma kolaylığı için tasarlanmış). Her iki font da projeye gömülür (`assets/fonts/`); çalışma anında internetten indirilmez.
 
 ### 3.1 Tip Ölçeği
 
@@ -99,7 +99,7 @@ Renk paleti, öğrencinin stresini azaltmak ve uygulamanın modern hissettirmesi
 | :--- | :--- |
 | **Metinsel** | Standart ölçek. Roboto, satır yüksekliği 1.5. |
 | **Görsel** | Standart ölçek; metin blokları kısa tutulur, yüklenen slaytlardaki görseller metnin önünde ve büyük gösterilir. |
-| **Dislektik** | Lexend; gövde metni **18px**; satır yüksekliği **1.8**; harf aralığı **+0.5px**; kelime aralığı geniş; paragraflar en fazla 3-4 satır; **yalnızca sola hizalı** (iki yana yaslama yok); italik ve tamamı büyük harf kullanılmaz; zemin Cream-Base (saf beyaz yok). |
+| **Dislektik** | Lexend; gövde metni **18px**; satır yüksekliği **1.8**; harf aralığı **+0.5px**; kelime aralığı geniş; paragraflar en fazla 3-4 satır; **yalnızca sola hizalı** (iki yana yaslama yok); italik ve tamamı büyük harf kullanılmaz; zemin Cream-Base (saf beyaz yok) — **kart yüzeyleri dahil**: Dislektik profilde kartlar Cream-Surface yerine Cream-Base zeminlidir ve Shadow/Light ile ayrışır. |
 
 ## 4. Düzen & Izgara (Layout & Spacing)
 
@@ -182,7 +182,7 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 
 Öğrencinin ilk karşılaştığı, öğretmenin yüklediği içeriği profiline göre gösteren ekran.
 
-- **Zemin:** Cream-Surface kart, Cream-Base arka plan.
+- **Zemin:** Cream-Surface kart, Cream-Base arka plan. Dislektik profilde kart da Cream-Base olur (bkz. 3.2).
 - **İçerik:** Üstte ikon (Lilac-500), ortada başlık (Task Title), altta gövde metni (profil tipografi kurallarına göre, bkz. 3.2).
 - **Etkileşim:** Altta iki buton. Birincil: "Hemen Başla" (Lilac-700 zemin, beyaz metin). İkincil: "Basitleştir" (beyaz zemin, Lilac-700 kenarlık ve metin).
 - **Akış (içerik → sorular):** Öğrenci önce ders metnini okur; "Hemen Başla" onu öğretmenin eklediği sorulara geçirir. Sorular, test ekranıyla aynı düzende gösterilir (her ekranda tek soru, büyük şık kartları, üstte "Soru 2 / 5"). "Basitleştir" butonu soru ekranlarında da bulunur.
@@ -215,21 +215,21 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 ### 8.7 Öğretmen Paneli
 
 - **Üst özet şeridi:** Sınıf adı, sınıf kodu ve sayaçlar (Dashboard Number): "42 öğrenci · 5 dikkat · 3 kritik". "Dikkat" sayacı Lilac-100 zeminli rozet, "kritik" sayacı Warning-Soft zeminli rozet içinde gösterilir. Sağ üstte **Sunum Modu anahtarı** (açıkken yanında küçük "5 sn" etiketi).
-- **Kritik öğrenci listesi:** Yalnızca "Kritik" eşiğini aşan öğrenciler gösterilir (40+ mock öğrenciden süzülmüş). Her satır Warning-Soft zeminli: isim, profil etiketi (ör. "Dislektik"), ne kadar süredir takıldığı, konu adı.
+- **Kritik öğrenci listesi:** Yalnızca "Kritik" eşiğini aşan öğrenciler gösterilir (40+ mock öğrenciden süzülmüş). Her satır Warning-Soft zeminli: **tam ad** (aynı ada sahip iki öğrenci varsa yanında Caption boyutunda Grey-600 ayırt edici etiket, ör. "· mkaya"), profil etiketi (ör. "Dislektik"), ne kadar süredir takıldığı, konu adı.
 - **Öğrenme stili dağılımı:** Küçük bir özet kartı (ör. Görsel 15 · Dislektik 8 · Metinsel 19).
 - **Öğrenci detayı (sağ sütun):** Listeden bir öğrenci seçildiğinde profil, konu, durum ve kısa bir etkileşim özeti gösterilir (ör. "12 etkileşim · 45 sn hareketsiz").
 - **Gizlilik ilkesi:** Ham telemetri (tek tek fare hareketleri, tıklama zaman damgaları) hiçbir yerde gösterilmez; yalnızca öğrenci detayında özet sayılar ve "destek gerekiyor" bilgisi yer alır.
 
 ### 8.8 "Acil Müdahale" Uyarı Kartı ve PeerSwarm Önerisi
 
-- **Uyarı kartı:** Warning (#FFB347) zemin, Grey-900 metin, Shadow/Warning, radius-lg. İçerik: 🚨 ikon, "Ayşe Y. bu konuda zorlanıyor", konu adı, süre ve "Sistem içeriği Story moduna dönüştürdü ve destek mesajı gönderdi" bilgisi.
-- **PeerSwarm önerisi:** Kartın içinde Mint-300 zeminli küçük bir alt bölüm: "Yardım edebilecek akran: Mehmet K. (bu konuyu tamamladı)" + "Eşleştir" butonu.
+- **Uyarı kartı:** Warning (#FFB347) zemin, Grey-900 metin, Shadow/Warning, radius-lg. İçerik: 🚨 ikon, "Ayşe Yılmaz bu konuda zorlanıyor", konu adı, süre ve "Sistem içeriği Story moduna dönüştürdü ve destek mesajı gönderdi" bilgisi.
+- **PeerSwarm önerisi:** Kartın içinde Mint-300 zeminli küçük bir alt bölüm: "Yardım edebilecek akran: Mehmet Çelik (bu konuda başarılı)" + "Eşleştir" butonu.
 - **Eylemler:** "Eşleştir" (birincil) ve küçük bir "Gördüm" metin linki. Eşleştirilen ya da "Gördüm" denen kart listeden kalkar. Öğretmen öğrenciye elle mesaj yazmaz; destek mesajlarını sistem otomatik gönderir (bkz. 8.9).
 
 ### 8.9 Öğrenci Bildirim Kartı ve Otomatik Destek Mesajları
 
 - **Bildirim kartı:** Ekranın üstünden kayarak gelen küçük kart; Mint-300 zemin, Grey-900 metin, radius-md, Shadow/Light. Öğrencinin akışını bölmez; birkaç saniye sonra kendiliğinden kapanır ya da "Tamam" ile kapatılır.
-- **Akran eşleştirme:** Öğretmen "Eşleştir"e bastığında iki öğrenciye de bildirim kartı gelir (ör. "Mehmet K. sana bu konuda yardım edecek").
+- **Akran eşleştirme:** Öğretmen "Eşleştir"e bastığında iki öğrenciye de bildirim kartı gelir (ör. "Mehmet Çelik sana bu konuda yardım edecek").
 - **Otomatik destek mesajları (sistem gönderir, öğretmen değil):**
   - **Morphing anında:** Şeftali SnackBar — "Biraz zorlandın gibi, içeriği kolaylaştırdım."
   - **Kontrol sorusu doğru cevaplandığında:** Bildirim kartı — "Harika! Zor kısmı aştın."

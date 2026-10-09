@@ -43,6 +43,8 @@ Sahnede gösterilecek ve tüm geliştirme ile provaların odaklanacağı tek uç
 6. Arayüz akıcı bir geçişle metni **Flashcard/Story** formatına dönüştürür ve Sokratik Rehber cevabı vermek yerine ilk ipucu sorusunu sorar.
 7. Aynı anda Öğretmen Panelinde ilgili öğrenci için **"Acil Müdahale"** uyarısı belirir; uyarıda yardım edebilecek bir akran önerisi (PeerSwarm) yer alır. Öğretmen tek tıkla akranı eşleştirir (iki öğrenciye de bildirim gider). Öğrenciye destek mesajını öğretmen değil, sistem otomatik gönderir.
 
+> **Kısa yol (yedek plan):** Kayıt, test ve sınıf ekranları zamanında yetişmezse demo, "Demo Öğrenci olarak gir" butonuyla açılan hazır hesapla (profili Dislektik, sınıfa kayıtlı) doğrudan 4. adımdan başlar.
+
 > **Sunum Modu:** Jüri karşısında akışın uzamaması için Öğretmen Panelinde bir "Sunum Modu" anahtarı bulunur. Açıkken hareketsizlik eşiği tüm soru tiplerinde **5 saniyeye** iner; böylece odak kaybı adımı birkaç saniyede gösterilebilir. Kapalıyken gerçek eşikler (30 sn / 60 sn) geçerlidir.
 
 ## Başarı Kriterleri

@@ -1,0 +1,842 @@
+[
+  {
+    "id": "mock_01",
+    "firstName": "Rümeyda",
+    "lastName": "Yılmaz",
+    "displayName": "Rümeyda Yılmaz",
+    "learningStyle": "visual",
+    "status": "attention",
+    "currentTopic": "pointers",
+    "currentTopicTitle": "C: Pointer'lar",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 43,
+      "logic_gates": 46,
+      "memory_allocation": 62,
+      "data_structures": 60,
+      "binary_search": 59,
+      "system_calls": 53
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_02",
+    "firstName": "Ahmet",
+    "lastName": "Yılmaz",
+    "displayName": "Ahmet Yılmaz",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "logic_gates",
+    "currentTopicTitle": "Mantık Kapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 79,
+      "logic_gates": 50,
+      "memory_allocation": 72,
+      "data_structures": 91,
+      "binary_search": 46,
+      "system_calls": 50
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_03",
+    "firstName": "Ayşe",
+    "lastName": "Kaya",
+    "displayName": "Ayşe Kaya",
+    "learningStyle": "dyslexic",
+    "status": "focused",
+    "currentTopic": "memory_allocation",
+    "currentTopicTitle": "Bellek Yönetimi",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 59,
+      "logic_gates": 77,
+      "memory_allocation": 46,
+      "data_structures": 94,
+      "binary_search": 57,
+      "system_calls": 79
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_04",
+    "firstName": "Can",
+    "lastName": "Özkan",
+    "displayName": "Can Özkan",
+    "learningStyle": "dyslexic",
+    "status": "critical",
+    "currentTopic": "data_structures",
+    "currentTopicTitle": "Veri Yapıları",
+    "stuckMinutes": 4,
+    "topicScores": {
+      "pointers": 59,
+      "logic_gates": 73,
+      "memory_allocation": 62,
+      "data_structures": 30,
+      "binary_search": 55,
+      "system_calls": 72
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_05",
+    "firstName": "Zeynep",
+    "lastName": "Demir",
+    "displayName": "Zeynep Demir",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "pointers",
+    "currentTopicTitle": "C: Pointer'lar",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 62,
+      "logic_gates": 54,
+      "memory_allocation": 58,
+      "data_structures": 66,
+      "binary_search": 94,
+      "system_calls": 50
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_06",
+    "firstName": "Mehmet",
+    "lastName": "Çelik",
+    "displayName": "Mehmet Çelik",
+    "learningStyle": "textual",
+    "status": "attention",
+    "currentTopic": "binary_search",
+    "currentTopicTitle": "İkili Arama",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 51,
+      "logic_gates": 67,
+      "memory_allocation": 67,
+      "data_structures": 61,
+      "binary_search": 43,
+      "system_calls": 74
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_07",
+    "firstName": "Elif",
+    "lastName": "Şahin",
+    "displayName": "Elif Şahin",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "system_calls",
+    "currentTopicTitle": "Sistem Çağrıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 89,
+      "logic_gates": 50,
+      "memory_allocation": 88,
+      "data_structures": 63,
+      "binary_search": 68,
+      "system_calls": 57
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_08",
+    "firstName": "Burak",
+    "lastName": "Arslan",
+    "displayName": "Burak Arslan",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "logic_gates",
+    "currentTopicTitle": "Mantık Kapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 59,
+      "logic_gates": 92,
+      "memory_allocation": 50,
+      "data_structures": 59,
+      "binary_search": 51,
+      "system_calls": 69
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_09",
+    "firstName": "Büşra",
+    "lastName": "Yıldız",
+    "displayName": "Büşra Yıldız",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "memory_allocation",
+    "currentTopicTitle": "Bellek Yönetimi",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 74,
+      "logic_gates": 68,
+      "memory_allocation": 55,
+      "data_structures": 68,
+      "binary_search": 67,
+      "system_calls": 58
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_10",
+    "firstName": "Emre",
+    "lastName": "Polat",
+    "displayName": "Emre Polat",
+    "learningStyle": "dyslexic",
+    "status": "focused",
+    "currentTopic": "data_structures",
+    "currentTopicTitle": "Veri Yapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 62,
+      "logic_gates": 49,
+      "memory_allocation": 55,
+      "data_structures": 79,
+      "binary_search": 60,
+      "system_calls": 95
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_11",
+    "firstName": "Fatma",
+    "lastName": "Doğan",
+    "displayName": "Fatma Doğan",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "pointers",
+    "currentTopicTitle": "C: Pointer'lar",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 69,
+      "logic_gates": 62,
+      "memory_allocation": 80,
+      "data_structures": 59,
+      "binary_search": 91,
+      "system_calls": 48
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_12",
+    "firstName": "Hakan",
+    "lastName": "Kılıç",
+    "displayName": "Hakan Kılıç",
+    "learningStyle": "dyslexic",
+    "status": "critical",
+    "currentTopic": "logic_gates",
+    "currentTopicTitle": "Mantık Kapıları",
+    "stuckMinutes": 5,
+    "topicScores": {
+      "pointers": 47,
+      "logic_gates": 30,
+      "memory_allocation": 70,
+      "data_structures": 62,
+      "binary_search": 49,
+      "system_calls": 58
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_13",
+    "firstName": "İrem",
+    "lastName": "Çetin",
+    "displayName": "İrem Çetin",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "binary_search",
+    "currentTopicTitle": "İkili Arama",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 91,
+      "logic_gates": 76,
+      "memory_allocation": 96,
+      "data_structures": 74,
+      "binary_search": 90,
+      "system_calls": 61
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_14",
+    "firstName": "Kaan",
+    "lastName": "Öztürk",
+    "displayName": "Kaan Öztürk",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "system_calls",
+    "currentTopicTitle": "Sistem Çağrıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 79,
+      "logic_gates": 90,
+      "memory_allocation": 72,
+      "data_structures": 70,
+      "binary_search": 68,
+      "system_calls": 59
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_15",
+    "firstName": "Leyla",
+    "lastName": "Aydın",
+    "displayName": "Leyla Aydın",
+    "learningStyle": "dyslexic",
+    "status": "focused",
+    "currentTopic": "memory_allocation",
+    "currentTopicTitle": "Bellek Yönetimi",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 77,
+      "logic_gates": 76,
+      "memory_allocation": 50,
+      "data_structures": 48,
+      "binary_search": 52,
+      "system_calls": 54
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_16",
+    "firstName": "Murat",
+    "lastName": "Koç",
+    "displayName": "Murat Koç",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "data_structures",
+    "currentTopicTitle": "Veri Yapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 55,
+      "logic_gates": 72,
+      "memory_allocation": 49,
+      "data_structures": 69,
+      "binary_search": 69,
+      "system_calls": 96
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_17",
+    "firstName": "Nazlı",
+    "lastName": "Acar",
+    "displayName": "Nazlı Acar",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "pointers",
+    "currentTopicTitle": "C: Pointer'lar",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 61,
+      "logic_gates": 80,
+      "memory_allocation": 45,
+      "data_structures": 52,
+      "binary_search": 98,
+      "system_calls": 62
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_18",
+    "firstName": "Oğuz",
+    "lastName": "Şen",
+    "displayName": "Oğuz Şen",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "logic_gates",
+    "currentTopicTitle": "Mantık Kapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 66,
+      "logic_gates": 52,
+      "memory_allocation": 63,
+      "data_structures": 72,
+      "binary_search": 55,
+      "system_calls": 88
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_19",
+    "firstName": "Pelin",
+    "lastName": "Turan",
+    "displayName": "Pelin Turan",
+    "learningStyle": "dyslexic",
+    "status": "focused",
+    "currentTopic": "binary_search",
+    "currentTopicTitle": "İkili Arama",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 98,
+      "logic_gates": 77,
+      "memory_allocation": 96,
+      "data_structures": 77,
+      "binary_search": 51,
+      "system_calls": 64
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_20",
+    "firstName": "Umut",
+    "lastName": "Karaca",
+    "displayName": "Umut Karaca",
+    "learningStyle": "textual",
+    "status": "attention",
+    "currentTopic": "system_calls",
+    "currentTopicTitle": "Sistem Çağrıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 57,
+      "logic_gates": 54,
+      "memory_allocation": 68,
+      "data_structures": 55,
+      "binary_search": 79,
+      "system_calls": 40
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_21",
+    "firstName": "Selin",
+    "lastName": "Gök",
+    "displayName": "Selin Gök",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "memory_allocation",
+    "currentTopicTitle": "Bellek Yönetimi",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 65,
+      "logic_gates": 76,
+      "memory_allocation": 46,
+      "data_structures": 52,
+      "binary_search": 68,
+      "system_calls": 64
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_22",
+    "firstName": "Taha",
+    "lastName": "Bulut",
+    "displayName": "Taha Bulut",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "data_structures",
+    "currentTopicTitle": "Veri Yapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 60,
+      "logic_gates": 48,
+      "memory_allocation": 60,
+      "data_structures": 50,
+      "binary_search": 50,
+      "system_calls": 89
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_23",
+    "firstName": "Ceren",
+    "lastName": "Ak",
+    "displayName": "Ceren Ak",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "pointers",
+    "currentTopicTitle": "C: Pointer'lar",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 92,
+      "logic_gates": 53,
+      "memory_allocation": 53,
+      "data_structures": 75,
+      "binary_search": 96,
+      "system_calls": 55
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_24",
+    "firstName": "Deniz",
+    "lastName": "Taşkın",
+    "displayName": "Deniz Taşkın",
+    "learningStyle": "dyslexic",
+    "status": "focused",
+    "currentTopic": "logic_gates",
+    "currentTopicTitle": "Mantık Kapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 72,
+      "logic_gates": 58,
+      "memory_allocation": 79,
+      "data_structures": 57,
+      "binary_search": 64,
+      "system_calls": 98
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_25",
+    "firstName": "Efe",
+    "lastName": "Yüksel",
+    "displayName": "Efe Yüksel",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "binary_search",
+    "currentTopicTitle": "İkili Arama",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 91,
+      "logic_gates": 73,
+      "memory_allocation": 89,
+      "data_structures": 73,
+      "binary_search": 52,
+      "system_calls": 60
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_26",
+    "firstName": "Gizem",
+    "lastName": "Başar",
+    "displayName": "Gizem Başar",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "system_calls",
+    "currentTopicTitle": "Sistem Çağrıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 66,
+      "logic_gates": 89,
+      "memory_allocation": 80,
+      "data_structures": 59,
+      "binary_search": 59,
+      "system_calls": 45
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_27",
+    "firstName": "Halil",
+    "lastName": "Kaplan",
+    "displayName": "Halil Kaplan",
+    "learningStyle": "dyslexic",
+    "status": "focused",
+    "currentTopic": "memory_allocation",
+    "currentTopicTitle": "Bellek Yönetimi",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 48,
+      "logic_gates": 59,
+      "memory_allocation": 49,
+      "data_structures": 47,
+      "binary_search": 66,
+      "system_calls": 49
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_28",
+    "firstName": "Işıl",
+    "lastName": "Erdem",
+    "displayName": "Işıl Erdem",
+    "learningStyle": "dyslexic",
+    "status": "attention",
+    "currentTopic": "data_structures",
+    "currentTopicTitle": "Veri Yapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 77,
+      "logic_gates": 60,
+      "memory_allocation": 62,
+      "data_structures": 44,
+      "binary_search": 58,
+      "system_calls": 79
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_29",
+    "firstName": "Koray",
+    "lastName": "Çetin",
+    "displayName": "Koray Çetin",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "pointers",
+    "currentTopicTitle": "C: Pointer'lar",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 75,
+      "logic_gates": 60,
+      "memory_allocation": 75,
+      "data_structures": 71,
+      "binary_search": 89,
+      "system_calls": 51
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_30",
+    "firstName": "Merve",
+    "lastName": "Güler",
+    "displayName": "Merve Güler",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "logic_gates",
+    "currentTopicTitle": "Mantık Kapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 72,
+      "logic_gates": 67,
+      "memory_allocation": 72,
+      "data_structures": 71,
+      "binary_search": 74,
+      "system_calls": 98
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_31",
+    "firstName": "Okan",
+    "lastName": "Korkmaz",
+    "displayName": "Okan Korkmaz",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "binary_search",
+    "currentTopicTitle": "İkili Arama",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 91,
+      "logic_gates": 48,
+      "memory_allocation": 91,
+      "data_structures": 66,
+      "binary_search": 51,
+      "system_calls": 60
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_32",
+    "firstName": "Özge",
+    "lastName": "Tunç",
+    "displayName": "Özge Tunç",
+    "learningStyle": "dyslexic",
+    "status": "focused",
+    "currentTopic": "system_calls",
+    "currentTopicTitle": "Sistem Çağrıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 79,
+      "logic_gates": 95,
+      "memory_allocation": 53,
+      "data_structures": 72,
+      "binary_search": 56,
+      "system_calls": 62
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_33",
+    "firstName": "Sarp",
+    "lastName": "Yavuz",
+    "displayName": "Sarp Yavuz",
+    "learningStyle": "visual",
+    "status": "attention",
+    "currentTopic": "memory_allocation",
+    "currentTopicTitle": "Bellek Yönetimi",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 60,
+      "logic_gates": 49,
+      "memory_allocation": 40,
+      "data_structures": 80,
+      "binary_search": 51,
+      "system_calls": 48
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_34",
+    "firstName": "Tuğçe",
+    "lastName": "Sönmez",
+    "displayName": "Tuğçe Sönmez",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "data_structures",
+    "currentTopicTitle": "Veri Yapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 50,
+      "logic_gates": 60,
+      "memory_allocation": 55,
+      "data_structures": 91,
+      "binary_search": 76,
+      "system_calls": 94
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_35",
+    "firstName": "Volkan",
+    "lastName": "Erol",
+    "displayName": "Volkan Erol",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "pointers",
+    "currentTopicTitle": "C: Pointer'lar",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 48,
+      "logic_gates": 55,
+      "memory_allocation": 69,
+      "data_structures": 45,
+      "binary_search": 95,
+      "system_calls": 61
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_36",
+    "firstName": "Yasemin",
+    "lastName": "Aktaş",
+    "displayName": "Yasemin Aktaş",
+    "learningStyle": "dyslexic",
+    "status": "focused",
+    "currentTopic": "logic_gates",
+    "currentTopicTitle": "Mantık Kapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 63,
+      "logic_gates": 72,
+      "memory_allocation": 80,
+      "data_structures": 76,
+      "binary_search": 54,
+      "system_calls": 92
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_37",
+    "firstName": "Zeki",
+    "lastName": "Can",
+    "displayName": "Zeki Can",
+    "learningStyle": "visual",
+    "status": "focused",
+    "currentTopic": "binary_search",
+    "currentTopicTitle": "İkili Arama",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 58,
+      "logic_gates": 48,
+      "memory_allocation": 79,
+      "data_structures": 48,
+      "binary_search": 65,
+      "system_calls": 48
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_38",
+    "firstName": "Bahar",
+    "lastName": "Çetin",
+    "displayName": "Bahar Çetin",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "system_calls",
+    "currentTopicTitle": "Sistem Çağrıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 48,
+      "logic_gates": 96,
+      "memory_allocation": 77,
+      "data_structures": 78,
+      "binary_search": 55,
+      "system_calls": 48
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_39",
+    "firstName": "Cemil",
+    "lastName": "Taş",
+    "displayName": "Cemil Taş",
+    "learningStyle": "dyslexic",
+    "status": "focused",
+    "currentTopic": "memory_allocation",
+    "currentTopicTitle": "Bellek Yönetimi",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 50,
+      "logic_gates": 56,
+      "memory_allocation": 49,
+      "data_structures": 49,
+      "binary_search": 60,
+      "system_calls": 70
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_40",
+    "firstName": "Derya",
+    "lastName": "Mutlu",
+    "displayName": "Derya Mutlu",
+    "learningStyle": "dyslexic",
+    "status": "focused",
+    "currentTopic": "data_structures",
+    "currentTopicTitle": "Veri Yapıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 52,
+      "logic_gates": 60,
+      "memory_allocation": 47,
+      "data_structures": 50,
+      "binary_search": 71,
+      "system_calls": 93
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_41",
+    "firstName": "Selin",
+    "lastName": "Aydoğan",
+    "displayName": "Selin Aydoğan",
+    "learningStyle": "dyslexic",
+    "status": "focused",
+    "currentTopic": "memory_allocation",
+    "currentTopicTitle": "Bellek Yönetimi",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 61,
+      "logic_gates": 58,
+      "memory_allocation": 90,
+      "data_structures": 60,
+      "binary_search": 61,
+      "system_calls": 70
+    },
+    "isMock": true
+  },
+  {
+    "id": "mock_42",
+    "firstName": "Kerem",
+    "lastName": "Şahin",
+    "displayName": "Kerem Şahin",
+    "learningStyle": "textual",
+    "status": "focused",
+    "currentTopic": "system_calls",
+    "currentTopicTitle": "Sistem Çağrıları",
+    "stuckMinutes": null,
+    "topicScores": {
+      "pointers": 64,
+      "logic_gates": 74,
+      "memory_allocation": 65,
+      "data_structures": 49,
+      "binary_search": 45,
+      "system_calls": 74
+    },
+    "isMock": true
+  }
+]

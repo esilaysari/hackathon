@@ -1,0 +1,126 @@
+# EduSwarm — Proje Yol Günlüğü (MEMORY.md)
+
+**Nasıl kullanılır (her ajan ve ekip üyesi için):**
+
+- Yeni bir oturuma başlarken önce bu dosyayı, özellikle **1. Devamlılık** bölümünü oku.
+- Bir görev veya milestone bittiğinde **5. Yol Günlüğü**'ne tarihli ve saatli, kısa bir giriş ekle.
+- Teknik veya ürünsel bir karar alındığında **3. Karar Defteri**'ne bir satır ekle. Buraya yazılan bir karar tekrar tartışılmaz. Yeni bilgiyle geçersiz olursa eski satır silinmez; **İPTAL** etiketiyle işaretlenir ve yerine geçen kararın numarası yazılır.
+- Bir hata, eksik ya da geçici çözüm fark edildiğinde **4. Bilinen Sorunlar** tablosuna ekle; çözülünce durumunu güncelle.
+- Oturumu bitirmeden **1. Devamlılık**'ı güncelle: şu an neredeyiz, sıradaki adım ne, bekleyen bir karar var mı.
+- Bu dosya **append-only**'dir: geçmiş kayıtlar düzenlenmez, yalnızca üstüne eklenir. İstisna: 1. Devamlılık, 2. İlerleme Gözlemi ve 4. Bilinen Sorunlar her zaman güncel hâlde tutulur.
+- Tarih formatı: `YYYY-MM-DD HH:MM` (hackathon 24 saat sürdüğü için saat de yazılır).
+- Bu dosya ile INTENT.md veya DESIGN.md çelişirse **INTENT.md ve DESIGN.md esas alınır**; çelişki 4. Bilinen Sorunlar'a yazılır.
+- İlgili dosyalar: `INTENT.md` (niyet ve kapsam), `DESIGN.md` (tasarım sözleşmesi), `CLAUDE.md` (ajan kuralları), `TRD.md` (teknik gereksinimler), `ROADMAP.md` (görev planı).
+
+## 1. Devamlılık — Şu An Neredeyiz
+
+**Son güncelleme:** 2026-10-09 18:50
+
+**Tamamlanan:** INTENT.md, DESIGN.md, CLAUDE.md, TRD.md ve bu dosya birbiriyle hizalandı (K14–K39). `mock_students.json` K24'e göre uyarlandı (42 öğrenci, K38). Proje klasöründe henüz uygulama kodu yok.
+
+**Sıradaki adım:** ROADMAP Blok 0: Kurulum (Flutter, Firebase projesi, `flutterfire configure`, paketler, gömülü fontlar). ROADMAP.md henüz klasörde yok; kullanıcı ekleyecek. Zaman planı ve 04:30 kod dondurma kararı ROADMAP.md eklenince Karar Defteri'ne yazılacak.
+
+**Bekleyen kararlar:** Yok — veri saklama, anlık iletişim, durum yönetimi ve içerik yükleme TRD.md ile karara bağlandı (K31–K34).
+
+**Blokaj:** Flutter SDK bu bilgisayarda PATH'te değil; kod yazımına başlamadan kurulmalı (K30).
+
+## 2. İlerleme Gözlemi
+
+| Aşama | Dosya / Çıktı | Durum |
+| :--- | :--- | :--- |
+| Niyet ve Bağlam | INTENT.md | ✅ Tamamlandı — 2026-10-09 |
+| Tasarım Sözleşmesi | DESIGN.md | ✅ Tamamlandı — 2026-10-09 |
+| Proje Belleği | MEMORY.md | ✅ Bu dosya — 2026-10-09 |
+| Mock Veri Seti (42 öğrenci, K24) | mock_students.json | ✅ Uyarlandı — 2026-10-09 (K38) |
+| Proje Kuralları | CLAUDE.md | ✅ Tamamlandı — 2026-10-09 |
+| Teknik Gereksinimler | TRD.md | ✅ Tamamlandı — 2026-10-09 |
+| Görev Planı | ROADMAP.md | ⏳ Yazıldı, klasöre eklenecek |
+| Ajan Kural Dosyaları | .claude/rules/ | ⬜ Başlanmadı |
+| Git deposu ve GitHub | github.com/esilaysari/hackathon | ✅ Kuruldu (commit'leri kullanıcı atar, K28) |
+| Öğrenci Portalı: Ağır Görev + Morphing + Story | — | ⬜ Başlanmadı (**öncelik 1**) |
+| Öğretmen Paneli: kritik liste + Acil Müdahale + Sunum Modu | — | ⬜ Başlanmadı (**öncelik 1**) |
+| Sokratik Rehber + PeerSwarm önerisi | — | ⬜ Başlanmadı (öncelik 2) |
+| Kayıt, öğrenme stili testi, sınıf kodu, içerik yükleme | — | ⬜ Başlanmadı (öncelik 3) |
+| Sunum provası (Altın Senaryo) | — | ⬜ Başlanmadı |
+
+## 3. Karar Defteri
+
+| # | Tarih | Karar | Gerekçe |
+| :--- | :--- | :--- | :--- |
+| K1 | 2026-10-09 | **Ana Odak (Morphing UI):** Sistem, öğrencinin odak kaybını telemetriyle tespit edip arayüzü anlık olarak değiştiren bir bilişsel yük yönetimi platformu olacak. | Standart "YZ ile cevap veren" uygulamalardan farklılaşmak ve jüriye yenilikçi bir UX sunmak. |
+| K2 | 2026-10-09 | **İsim:** Proje adı "BiteSync" yerine "EduSwarm" olarak sabitlendi. | Kalabalık sınıf (swarm) yönetimi vizyonunu yansıtmak. |
+| K3 | 2026-10-09 | ~~**Telemetri:** 10 saniyelik hareketsizlik ve "rage tap" gibi basit etkileşimler stres belirtisi sayılacak.~~ **İPTAL → K7, K8** | Eşik süreleri değişti; "rage tap" INTENT'te kapsam dışına alındı. |
+| K4 | 2026-10-09 | ~~**Veri Stratejisi:** 40 kişilik statik JSON tabanlı mock veri kullanılacak; öğrencilerin yaklaşık %20'si "Kritik" durumda olacak. Öğretmen panelinde yalnızca Kritik öğrenciler listelenecek.~~ **İPTAL → K24** | Kalabalık sınıf yönetimini canlı demoda göstermek. |
+| K5 | 2026-10-09 | ~~**Geliştirme:** v0.dev veya Lovable gibi araçlarla PWA/Web App arayüzleri üretilecek.~~ **İPTAL → K6** | Bu araçlar React tabanlı kod üretir; Flutter Web kararıyla uyumsuz. |
+| K6 | 2026-10-09 | **Platform:** Flutter Web; tek kod tabanı, mobil uyumlu. Öğrenci Portalı mobil öncelikli, Öğretmen Paneli masaüstü öncelikli. Kod, VS Code'da Claude ile, doküman zinciri (INTENT → DESIGN → MEMORY → CLAUDE → TRD → ROADMAP) izlenerek yazılacak. | Tek kodla hem telefon hem bilgisayar desteği; native uygulama kapsam dışı. |
+| K7 | 2026-10-09 | **Odak kaybı eşikleri:** Sözel/görsel sorularda 30 sn, işlem gerektiren sorularda 60 sn hareketsizlik. Telemetri yalnızca zamanlayıcı ve basit tıklama sayacından oluşur. | Soru tipine göre gerçekçi düşünme süresi tanımak. |
+| K8 | 2026-10-09 | **Sunum Modu:** Öğretmen panelindeki anahtar açıkken tüm eşikler 5 sn'ye iner. Jüriye açıkça gösterilir. | Sahnede jüriyi 30 sn bekletmemek. |
+| K9 | 2026-10-09 | **Yapay zekâ simülasyonu:** Gerçek LLM API'si kullanılmayacak. İçerik, profillere göre kural tabanlı uyarlanacak; Sokratik Rehber soruları önceden hazırlanmış mock veriden gelecek. | API maliyeti, bağlantı ve sahnede öngörülemeyen cevap riski. |
+| K10 | 2026-10-09 | ~~**Kullanıcı akışı:** Ad/soyad/e-posta + rol ile kayıt (KVKK onayıyla), kısa öğrenme stili testi, 6 haneli sınıf kodu / davet linki, öğretmenin kendi notunu yüklemesi. E-posta doğrulama ve şifre sıfırlama yok; demo için hazır hesaplar bulunacak.~~ **İPTAL → K14** | Gerçekçi bir ürün akışı göstermek, ama 24 saate sığacak sadelikte. |
+| K11 | 2026-10-09 | **Erişilebilirlik:** Tüm metin/zemin eşleşmeleri en az WCAG AA (4.5:1). Dislektik modda Lexend yazı tipi, 18px gövde, 1.8 satır yüksekliği, yalnızca sola hizalı metin. | Erişilebilirlik projenin ana fikri; jüri bunu sorgulayabilir. |
+| K12 | 2026-10-09 | ~~**Gizlilik:** Öğrenci "Basitleştir"e kendisi basarsa öğretmene uyarı gitmez. Öğretmen panelinde ham telemetri gösterilmez, yalnızca "destek gerekiyor" özeti görünür.~~ **İPTAL → K23** | "Öğrenciyi aşırı izleme" algısını önlemek; öğrenci kontrolünü korumak. |
+| K13 | 2026-10-09 | **Önceliklendirme:** Önce Altın Senaryo'nun ders anı (Morphing UI + Acil Müdahale + Sunum Modu), sonra Sokratik Rehber ve PeerSwarm, en son kayıt/test/sınıf ekranları. | Zaman yetmezse bile en etkileyici kısmın hazır olması. |
+| K14 | 2026-10-09 | **Kullanıcı akışı (güncel):** Giriş/Kayıt tek kartta iki sekme. Kayıt: ad, soyad, e-posta, **şifre**, rol + KVKK onayı; giriş e-posta + şifre. Kısa öğrenme stili testi, 6 haneli sınıf kodu / davet linki. E-posta doğrulama ve şifre sıfırlama yok; demo için hazır hesaplar ve demo giriş butonları bulunur. | K10'a şifre eklendi; giriş ile kayıt ayrıldı. |
+| K15 | 2026-10-09 | ~~**İçerik formatı:** Öğretmen PDF veya Metin/Markdown yükler. PPTX doğrudan işlenmez; slaytlar PDF olarak yüklenir.~~ **İPTAL → K33** | Kural tabanlı kartlara bölme için okunabilir metin gerekir; PPTX ayrıştırma 24 saat için riskli. |
+| K16 | 2026-10-09 | **Sorular ve etiketler:** Öğretmen, yüklemenin altındaki formla soru (metin, 3-4 şık, doğru cevap) ekler ve her soruyu "Sözel/Görsel" (30 sn) ya da "İşlem" (60 sn) olarak etiketler. Öğrenci akışı: önce içerik okunur (okuma ekranı eşiği 30 sn), "Hemen Başla" ile sorulara geçilir. Demo dersinde sorular önceden doldurulmuş gelir. | K7'deki soru tipine bağlı eşiğin kaynağını netleştirmek. |
+| K17 | 2026-10-09 | **Üç seviyeli odak durumu:** Odakta / Dikkat (eşiğin yarısı aşıldı) / Kritik (eşik aşıldı). Dikkat yalnızca öğretmen panelinin özet şeridinde sayaç olarak görünür; öğrenci ekranında değişiklik yapmaz. Morphing, otomatik mesaj ve Acil Müdahale yalnızca Kritik'te tetiklenir. Herhangi bir etkileşim sayacı sıfırlar. | Öğretmene sınıfın genel nabzını göstermek; öğrenciyi erken rahatsız etmemek. |
+| K18 | 2026-10-09 | **Profil bazlı sunum:** Dislektik (Lexend, 18px, 1.8 satır yüksekliği), Görsel (kart düzeni, ikonlar, görseller önde), Metinsel (klasik başlıklı okuma) — hepsi kural tabanlı. | Üç profil için de görünür fark; ayrı şablon maliyetinden kaçınmak. |
+| K19 | 2026-10-09 | **Gerçek zamanlı iletişim:** Ders içeriği öğrencilere, uyarılar öğretmen paneline anlık ulaşır; demo iki ayrı cihazda yapılır (öğretmen laptop, öğrenci telefon). Altyapı TRD.md'de seçilecek. | "Anında" uyarı vaadinin sahnede inandırıcı olması. |
+| K20 | 2026-10-09 | **Sokratik Rehber:** Her soru için 2-3 ipucundan oluşan zincir. Butonlar "Anladım" / "Anlamadım". Anlamadım → sıradaki ipucu; ipuçları biterse akran desteği önerilir. Anladım → 3-4 şıklı kontrol sorusu; doğruysa durum Odakta'ya döner, yanlışsa sıradaki ipucu. | Öğrencinin "anladım" beyanını doğrulamak; doğrudan cevap vermemek. |
+| K21 | 2026-10-09 | **Story sonu:** Son kartta "Soruya Dön"; öğrenci takıldığı ekrana döner, sayaç sıfırlanır, Morphing ters yönde oynar. | Story modunun çıkmaz sokak olmaması. |
+| K22 | 2026-10-09 | **PeerSwarm ve öğretmen eylemleri:** Mock öğrencilerin konu bazlı başarı skoru vardır; o konuda skoru en yüksek ve durumu Odakta olan akran önerilir. Uyarı kartında "Eşleştir" (iki öğrenciye bildirim kartı gider) ve "Gördüm" bulunur. Öğretmen elle mesaj yazmaz; destek mesajlarını **sistem otomatik** gönderir: Morphing anında ("içeriği kolaylaştırdım") ve kontrol sorusu doğru cevaplandığında (tebrik). | Öğretmenin 40+ kişilik sınıfta tek tek mesaj yazacak vakti yok; destek otomatik olmalı. |
+| K23 | 2026-10-09 | **Gizlilik (güncel):** Öğrenci "Basitleştir"e kendisi basarsa öğretmene uyarı gitmez. Ham telemetri (tek tek tıklamalar, zaman damgaları) hiçbir yerde gösterilmez; öğretmen bir öğrenciyi seçtiğinde yalnızca özet görünür (ör. "12 etkileşim · 45 sn hareketsiz"). Tıklama sayısı bu sürümde karar mantığını etkilemez. | K12'yi INTENT'teki "tıklama sayısı kaydedilir" kararıyla uzlaştırmak. |
+| K24 | 2026-10-09 | **Mock veri dağılımı:** 42 mock öğrenci; başlangıçta yaklaşık 2 Kritik, 5 Dikkat, kalanı Odakta. Her öğrencide profil, konu, odak durumu, takılma süresi ve konu bazlı başarı skoru (PeerSwarm) bulunur. | Gerçek öğrencinin uyarı kartının kalabalıkta kaybolmaması; DESIGN 8.7 örneğiyle uyum. |
+| K25 | 2026-10-09 | ~~**Eski denemeler:** `main.dart` ve `mock_students.json` kullanılmayacak; kod ve mock veri güncel dokümanlara göre sıfırdan yazılacak.~~ **İPTAL → K38** | İkisi de eski kararlarla yazılmıştı ve proje klasöründe yok. |
+| K26 | 2026-10-09 | **Demo yedek planı (K13 eki):** Kayıt/test/sınıf ekranları yetişmezse demo, "Demo Öğrenci olarak gir" butonuyla açılan hazır hesapla (profil Dislektik, sınıfa kayıtlı) doğrudan ders anından başlar. | K13 önceliği korunurken Altın Senaryo'nun her koşulda gösterilebilmesi. |
+| K27 | 2026-10-09 | **Dislektik zemin:** Dislektik profilde kart yüzeyleri dahil saf beyaz kullanılmaz; kartlar Cream-Base zeminli olur ve gölgeyle ayrışır. | DESIGN §3.2 ile §8.4 arasındaki çelişkiyi gidermek; parlak beyazın göz yorgunluğundan kaçınmak. |
+| K28 | 2026-10-09 | **Git akışı:** Commit'leri kullanıcı atar; Claude commit/push çalıştırmaz, özellik bitince İngilizce `tip: açıklama` biçiminde mesaj önerir (ör. `feat: ...`, `docs: ...`). | Mevcut commit geçmişiyle tutarlılık; kullanıcı kontrolü. |
+| K29 | 2026-10-09 | **Fontlar ve Sunum Modu:** Roboto ve Lexend projeye gömülür (çalışma anında indirme yok). Sunum Modu sınıfın bir ayarıdır; gerçek zamanlı kanalla tüm öğrenci cihazlarına yayılır. | Salon Wi-Fi'sına bağımlı kalmamak; eşik öğrencinin cihazında sayıldığı için ayarın oraya ulaşması gerekir. |
+| K30 | 2026-10-09 | **Geliştirme ortamı:** Flutter SDK geliştirme bilgisayarına kurulup PATH'e eklenecek; Claude `flutter analyze` ve tarayıcı denemesi yapamazsa bunu açıkça söyler. | CLAUDE.md §3.4 doğrulama kuralının uygulanabilmesi. |
+| K31 | 2026-10-09 | **Veri ve anlık iletişim:** Cloud Firestore (Spark planı), bölge europe-west3, güvenlik kuralları test modu. Ders gönderimi, uyarılar, durum geçişleri, bildirimler ve Sunum Modu `snapshots()` ile canlı iletilir (TRD T2). | Farklı cihazlar arasında sunucu kodu yazmadan gerçek zamanlı iletişim; K19'un altyapısı. |
+| K32 | 2026-10-09 | **Hibrit veri:** Gerçek kullanıcılar Firestore'da; 42 mock öğrenci ve statik içerik (test, demo dersi, ipuçları, destek mesajları) yerel JSON'da. Panel iki kaynağı tek listede birleştirir (TRD T3, T4). | Mock veri sahnede bozulmasın; canlı akış yalnızca gerçek öğrenci için. |
+| K33 | 2026-10-09 | **İçerik yükleme:** Yapıştırılan metin veya `.txt` / `.md`; içerik metin olarak Firestore'da saklanır. PDF ve slayt görseli zaman kalırsa (TRD T6). | Firebase Storage kurulumu ve PDF ayrıştırma 24 saate değmez; metin Story kartlarına bölünebilen tek format. K15'in yerini alır. |
+| K34 | 2026-10-09 | **Durum yönetimi:** Firestore verisi için `StreamBuilder`, giriş yapan kullanıcı ve aktif sınıf için `provider` + `ChangeNotifier` (TRD T7). | Önce Basitlik; ek mimari öğrenme yükü yok. |
+| K35 | 2026-10-09 | **Kimlik ve isimler:** Öğretmen panelinde öğrencinin tam adı gösterilir; aynı ad varsa e-postanın `@` öncesi (mock'ta `id`) küçük etiketle eklenir. Sistem öğrencileri yalnızca `id` ile ayırt eder (uyarı, durum, PeerSwarm). | Öğretmen kime yardım edeceğini bilmeli; isim çakışması eşleştirmeyi bozmamalı. |
+| K36 | 2026-10-09 | **Demo dersi konusu:** "C: Pointer'lar" (`topicKey: pointers`). Sokratik zincir ve kontrol sorusu bu konu için hazırlanır; PeerSwarm önerisi Pelin Turan (pointers skoru 98). | Mock verideki konu sözlüğüyle eşleşmeli; PeerSwarm önerisi boş kalmamalı. |
+| K37 | 2026-10-09 | **Kimlik doğrulama:** Firebase Authentication, e-posta + şifre sağlayıcısı. Şifre Firestore'a yazılmaz; demo hesapları Auth'ta önceden oluşturulur (TRD T5). | K14 şifre istiyor; test modundaki açık Firestore'da şifre saklamak güvenli değil. TRD'nin eski "şifresiz" T5 maddesinin yerini alır. |
+| K38 | 2026-10-09 | **Mock veri uyarlaması:** Ekipten gelen `mock_students.json` sıfırdan yazılmak yerine uyarlandı: 42 kayıt (14/14/14 profil), `status`: `focused` / `attention` / `critical` (2 kritik, 5 dikkat), `completedTopics` yerine `topicScores` (0-100). | Mevcut dosya sağlamdı; yalnızca K17, K22 ve K24'e uyum gerekiyordu. K25'in yerini alır. |
+| K39 | 2026-10-09 | **Yayın:** `flutter build web` + Firebase Hosting (TRD T8). | Öğrenci telefonu gerçek bir URL'den açar; ayrı sunucu yok. |
+
+## 4. Bilinen Sorunlar ve Teknik Borç
+
+| # | Tarih | Sorun | Durum |
+| :--- | :--- | :--- | :--- |
+| S1 | 2026-10-09 | `main.dart` eski 10 sn eşiğiyle ve DESIGN.md öncesinde yazıldı; renkler, kontrast ve eşikler güncel değil. | Kapandı — K25 (kullanılmayacak) |
+| S2 | 2026-10-09 | `mock_students.json` alanlarının DESIGN.md 8.7 (profil, konu, takılma süresi, PeerSwarm için tamamlanan konular) ile uyumu kontrol edilmedi. Eski "Kırmızı Liste" ifadesi "Kritik" olarak değiştirilmeli. | Çözüldü — K38 (mevcut dosya uyarlandı) |
+| S3 | 2026-10-09 | DESIGN.md diskte eski bir sürümle değiştirilmişti (8.1, 8.3–8.9'daki K14–K22 karşılıkları kaybolmuştu). | Çözüldü — son commit'teki sürüm geri getirildi, yeni "tam ad" değişiklikleri (K35) üzerine eklendi |
+
+## 5. Yol Günlüğü
+
+- **2026-10-09 — Konsept Geliştirme ve Pivot**
+  - Projenin temel fikri, yapay zekânın tembellik yaratan bir araç olması probleminden yola çıkarak "öğrenciyi araştırtan ve yorulduğunda onu kurtaran" bir sisteme (EduSwarm) dönüştürüldü.
+  - VS Code odaklı başlangıç fikri, daha geniş bir kullanıcı kitlesine hitap etmek ve sunum kolaylığı sağlamak amacıyla mobil/web uygulama mimarisine evrildi.
+- **2026-10-09 — Dokümantasyon ve İlk Kod Denemesi**
+  - Projenin amacını, hedef kitlesini ve başarı kriterlerini netleştiren `INTENT.md` oluşturuldu.
+  - Lila/nane yeşili paleti ve animasyon kurallarını belirleyen `DESIGN.md` hazırlandı.
+  - Morphing UI mantığını simüle eden örnek Flutter kodu (`main.dart`) ve 40 kişilik mock veri seti (`mock_students.json`) hazırlandı.
+- **2026-10-09 — Proje Belleğinin Kurulması**
+  - Kararların ve ilerlemenin kaydedileceği bu dosya oluşturuldu.
+- **2026-10-09 16:50 — Dokümanların Hizalanması**
+  - INTENT.md güncellendi: kullanıcı yolculuğu (kayıt, öğrenme stili testi, sınıf kodu, içerik yükleme), Altın Senaryo, 30/60 sn eşikler ve Sunum Modu eklendi.
+  - DESIGN.md Flutter Web'e göre yeniden düzenlendi: kontrast düzeltmeleri, profil bazlı tipografi, yeni bileşenler (kayıt, test, sınıf kodu, Sokratik baloncuk, öğretmen paneli, Acil Müdahale kartı).
+  - MEMORY.md'de K3 ve K5 iptal edildi; K6–K13 kararları ve Bilinen Sorunlar bölümü eklendi.
+- **2026-10-09 17:36 — INTENT / DESIGN / MEMORY Hizalaması (Claude ile soru-cevap)**
+  - INTENT.md: şifreli giriş, PDF/Markdown yükleme, soru etiketleri, üç seviyeli odak durumu, Anladım/Anlamadım akışı, PeerSwarm konu skoru, gerçek zamanlı iletişim ve otomatik destek mesajları eklendi; dosya adı `intentt.md` → `INTENT.md` düzeltildi.
+  - DESIGN.md: sekmeli Giriş/Kayıt (8.1), soru ekleme formu (8.3), içerik → sorular akışı ve Dikkat eşiği (8.4), Story sonu (8.5), Anladım/Anlamadım (8.6), Dikkat sayacı ve öğrenci detayı (8.7), "Mesaj Gönder"siz uyarı kartı (8.8), öğrenci bildirim kartı ve otomatik mesajlar (8.9, yeni), ters Morphing ve bildirim animasyonları eklendi.
+  - MEMORY.md: K4, K10, K12 iptal edildi; K14–K26 eklendi; S1 ve S2 kapatıldı.
+- **2026-10-09 18:02 — CLAUDE.md Hizalaması**
+  - CLAUDE.md §1, §2 ve §4.1 K14–K26 kararlarına göre güncellendi; stack tablosuna içerik ayrıştırma satırı ve ortam notu eklendi.
+  - DESIGN.md §3 ve §8.4'te Dislektik kart zemini (K27) ve gömülü fontlar (K29) netleştirildi.
+  - K27–K30 eklendi; Flutter kurulumu blokaj olarak işaretlendi.
+- **2026-10-09 18:50 — TRD Hizalaması ve Teknik Kararlar**
+  - TRD.md K14–K29'a göre güncellendi: Firebase Auth (e-posta/şifre), `focused/attention/critical` durumları, soru bazında tip, Anladım/Anlamadım + kontrol sorusu, `topicScores` ile PeerSwarm, Eşleştir + bildirimler, destek mesajı havuzu, gömülü fontlar (T9), Story sonu.
+  - CLAUDE.md §2 Stack tablosu TRD'ye göre yeniden yazıldı; "bekleyen karar" satırları kaldırıldı.
+  - DESIGN.md eski sürümle değiştirilmişti; güncel sürüm geri getirildi ve tam ad değişiklikleri eklendi (S3).
+  - `mock_students.json` 42 öğrenciye uyarlandı (K38).
+  - K15 ve K25 iptal edildi; K31–K39 eklendi; bekleyen kararlar kapandı. Flutter Web + Firebase için `.gitignore` eklendi.
