@@ -14,11 +14,11 @@
 
 ## 1. Devamlılık — Şu An Neredeyiz
 
-**Son güncelleme:** 2026-10-09 19:25
+**Son güncelleme:** 2026-10-09 19:46
 
 **Tamamlanan:** INTENT.md, DESIGN.md, CLAUDE.md, TRD.md ve bu dosya birbiriyle hizalandı (K14–K39). `mock_students.json` K24'e göre uyarlandı (42 öğrenci, K38). Proje klasöründe henüz uygulama kodu yok.
 
-**Sıradaki adım:** ROADMAP Faz 0: Firebase bağlantısı (kullanıcı terminalden `flutterfire configure`; ardından `Firebase.initializeApp`, demo hesapları ve demo sınıfı). Faz 0'ın kalanı: Roboto + Lexend fontlarının `assets/fonts/`'a eklenmesi.
+**Sıradaki adım:** Kullanıcı seed betiğini bir kez çalıştıracak (`flutter run -d chrome -t lib/seed.dart`). Ardından ROADMAP Faz 1–2: Öğrenci çekirdeği (demo dersi, telemetri, Morphing UI, Story modu).
 
 **Bekleyen kararlar:** Yok — veri saklama, anlık iletişim, durum yönetimi ve içerik yükleme TRD.md ile karara bağlandı (K31–K34).
 
@@ -87,6 +87,7 @@
 | K38 | 2026-10-09 | **Mock veri uyarlaması:** Ekipten gelen `mock_students.json` sıfırdan yazılmak yerine uyarlandı: 42 kayıt (14/14/14 profil), `status`: `focused` / `attention` / `critical` (2 kritik, 5 dikkat), `completedTopics` yerine `topicScores` (0-100). | Mevcut dosya sağlamdı; yalnızca K17, K22 ve K24'e uyum gerekiyordu. K25'in yerini alır. |
 | K39 | 2026-10-09 | **Yayın:** `flutter build web` + Firebase Hosting (TRD T8). | Öğrenci telefonu gerçek bir URL'den açar; ayrı sunucu yok. |
 | K40 | 2026-10-09 | **Zaman planı:** Geliştirme ROADMAP.md'deki faz sırasına göre yürür (Faz 0–7, 2026-10-09 19:20 → 2026-10-10 06:30). **04:30 kod dondurma:** bu saatten sonra yeni özellik eklenmez, yalnızca demoyu bozan hatalar düzeltilir. **HSD Bounty pop-up'ı kapsam dışıdır;** akran desteği için yerine PeerSwarm "Eşleştir" (K22) kullanılır. | Sunum öncesi en az 2 saat prova ve teslim payı bırakmak; aynı ihtiyacı karşılayan iki özellik yazmamak. |
+| K41 | 2026-10-09 | **Demo kimlikleri:** Firebase projesi `eduswarm-985b9`. Demo öğretmen "Nur Demirtaş" (demo.ogretmen@eduswarm.dev), demo öğrenci "Ayşe Yılmaz" (demo.ogrenci@eduswarm.dev, Dislektik), demo sınıfı `classes/demo_class` "Programlamaya Giriş", kod `PTR234`. E-postalar ve ortak demo şifresi yalnızca `lib/demo_accounts.dart`'ta tutulur; demo verisi `lib/seed.dart` ile yazılır. | Uydurma isimler mock veriyle çakışmaz; DESIGN §8.8 örneğindeki "Ayşe Yılmaz" ile uyumlu. Şifre tek yerde, sunumdan sonra değiştirilebilir. |
 
 ## 4. Bilinen Sorunlar ve Teknik Borç
 
@@ -135,3 +136,8 @@
   - ROADMAP.md (Faz 0–7, 04:30 kod dondurma) projeye eklendi ve İlerleme Gözlemi'nde tamamlandı olarak işaretlendi.
   - K40 eklendi (zaman planı, kod dondurma, HSD Bounty kapsam dışı).
   - Flutter blokajı kaldırıldı; sıradaki adım ROADMAP Faz 0: Firebase bağlantısı.
+- **2026-10-09 19:46 — ROADMAP Faz 0 Tamamlandı**
+  - `main.dart` Firebase'i `DefaultFirebaseOptions.currentPlatform` ile başlatıyor; debug modda mock öğrenci sayısını yazdırıyor (`services/mock_data_service.dart`).
+  - Roboto (unhinted, Regular/Medium/Bold) ve Lexend (Regular/Medium/Bold) resmi Google depolarından bir kez indirilip `assets/fonts/`'a gömüldü, OFL lisanslarıyla birlikte; `pubspec.yaml`'da tanımlandı.
+  - `lib/demo_accounts.dart` (demo sabitleri) ve `lib/seed.dart` (demo öğretmen, demo öğrenci, demo sınıfı + üyelik) eklendi; K41.
+  - Doğrulama: `flutter analyze` temiz, `flutter test` geçti, `flutter run -d chrome` → Firebase hatasız başladı, konsolda "Mock öğrenci sayısı: 42". Seed henüz çalıştırılmadı (kullanıcı çalıştıracak).

@@ -66,8 +66,22 @@ flutter:
     - assets/mock/
     - assets/content/
 
-  # Roboto ve Lexend (TRD T9) dosyaları assets/fonts/ altına eklenince
-  # buraya "fonts:" bölümü olarak tanımlanacak.
+  # Gömülü fontlar (TRD T9, MEMORY K29); lisanslar assets/fonts/OFL-*.txt.
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
+    - family: Lexend
+      fonts:
+        - asset: assets/fonts/Lexend-Regular.ttf
+        - asset: assets/fonts/Lexend-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Lexend-Bold.ttf
+          weight: 700
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

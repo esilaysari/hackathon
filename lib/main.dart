@@ -1,9 +1,22 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'firebase_options.dart';
+import 'services/mock_data_service.dart';
 import 'strings.dart';
 import 'theme/tokens.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Faz 0 kontrolü: mock veri okunabiliyor mu (beklenen: 42).
+  if (kDebugMode) {
+    final students = await MockDataService.loadStudents();
+    debugPrint('Mock öğrenci sayısı: ${students.length}');
+  }
+
   runApp(const EduSwarmApp());
 }
 
@@ -15,6 +28,7 @@ class EduSwarmApp extends StatelessWidget {
     return MaterialApp(
       title: AppStrings.appTitle,
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: AppFonts.roboto),
       home: const Scaffold(
         backgroundColor: AppColors.creamBase,
         body: Center(
