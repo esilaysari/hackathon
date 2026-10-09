@@ -14,15 +14,15 @@
 
 ## 1. Devamlılık — Şu An Neredeyiz
 
-**Son güncelleme:** 2026-10-09 19:20
+**Son güncelleme:** 2026-10-09 19:25
 
 **Tamamlanan:** INTENT.md, DESIGN.md, CLAUDE.md, TRD.md ve bu dosya birbiriyle hizalandı (K14–K39). `mock_students.json` K24'e göre uyarlandı (42 öğrenci, K38). Proje klasöründe henüz uygulama kodu yok.
 
-**Sıradaki adım:** Blok 0'ın kalanı: Firebase bağlantısı (kullanıcı terminalden `flutterfire configure` ile kuracak), Roboto + Lexend font dosyalarının `assets/fonts/`'a eklenip `pubspec.yaml`'da tanımlanması. ROADMAP.md henüz klasörde yok; zaman planı ve 04:30 kod dondurma kararı eklenince Karar Defteri'ne yazılacak.
+**Sıradaki adım:** ROADMAP Faz 0: Firebase bağlantısı (kullanıcı terminalden `flutterfire configure`; ardından `Firebase.initializeApp`, demo hesapları ve demo sınıfı). Faz 0'ın kalanı: Roboto + Lexend fontlarının `assets/fonts/`'a eklenmesi.
 
 **Bekleyen kararlar:** Yok — veri saklama, anlık iletişim, durum yönetimi ve içerik yükleme TRD.md ile karara bağlandı (K31–K34).
 
-**Blokaj:** Yok. Flutter 3.47.7 kurulu; `flutter analyze` temiz.
+**Blokaj:** Yok. Flutter 3.47.7 kurulu ve Flutter Web projesi oluşturuldu (K30 karşılandı); `flutter analyze` temiz.
 
 ## 2. İlerleme Gözlemi
 
@@ -34,7 +34,7 @@
 | Mock Veri Seti (42 öğrenci, K24) | mock_students.json | ✅ Uyarlandı — 2026-10-09 (K38) |
 | Proje Kuralları | CLAUDE.md | ✅ Tamamlandı — 2026-10-09 |
 | Teknik Gereksinimler | TRD.md | ✅ Tamamlandı — 2026-10-09 |
-| Görev Planı | ROADMAP.md | ⏳ Yazıldı, klasöre eklenecek |
+| Görev Planı | ROADMAP.md | ✅ Tamamlandı — 2026-10-09 |
 | Ajan Kural Dosyaları | .claude/rules/ | ⬜ Başlanmadı |
 | Git deposu ve GitHub | github.com/esilaysari/hackathon | ✅ Kuruldu (commit'leri kullanıcı atar, K28) |
 | Öğrenci Portalı: Ağır Görev + Morphing + Story | — | ⬜ Başlanmadı (**öncelik 1**) |
@@ -86,6 +86,7 @@
 | K37 | 2026-10-09 | **Kimlik doğrulama:** Firebase Authentication, e-posta + şifre sağlayıcısı. Şifre Firestore'a yazılmaz; demo hesapları Auth'ta önceden oluşturulur (TRD T5). | K14 şifre istiyor; test modundaki açık Firestore'da şifre saklamak güvenli değil. TRD'nin eski "şifresiz" T5 maddesinin yerini alır. |
 | K38 | 2026-10-09 | **Mock veri uyarlaması:** Ekipten gelen `mock_students.json` sıfırdan yazılmak yerine uyarlandı: 42 kayıt (14/14/14 profil), `status`: `focused` / `attention` / `critical` (2 kritik, 5 dikkat), `completedTopics` yerine `topicScores` (0-100). | Mevcut dosya sağlamdı; yalnızca K17, K22 ve K24'e uyum gerekiyordu. K25'in yerini alır. |
 | K39 | 2026-10-09 | **Yayın:** `flutter build web` + Firebase Hosting (TRD T8). | Öğrenci telefonu gerçek bir URL'den açar; ayrı sunucu yok. |
+| K40 | 2026-10-09 | **Zaman planı:** Geliştirme ROADMAP.md'deki faz sırasına göre yürür (Faz 0–7, 2026-10-09 19:20 → 2026-10-10 06:30). **04:30 kod dondurma:** bu saatten sonra yeni özellik eklenmez, yalnızca demoyu bozan hatalar düzeltilir. **HSD Bounty pop-up'ı kapsam dışıdır;** akran desteği için yerine PeerSwarm "Eşleştir" (K22) kullanılır. | Sunum öncesi en az 2 saat prova ve teslim payı bırakmak; aynı ihtiyacı karşılayan iki özellik yazmamak. |
 
 ## 4. Bilinen Sorunlar ve Teknik Borç
 
@@ -130,3 +131,7 @@
   - Paketler: firebase_core, firebase_auth, cloud_firestore, provider, file_picker. `shared_preferences` ve `google_fonts` eklenmedi (K37, K29).
   - `lib/theme/tokens.dart` (DESIGN.md token'ları), `lib/strings.dart` iskeleti, sade `main.dart` (Cream-Base zemin + "EduSwarm") ve buna uygun widget testi yazıldı.
   - Doğrulama: `flutter analyze` → No issues found; `flutter test` → geçti; `flutter build web` → başarılı.
+- **2026-10-09 19:25 — ROADMAP.md Eklendi**
+  - ROADMAP.md (Faz 0–7, 04:30 kod dondurma) projeye eklendi ve İlerleme Gözlemi'nde tamamlandı olarak işaretlendi.
+  - K40 eklendi (zaman planı, kod dondurma, HSD Bounty kapsam dışı).
+  - Flutter blokajı kaldırıldı; sıradaki adım ROADMAP Faz 0: Firebase bağlantısı.
