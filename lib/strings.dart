@@ -141,7 +141,14 @@ abstract final class AppStrings {
   static const noGeneratedHints = 'Metinde eşleşme bulunamadı; genel ipuçları kullanılacak.';
   static const pdfNoText = "Bu PDF'ten metin okunamadı (taranmış olabilir). Metni yapıştırarak devam edebilirsin.";
   static const pptNotSupported = 'Eski .ppt biçimi desteklenmiyor. Lütfen .pptx olarak kaydedin.';
-  static const pptxImagesSkipped = 'Slaytlardaki görseller aktarılmadı.';
+  static const pdfImagesNotImported = "PDF'teki görseller aktarılmaz, görselli içerik için .pptx yükleyin.";
+  static String imagesImported(int n) => '$n görsel aktarıldı';
+  static String imagesFailed(int n) => '$n görsel aktarılamadı (tarayıcının açamadığı biçim ya da çok büyük).';
+  static const imagesPreparing = 'Görseller hazırlanıyor…';
+  static const slideImageAlt = 'Slayt görseli';
+  static String slideImageAltWithTitle(String title) => 'Slayt görseli: $title';
+  static const showImage = 'Görseli göster';
+  static const hideImage = 'Görseli gizle';
   static const pptxNoText = 'Bu sunumda okunabilir metin bulunamadı.';
   static const unsupportedFile = 'Bu dosya türü desteklenmiyor (PDF, .pptx, .md, .txt).';
   static String fileReadFailed(Object e) => 'Dosya okunamadı: $e';

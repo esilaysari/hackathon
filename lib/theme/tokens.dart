@@ -89,7 +89,8 @@ abstract final class AppLayout {
   static const storyProgressHeight = 4.0;
   static const storyProgressGap = 4.0; // Story ilerleme çubukları arası ince boşluk.
   static const storyCardHeightFactor = 0.5; // Story kartı en az ekran yüksekliğinin yarısı.
-  static const figureMaxHeight = 220.0; // Okuma ekranı şeması (Görsel profilde sınır yok, tam genişlik).
+  static const figureMaxHeight = 220.0; // Dislektik / açılmış Metinsel görsel (Görsel profilde tam genişlik).
+  static const thumbnailSize = AppSpacing.xl * 2; // Yükleme önizlemesindeki slayt görseli küçük resmi.
 }
 
 /// DESIGN.md §5 — Köşe yarıçapı.

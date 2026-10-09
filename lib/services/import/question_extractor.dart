@@ -9,10 +9,13 @@ import '../../models/lesson_draft.dart';
 ///   herhangi bir yerinde "Cevap Anahtarı" başlığı altında `1-B 2-C` / `1) B` / `1. B`.
 /// - Sorulara ve cevaplara ait satırlar metinden çıkarılır; kalan metin [ExtractedQuestions.text].
 class ExtractedQuestions {
-  const ExtractedQuestions({required this.text, required this.questions});
+  const ExtractedQuestions({required this.text, required this.questions, this.startLines = const []});
 
   final String text;
   final List<DraftQuestion> questions;
+
+  /// Her sorunun girdideki ilk satırı (slayt içe aktarmada sorunun slaydını bulmak için).
+  final List<int> startLines;
 }
 
 ExtractedQuestions extractQuestions(String input, {required QuestionType defaultType}) {
@@ -22,6 +25,7 @@ ExtractedQuestions extractQuestions(String input, {required QuestionType default
 
   final questions = <DraftQuestion>[];
   final numbers = <int>[];
+  final startLines = <int>[];
   _Block? block;
   var lastFinishedIndex = -1; // Az önce biten bloğun soru sırası (ayrı satırdaki cevap için).
 
@@ -40,6 +44,7 @@ ExtractedQuestions extractQuestions(String input, {required QuestionType default
       type: defaultType,
     ));
     numbers.add(b.number);
+    startLines.add(b.lines.first);
     lastFinishedIndex = questions.length - 1;
   }
 
@@ -108,7 +113,7 @@ ExtractedQuestions extractQuestions(String input, {required QuestionType default
     for (var i = 0; i < lines.length; i++)
       if (!consumed[i]) lines[i].trimRight(),
   ].join('\n').replaceAll(RegExp(r'\n{3,}'), '\n\n').trim();
-  return ExtractedQuestions(text: remaining, questions: questions);
+  return ExtractedQuestions(text: remaining, questions: questions, startLines: startLines);
 }
 
 class _Block {

@@ -54,7 +54,7 @@ void main() {
         final images = [
           for (final c in lesson.storyCards!)
             if (c.image != null) c.image!,
-          for (final f in lesson.figures) f.image,
+          for (final f in lesson.figures) f.image!,
         ];
         for (final path in images) {
           expect(File(path).existsSync(), isTrue, reason: path);

@@ -139,7 +139,11 @@ class TaskView extends StatelessWidget {
             for (final figure in lesson.figures.where((f) => f.afterParagraph == i))
               Padding(
                 padding: const EdgeInsets.only(bottom: AppSpacing.md),
-                child: LessonFigureView(figure: figure, style: style),
+                child: ProfileImages(
+                  key: ObjectKey(figure),
+                  pictures: LessonPicture.ofFigure(figure, lesson.images),
+                  style: style,
+                ),
               ),
           ],
         ],
@@ -151,6 +155,10 @@ class TaskView extends StatelessWidget {
     final body = ProfileStyle.body(style);
     final total = lesson.questions.length;
     final chain = hintChain;
+    final pictures = LessonPicture.ofQuestion(question, lesson.images);
+    // Görsel profilde slayt görseli sorunun önünde ve öne çıkarılmış; diğerlerinde soru metninin altında (K54).
+    final imagesFirst = style == LearningStyle.visual;
+    final imageView = ProfileImages(key: ValueKey('images_${question.id}'), pictures: pictures, style: style);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -168,11 +176,13 @@ class TaskView extends StatelessWidget {
                 style: AppTextStyles.bodyLg.copyWith(color: AppColors.grey600),
               ),
               const SizedBox(height: AppSpacing.md),
+              if (imagesFirst && pictures.isNotEmpty) ...[imageView, const SizedBox(height: AppSpacing.md)],
               LessonText(question.text, style: body),
               if (question.code != null) ...[
                 const SizedBox(height: AppSpacing.sm),
                 CodeBlock(question.code!),
               ],
+              if (!imagesFirst && pictures.isNotEmpty) ...[const SizedBox(height: AppSpacing.sm), imageView],
               const SizedBox(height: AppSpacing.md),
               for (var i = 0; i < question.options.length; i++)
                 Padding(

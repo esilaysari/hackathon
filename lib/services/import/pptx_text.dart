@@ -6,19 +6,22 @@ import 'package:xml/xml.dart';
 
 /// Bir slaytın metni: başlık yer tutucusu ve diğer kutulardaki paragraflar (maddeler).
 class SlideText {
-  const SlideText({required this.title, required this.body});
+  const SlideText({required this.title, required this.body, this.images = const []});
 
   final String title;
   final List<String> body;
+
+  /// Slayttaki resimlerin `ppt/media/…` yolları (sırasıyla, tekrarsız).
+  final List<String> images;
 }
 
 class PptxText {
-  const PptxText({required this.slides, required this.hasImages});
+  const PptxText({required this.slides, this.media = const {}});
 
   final List<SlideText> slides;
 
-  /// Sunumda resim var mı (`ppt/media/`); resimler aktarılmaz, önizlemede not düşülür.
-  final bool hasImages;
+  /// Slaytlarda kullanılan resimlerin ham baytları (`ppt/media/…` yolu → bayt).
+  final Map<String, Uint8List> media;
 }
 
 /// .pptx bir zip'tir; slaytlar `ppt/slides/slideN.xml`. Saf Dart, çalışma anında indirme yok.
@@ -27,13 +30,53 @@ PptxText readPptxText(Uint8List bytes) {
   final archive = ZipDecoder().decodeBytes(bytes);
   final slidePaths = _slideOrder(archive);
   if (slidePaths.isEmpty) throw const FormatException('Sunumda slayt bulunamadı');
+  final media = <String, Uint8List>{};
   return PptxText(
     slides: [
       for (final path in slidePaths)
-        if (_xml(archive, path) case final doc?) _readSlide(doc),
+        if (_xml(archive, path) case final doc?) _readSlide(doc, _slideImages(archive, path, doc, media)),
     ],
-    hasImages: archive.files.any((f) => f.isFile && f.name.startsWith('ppt/media/')),
+    media: media,
   );
+}
+
+/// Slayttaki resimler (K54): `p:pic` → `a:blip r:embed` → `ppt/slides/_rels/slideN.xml.rels`
+/// → `ppt/media/…`. Arka plan ve şablon (layout/master) resimleri `p:pic` olmadığı için
+/// alınmaz; dış bağlantılı resimler atlanır. Okunan baytlar [media]'ya eklenir.
+List<String> _slideImages(Archive archive, String slidePath, XmlDocument slide, Map<String, Uint8List> media) {
+  final slash = slidePath.lastIndexOf('/');
+  final rels = _xml(archive, '${slidePath.substring(0, slash)}/_rels/${slidePath.substring(slash + 1)}.rels');
+  if (rels == null) return const [];
+  final targets = {
+    for (final r in rels.findAllElements('Relationship'))
+      if (r.getAttribute('TargetMode') != 'External') r.getAttribute('Id'): r.getAttribute('Target'),
+  };
+  final paths = <String>[];
+  for (final picture in slide.findAllElements('p:pic')) {
+    final target = targets[picture.findAllElements('a:blip').firstOrNull?.getAttribute('r:embed')];
+    if (target == null) continue;
+    final path = _resolve(slidePath.substring(0, slash), target);
+    if (!path.startsWith('ppt/media/') || paths.contains(path)) continue;
+    final bytes = media[path] ?? archive.findFile(path)?.readBytes();
+    if (bytes == null) continue;
+    media[path] = bytes;
+    paths.add(path);
+  }
+  return paths;
+}
+
+/// İlişki hedefini zip içi yola çevirir: `../media/image1.png` → `ppt/media/image1.png`.
+String _resolve(String dir, String target) {
+  if (target.startsWith('/')) return target.substring(1);
+  final parts = dir.split('/');
+  for (final segment in target.split('/')) {
+    if (segment == '..') {
+      if (parts.isNotEmpty) parts.removeLast();
+    } else if (segment != '.' && segment.isNotEmpty) {
+      parts.add(segment);
+    }
+  }
+  return parts.join('/');
 }
 
 XmlDocument? _xml(Archive archive, String path) {
@@ -69,7 +112,7 @@ List<String> _slideOrder(Archive archive) {
 
 int _number(String path) => int.parse(RegExp(r'(\d+)\.xml$').firstMatch(path)!.group(1)!);
 
-SlideText _readSlide(XmlDocument doc) {
+SlideText _readSlide(XmlDocument doc, List<String> images) {
   final title = <String>[];
   final body = <String>[];
   for (final shape in doc.findAllElements('p:sp')) {
@@ -89,7 +132,7 @@ SlideText _readSlide(XmlDocument doc) {
       if (text.isNotEmpty) body.add(text);
     }
   }
-  return SlideText(title: title.join(' '), body: body);
+  return SlideText(title: title.join(' '), body: body, images: images);
 }
 
 /// PowerPoint'in otomatik numaraları (`a:buAutoNum`) metinde yazmaz; soru ayıklayıcı

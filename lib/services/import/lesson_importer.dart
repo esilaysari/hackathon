@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import '../../models/lesson.dart';
 import '../../models/lesson_draft.dart';
 import '../../strings.dart';
+import 'lesson_images.dart';
 import 'pdf_text.dart';
 import 'pptx_text.dart';
 import 'question_extractor.dart';
@@ -14,6 +15,8 @@ class ImportedContent {
     required this.content,
     this.storyCards,
     this.questions = const [],
+    this.figures = const [],
+    this.images,
     this.notes = const [],
     this.suggestedTitle,
   });
@@ -25,7 +28,14 @@ class ImportedContent {
   final List<StoryCard>? storyCards;
   final List<DraftQuestion> questions;
 
-  /// Önizlemede gösterilen bilgi notları (ör. "Slaytlardaki görseller aktarılmadı").
+  /// Slayt görsellerinin okuma ekranındaki yerleri (görselin slaydının son paragrafından sonra).
+  final List<LessonFigure> figures;
+
+  /// Kart/soru/şemaların başvurduğu ham slayt görselleri (`img1`, `img2`… → resim);
+  /// yalnızca .pptx'te dolu (boş da olabilir). Yüklemeden önce [ImageCompressor] ile küçültülür.
+  final Map<String, SourceImage>? images;
+
+  /// Önizlemede gösterilen bilgi notları (ör. PDF'te görsellerin aktarılmadığı).
   final List<String> notes;
   final String? suggestedTitle;
 }
@@ -71,7 +81,11 @@ abstract final class LessonImporter {
     }
     if (text.trim().isEmpty) throw const ImportException(AppStrings.pdfNoText);
     final extracted = extractQuestions(text, defaultType: defaultType);
-    return ImportedContent(content: paragraphize(extracted.text), questions: extracted.questions);
+    return ImportedContent(
+      content: paragraphize(extracted.text),
+      questions: extracted.questions,
+      notes: const [AppStrings.pdfImagesNotImported],
+    );
   }
 
   static ImportedContent _fromPptx(Uint8List bytes, QuestionType defaultType) {
@@ -86,37 +100,75 @@ abstract final class LessonImporter {
 
   /// Slaytlar tek metinde ayıklanır (cevap anahtarı başka slaytta olabilir), sonra kalan
   /// satırlar slaytlarına geri dağıtılır. Her slayt bir Story kartı: başlık → kart başlığı,
-  /// maddeler → kart metni. Yalnızca soru içeren slayt kart olmaz.
+  /// maddeler → kart metni. Yalnızca soru içeren slayt kart olmaz; yalnızca görsel içeren
+  /// slayt metinsiz bir kart olur. Slaydın görselleri karta, okuma ekranında slaydın son
+  /// paragrafının altına ve o slayttaki sorulara bağlanır (K54).
   static ImportedContent fromSlides(PptxText deck, {required QuestionType defaultType}) {
     const separator = '\u0000slide\u0000';
     final joined = deck.slides.map((s) => s.body.join('\n')).join('\n\n$separator\n\n');
     final extracted = extractQuestions(joined, defaultType: defaultType);
     final remainingBodies = extracted.text.split(separator);
 
+    // Aynı resim birden fazla slaytta kullanılsa da bir kez saklanır.
+    final ids = <String, String>{};
+    String idOf(String path) => ids.putIfAbsent(path, () => 'img${ids.length + 1}');
+    List<String> slideImages(int slide) => [for (final path in deck.slides[slide].images) idOf(path)];
+
     final cards = <StoryCard>[];
+    final figures = <LessonFigure>[];
     final content = StringBuffer();
+    var paragraphs = 0;
     for (var i = 0; i < deck.slides.length; i++) {
       final slide = deck.slides[i];
       final body = i < remainingBodies.length
           ? remainingBodies[i].split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty).toList()
           : <String>[];
       final title = slide.title.trim();
-      if (title.isEmpty && body.isEmpty) continue;
-      if (body.isEmpty && slide.body.isNotEmpty && title.isNotEmpty) continue; // Soru slaytı.
-      final heading = title.isNotEmpty ? title : body.first;
-      final bullets = title.isNotEmpty ? body : body.skip(1).toList();
-      cards.add(StoryCard(text: heading, subtitle: bullets.isEmpty ? null : bullets.map((b) => '• $b').join('\n')));
-      content.write('# $heading\n\n');
-      for (final b in bullets) {
-        content.write('$b\n\n');
+      final images = slideImages(i);
+      if (title.isEmpty && body.isEmpty) {
+        if (images.isEmpty) continue;
+        cards.add(StoryCard(text: '', imageIds: images)); // Yalnızca görsel içeren slayt.
+      } else {
+        if (body.isEmpty && slide.body.isNotEmpty && title.isNotEmpty) continue; // Soru slaytı.
+        final heading = title.isNotEmpty ? title : body.first;
+        final bullets = title.isNotEmpty ? body : body.skip(1).toList();
+        cards.add(StoryCard(
+          text: heading,
+          subtitle: bullets.isEmpty ? null : bullets.map((b) => '• $b').join('\n'),
+          imageIds: images,
+        ));
+        content.write('# $heading\n\n');
+        for (final b in bullets) {
+          content.write('$b\n\n');
+        }
+        paragraphs += 1 + bullets.length;
+      }
+      for (final id in images) {
+        figures.add(LessonFigure(
+          afterParagraph: paragraphs == 0 ? 0 : paragraphs - 1,
+          imageId: id,
+          alt: title.isEmpty ? AppStrings.slideImageAlt : AppStrings.slideImageAltWithTitle(title),
+        ));
       }
     }
     if (cards.isEmpty && extracted.questions.isEmpty) throw const ImportException(AppStrings.pptxNoText);
+
+    // Soru, ilk satırının bulunduğu slaydın görsellerini alır.
+    final joinedLines = joined.split('\n');
+    for (var q = 0; q < extracted.questions.length; q++) {
+      final slide = joinedLines.take(extracted.startLines[q]).where((l) => l == separator).length;
+      extracted.questions[q].imageIds.addAll(slideImages(slide));
+    }
+
     return ImportedContent(
       content: content.toString().trim(),
       storyCards: cards,
       questions: extracted.questions,
-      notes: [if (deck.hasImages) AppStrings.pptxImagesSkipped],
+      figures: figures,
+      images: {
+        for (final e in ids.entries)
+          e.value: SourceImage(bytes: deck.media[e.key]!, mimeType: SourceImage.mimeTypeOf(e.key)),
+      },
       suggestedTitle: deck.slides.map((s) => s.title.trim()).where((t) => t.isNotEmpty).firstOrNull,
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
@@ -19,6 +21,10 @@ abstract final class FirestoreService {
       _class(classId).collection('members');
   static CollectionReference<Map<String, dynamic>> _alerts(String classId) =>
       _class(classId).collection('alerts');
+
+  /// Slayt görselleri: ders belgesinin altında görsel başına bir belge (base64 JPEG, K54).
+  static CollectionReference<Map<String, dynamic>> _images(DocumentReference<Map<String, dynamic>> lesson) =>
+      lesson.collection('images');
 
   // --- Okuma -------------------------------------------------------------
 
@@ -44,9 +50,17 @@ abstract final class FirestoreService {
   static Stream<QuerySnapshot<Map<String, dynamic>>> watchLessons(String classId) =>
       _class(classId).collection('lessons').snapshots();
 
+  /// Ders belgesi + (varsa) `images/{id}` belgelerindeki slayt görselleri.
   static Future<Lesson> loadLesson(String classId, String lessonId) async {
-    final doc = await _class(classId).collection('lessons').doc(lessonId).get();
-    return Lesson.fromJson(doc.data()!);
+    final ref = _class(classId).collection('lessons').doc(lessonId);
+    final data = (await ref.get()).data()!;
+    final lesson = Lesson.fromJson(data);
+    if (parseImageIds(data['imageIds']).isEmpty) return lesson;
+    final images = await _images(ref).get();
+    return lesson.withImages({
+      for (final doc in images.docs)
+        if (doc.data()['data'] case final String base64) doc.id: Uint8List.fromList(base64Decode(base64)),
+    });
   }
 
   static Future<({String fullName, LearningStyle? learningStyle})> loadProfile(String uid) async {
@@ -152,21 +166,46 @@ abstract final class FirestoreService {
     return classId;
   }
 
-  /// "Dersi Gönder" (TRD §4.4 madde 6): ders belgesi + sınıfın `activeLessonId`'si.
-  /// Öğrencinin "Derslerim" listesi `lessons`'ı canlı dinler. Hata çağırana iletilir.
+  /// "Dersi Gönder" (TRD §4.4 madde 6): önce slayt görselleri (her biri ayrı belge; tek
+  /// batch'in 10 MiB istek sınırına takılmasın), sonra ders belgesi + sınıfın `activeLessonId`'si.
+  /// Öğrenci dersi görselleri yazıldıktan sonra görür. Hata çağırana iletilir; yarım kalan
+  /// görseller silinir.
   static Future<void> publishLesson(String classId, LessonDraft draft) async {
     final ref = _class(classId).collection('lessons').doc();
-    final batch = _db.batch()
-      ..set(ref, {...draft.toFirestore(ref.id), 'createdAt': FieldValue.serverTimestamp()})
-      ..update(_class(classId), {'activeLessonId': ref.id});
-    await batch.commit();
+    final written = <String>[];
+    try {
+      for (final entry in draft.images.entries) {
+        await _images(ref).doc(entry.key).set({
+          'data': entry.value.base64,
+          'mimeType': 'image/jpeg',
+          'width': entry.value.width,
+          'height': entry.value.height,
+        });
+        written.add(entry.key);
+      }
+      final batch = _db.batch()
+        ..set(ref, {...draft.toFirestore(ref.id), 'createdAt': FieldValue.serverTimestamp()})
+        ..update(_class(classId), {'activeLessonId': ref.id});
+      await batch.commit();
+    } catch (_) {
+      for (final id in written) {
+        await _safe('yarım görsel silindi → $id', () => _images(ref).doc(id).delete());
+      }
+      rethrow;
+    }
   }
 
-  /// Öğretmenin yüklediği dersi siler; öğrencilerin Derslerim listesi `lessons`'ı canlı
-  /// dinlediği için ders hemen kalkar. Hazır dersler asset'tir, burada yoktur. Hata çağırana iletilir.
+  /// Öğretmenin yüklediği dersi ve görsel belgelerini siler (Firestore alt koleksiyonları
+  /// kendiliğinden silmez). Öğrencilerin Derslerim listesi `lessons`'ı canlı dinlediği için
+  /// ders hemen kalkar. Hazır dersler asset'tir, burada yoktur. Hata çağırana iletilir.
   static Future<void> deleteLesson(String classId, String lessonId) async {
     final classRef = _class(classId);
-    final batch = _db.batch()..delete(classRef.collection('lessons').doc(lessonId));
+    final lessonRef = classRef.collection('lessons').doc(lessonId);
+    final images = await _images(lessonRef).get();
+    final batch = _db.batch()..delete(lessonRef);
+    for (final image in images.docs) {
+      batch.delete(image.reference);
+    }
     if ((await classRef.get()).data()?['activeLessonId'] == lessonId) {
       batch.update(classRef, {'activeLessonId': null});
     }

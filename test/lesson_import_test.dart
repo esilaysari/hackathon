@@ -6,6 +6,7 @@ import 'dart:ui' show Rect;
 import 'package:archive/archive.dart';
 import 'package:eduswarm/models/lesson.dart';
 import 'package:eduswarm/models/lesson_draft.dart';
+import 'package:eduswarm/services/import/lesson_images.dart';
 import 'package:eduswarm/services/import/lesson_importer.dart';
 import 'package:eduswarm/services/import/question_extractor.dart';
 import 'package:eduswarm/strings.dart';
@@ -93,6 +94,8 @@ c) z''';
       expect(imported.content, contains('Arrays store items in order.'));
       expect(imported.questions, hasLength(1));
       expect(imported.questions.single.correctIndex, 0);
+      expect(imported.notes, [AppStrings.pdfImagesNotImported]);
+      expect(imported.images, isNull);
     });
 
     test('Türkçe karakterler (gömülü TrueType yazı tipi) korunur', () {
@@ -114,7 +117,7 @@ c) z''';
   });
 
   group('PPTX', () {
-    test('Her slayt bir kart; soru slaytı kart olmaz; otomatik numaralar okunur; görsel notu', () {
+    test('Her slayt bir kart; soru slaytı kart olmaz; otomatik numaralar okunur', () {
       final bytes = _pptx([
         _slide('Pointer nedir?', [_p('Adres tutan değişkendir.'), _p('* ile değere ulaşılır.')]),
         _slide('Soru', [
@@ -131,8 +134,65 @@ c) z''';
       expect(imported.storyCards!.single.subtitle, '• Adres tutan değişkendir.\n• * ile değere ulaşılır.');
       expect(imported.questions.single.options, ['Değeri', 'Adresi', 'Tipi']);
       expect(imported.questions.single.correctIndex, 1);
-      expect(imported.notes, [AppStrings.pptxImagesSkipped]);
+      // Slaytta p:pic yoksa ppt/media'daki dosya alınmaz.
+      expect(imported.images, isEmpty);
+      expect(imported.notes, isEmpty);
       expect(imported.suggestedTitle, 'Pointer nedir?');
+    });
+
+    test('Görseller slayt ilişkilerinden bulunur ve kart/soru/şemaya bağlanır', () {
+      final bytes = _pptx(
+        [
+          _slide('Bellek', [_p('Kutucuklar.')], pictures: ['rId2'], background: 'rId3'),
+          _slide('', [], pictures: ['rId2']),
+          _slide('Soru', [
+            _p('1. Pointer neyi saklar?'),
+            _p('a) Değeri'),
+            _p('b) Adresi'),
+            _p('c) Tipi'),
+            _p('Cevap: b'),
+          ], pictures: ['rId2']),
+          _slide('Son', [_p('Bitti.')], pictures: ['rId4']),
+        ],
+        rels: {
+          1: {'rId2': '../media/image1.png', 'rId3': '../media/bg.png'},
+          2: {'rId2': '../media/image2.jpeg'},
+          3: {'rId2': '../media/image1.png'},
+          4: {'rId4': 'https://example.com/x.png'},
+        },
+        media: ['image1.png', 'image2.jpeg', 'bg.png'],
+      );
+      final imported = LessonImporter.import('ders.pptx', bytes, defaultType: _type);
+      final cards = imported.storyCards!;
+      expect([for (final c in cards) c.text], ['Bellek', '', 'Son']);
+      expect([for (final c in cards) c.imageIds], [
+        ['img1'],
+        ['img2'],
+        <String>[],
+      ]);
+      // Aynı resim iki slaytta: tek görsel; arka plan ve dış bağlantı alınmaz.
+      expect(imported.images!.keys, ['img1', 'img2']);
+      expect(imported.images!['img1']!.mimeType, 'image/png');
+      expect(imported.images!['img2']!.mimeType, 'image/jpeg');
+      expect(imported.questions.single.imageIds, ['img1']);
+      expect([for (final f in imported.figures) (f.imageId, f.afterParagraph)], [('img1', 1), ('img2', 1)]);
+
+      // Yalnızca küçültülebilen görsellerin id'leri ders belgesine yazılır.
+      final draft = LessonDraft(
+        title: 'Bellek',
+        content: imported.content,
+        storyCards: cards,
+        questions: imported.questions..single.correctIndex = 1,
+        figures: imported.figures,
+        images: {'img1': CompressedImage(base64: 'AAAA', width: 4, height: 3)},
+      );
+      final json = draft.toFirestore('abc');
+      expect(json['imageIds'], ['img1']);
+      expect((json['storyCards'] as List)[1].containsKey('imageIds'), isFalse);
+      final lesson = Lesson.fromJson(json);
+      expect(lesson.storyCards!.first.imageIds, ['img1']);
+      expect(lesson.questions.single.imageIds, ['img1']);
+      expect(lesson.figures.single.imageId, 'img1');
     });
 
     test('.ppt reddedilir', () {
@@ -174,18 +234,38 @@ Uint8List _pdf(List<String> lines, {PdfFont? font}) {
 String _p(String text, {String? autoNum}) =>
     '<a:p>${autoNum == null ? '' : '<a:pPr><a:buAutoNum type="$autoNum"/></a:pPr>'}<a:r><a:t>$text</a:t></a:r></a:p>';
 
-String _slide(String title, List<String> paragraphs) => '''
-<p:sld xmlns:p="p" xmlns:a="a"><p:cSld><p:spTree>
-<p:sp><p:nvSpPr><p:nvPr><p:ph type="title"/></p:nvPr></p:nvSpPr><p:txBody>${_p(title)}</p:txBody></p:sp>
+/// [pictures]: slayttaki `p:pic` resimlerinin ilişki id'leri; [background]: `p:bg` resmi.
+String _slide(String title, List<String> paragraphs, {List<String> pictures = const [], String? background}) => '''
+<p:sld xmlns:p="p" xmlns:a="a" xmlns:r="r"><p:cSld>
+${background == null ? '' : '<p:bg><p:bgPr><a:blipFill><a:blip r:embed="$background"/></a:blipFill></p:bgPr></p:bg>'}
+<p:spTree>
+${title.isEmpty ? '' : '<p:sp><p:nvSpPr><p:nvPr><p:ph type="title"/></p:nvPr></p:nvSpPr><p:txBody>${_p(title)}</p:txBody></p:sp>'}
 <p:sp><p:nvSpPr><p:nvPr><p:ph idx="1"/></p:nvPr></p:nvSpPr><p:txBody>${paragraphs.join()}</p:txBody></p:sp>
+${pictures.map((id) => '<p:pic><p:blipFill><a:blip r:embed="$id"/></p:blipFill></p:pic>').join()}
 </p:spTree></p:cSld></p:sld>''';
 
-Uint8List _pptx(List<String> slides, {bool withImage = false}) {
+/// [rels]: slayt numarası (1'den) → ilişki id'si → hedef; `http` hedefleri dış bağlantıdır.
+Uint8List _pptx(
+  List<String> slides, {
+  bool withImage = false,
+  Map<int, Map<String, String>> rels = const {},
+  List<String> media = const [],
+}) {
   final archive = Archive();
   void add(String name, String text) => archive.addFile(ArchiveFile.bytes(name, utf8.encode(text)));
   for (var i = 0; i < slides.length; i++) {
     add('ppt/slides/slide${i + 1}.xml', slides[i]);
   }
+  for (final MapEntry(key: slide, value: targets) in rels.entries) {
+    add('ppt/slides/_rels/slide$slide.xml.rels', '''
+<Relationships xmlns="r">${[
+      for (final MapEntry(key: id, value: target) in targets.entries)
+        '<Relationship Id="$id" Target="$target"${target.startsWith('http') ? ' TargetMode="External"' : ''}/>',
+    ].join()}</Relationships>''');
+  }
   if (withImage) archive.addFile(ArchiveFile.bytes('ppt/media/image1.png', [1, 2, 3]));
+  for (final name in media) {
+    archive.addFile(ArchiveFile.bytes('ppt/media/$name', [1, 2, 3]));
+  }
   return Uint8List.fromList(ZipEncoder().encode(archive));
 }

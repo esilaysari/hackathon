@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../models/lesson.dart';
 import '../../models/lesson_draft.dart';
 import '../../services/firestore_service.dart';
+import '../../services/import/lesson_images.dart';
 import '../../services/import/lesson_importer.dart';
 import '../../strings.dart';
 import '../../theme/tokens.dart';
@@ -29,7 +30,13 @@ class _LessonUploadScreenState extends State<LessonUploadScreen> {
 
   String? _fileName;
   List<StoryCard>? _slides;
+  List<LessonFigure> _figures = const [];
   List<String> _notes = const [];
+
+  /// Sunumdaki görsel sayısı (yalnızca .pptx'te dolu) ve küçültülüp aktarılabilenler (K54).
+  int? _slideImageCount;
+  Map<String, CompressedImage> _images = const {};
+  bool _compressing = false;
   bool _reading = false;
   bool _sending = false;
   String? _error;
@@ -53,6 +60,8 @@ class _LessonUploadScreenState extends State<LessonUploadScreen> {
         content: _content.text,
         storyCards: _slides,
         questions: _questions,
+        figures: _figures,
+        images: _images,
       );
 
   Future<void> _pickFile() async {
@@ -64,9 +73,14 @@ class _LessonUploadScreenState extends State<LessonUploadScreen> {
     });
     try {
       final imported = LessonImporter.import(file.name, await file.readAsBytes(), defaultType: _defaultType);
+      final sourceImages = imported.images;
       setState(() {
         _fileName = file.name;
         _slides = imported.storyCards;
+        _figures = imported.figures;
+        _slideImageCount = sourceImages?.length;
+        _images = const {};
+        _compressing = sourceImages?.isNotEmpty ?? false;
         _notes = imported.notes;
         _content.text = imported.content;
         _questions
@@ -74,12 +88,21 @@ class _LessonUploadScreenState extends State<LessonUploadScreen> {
           ..addAll(imported.questions);
         if (_title.text.trim().isEmpty) _title.text = imported.suggestedTitle ?? _baseName(file.name);
       });
+      if (sourceImages != null && sourceImages.isNotEmpty) {
+        final images = await ImageCompressor.compressAll(sourceImages);
+        if (mounted && _fileName == file.name) setState(() => _images = images);
+      }
     } on ImportException catch (e) {
       setState(() => _error = e.message);
     } catch (e) {
       setState(() => _error = AppStrings.fileReadFailed(e));
     } finally {
-      if (mounted) setState(() => _reading = false);
+      if (mounted) {
+        setState(() {
+          _reading = false;
+          _compressing = false;
+        });
+      }
     }
   }
 
@@ -88,6 +111,9 @@ class _LessonUploadScreenState extends State<LessonUploadScreen> {
   void _removeFile() => setState(() {
         _fileName = null;
         _slides = null;
+        _figures = const [];
+        _slideImageCount = null;
+        _images = const {};
         _notes = const [];
         _content.clear();
       });
@@ -153,6 +179,7 @@ class _LessonUploadScreenState extends State<LessonUploadScreen> {
                   fileName: _fileName,
                   reading: _reading,
                   onPick: _reading ? null : _pickFile,
+                  status: _compressing ? AppStrings.imagesPreparing : null,
                   onRemove: _removeFile,
                 ),
                 const SizedBox(height: AppSpacing.md),
@@ -209,6 +236,10 @@ class _LessonUploadScreenState extends State<LessonUploadScreen> {
                     style: AppTextStyles.bodyLg.copyWith(fontWeight: FontWeight.w700),
                   ),
                   for (final note in _notes) Text(note, style: AppTextStyles.bodyLg),
+                  if (_compressing)
+                    const Text(AppStrings.imagesPreparing, style: AppTextStyles.bodyLg)
+                  else if (_slideImageCount != null)
+                    _ImportedImages(images: _images, failed: _slideImageCount! - _images.length),
                   if (draft.content.trim().isNotEmpty || draft.questions.isNotEmpty)
                     _GeneratedHints(hints: draft.generatedHints, questionCount: draft.questions.length),
                 ],
@@ -219,7 +250,7 @@ class _LessonUploadScreenState extends State<LessonUploadScreen> {
           const SizedBox(height: AppSpacing.md),
           PrimaryButton(
             label: _sending ? AppStrings.sending : AppStrings.sendLesson,
-            onPressed: _sending || _reading ? null : _send,
+            onPressed: _sending || _reading || _compressing ? null : _send,
           ),
         ],
       ),
@@ -229,10 +260,19 @@ class _LessonUploadScreenState extends State<LessonUploadScreen> {
 
 /// Kesikli Lilac-300 kenarlıklı yükleme alanı (radius-lg); seçilen dosya kart olarak görünür.
 class _UploadZone extends StatelessWidget {
-  const _UploadZone({required this.fileName, required this.reading, required this.onPick, required this.onRemove});
+  const _UploadZone({
+    required this.fileName,
+    required this.reading,
+    required this.onPick,
+    required this.onRemove,
+    this.status,
+  });
 
   final String? fileName;
   final bool reading;
+
+  /// Okuma sürerken gösterilen durum (ör. "Görseller hazırlanıyor…").
+  final String? status;
   final VoidCallback? onPick;
   final VoidCallback onRemove;
 
@@ -256,7 +296,7 @@ class _UploadZone extends StatelessWidget {
                     const Icon(Icons.upload_file_rounded, color: AppColors.lilac700, size: AppSpacing.xl),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      reading ? AppStrings.readingFile : AppStrings.uploadDropText,
+                      reading ? status ?? AppStrings.readingFile : AppStrings.uploadDropText,
                       style: AppTextStyles.bodyLg,
                       textAlign: TextAlign.center,
                     ),
@@ -334,6 +374,45 @@ class _SlideList extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
+      ],
+    );
+  }
+}
+
+/// "x görsel aktarıldı" + küçük resimler; aktarılamayanlar ayrıca belirtilir (K54).
+class _ImportedImages extends StatelessWidget {
+  const _ImportedImages({required this.images, required this.failed});
+
+  final Map<String, CompressedImage> images;
+  final int failed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(AppStrings.imagesImported(images.length), style: AppTextStyles.bodyLg),
+        if (failed > 0) Text(AppStrings.imagesFailed(failed), style: AppTextStyles.bodyLg),
+        if (images.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              for (final image in images.values)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppRadius.md),
+                  child: Image.memory(
+                    image.bytes,
+                    width: AppLayout.thumbnailSize,
+                    height: AppLayout.thumbnailSize,
+                    fit: BoxFit.cover,
+                    semanticLabel: AppStrings.slideImageAlt,
+                  ),
+                ),
+            ],
+          ),
+        ],
       ],
     );
   }

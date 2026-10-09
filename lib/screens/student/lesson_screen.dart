@@ -430,6 +430,7 @@ class _LessonScreenState extends State<LessonScreen> {
     return StoryView(
       key: const ValueKey('story'),
       cards: _storyCards,
+      images: _lesson!.images,
       index: _storyIndex,
       style: _style,
       onAdvance: () => setState(() => _storyIndex++),
