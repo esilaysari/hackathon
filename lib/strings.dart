@@ -42,6 +42,7 @@ abstract final class AppStrings {
   static const kvkkDetailsText =
       'EduSwarm bir prototiptir. Öğrenme stilin ve ders sırasındaki özet etkileşim bilgilerin (ör. hareketsiz kalınan süre) yalnızca öğretmeninin sana zamanında yardım edebilmesi için kullanılır. Ham veriler gösterilmez, üçüncü kişilerle paylaşılmaz.';
   static const close = 'Kapat';
+  static const cancel = 'Vazgeç';
   static const demoTeacher = 'Demo Öğretmen olarak gir';
   static const demoStudent = 'Demo Öğrenci olarak gir';
   static const requiredField = 'Bu alanı doldur';
@@ -128,6 +129,11 @@ abstract final class AppStrings {
   static const questionsIncomplete =
       'Bazı sorular eksik: her soruda metin, 3-4 dolu şık ve işaretli doğru cevap olmalı.';
   static const lessonSent = 'Ders gönderildi; öğrencilerin Derslerim listesinde.';
+  static const uploadedLessonsTitle = 'Yüklediğin dersler';
+  static const noUploadedLessons = 'Bu sınıfa henüz ders yüklemedin.';
+  static const deleteLesson = 'Sil';
+  static const deleteLessonConfirm = 'Bu dersi silmek istediğine emin misin?';
+  static const lessonDeleted = 'Ders silindi.';
   static const slidesTitle = 'Slaytlar';
   static const generatedHintsTitle = 'Üretilen Sokratik ipuçları';
   static const readingHintsLabel = 'Okuma ekranı ipuçları';
@@ -144,6 +150,7 @@ abstract final class AppStrings {
   static const myLessonsTitle = 'Derslerim';
   static const myLessonsLoading = 'Dersler yükleniyor…';
   static const noLessonsInClass = 'Bu sınıfta henüz ders yok.';
+  static const retakeLearningStyleTest = 'Öğrenme stilimi yeniden belirle';
   static const noClassesYet = 'Henüz bir sınıfa katılmadın. Öğretmeninin kodunu girerek katılabilirsin.';
   static String estimatedMinutes(int minutes) => '~$minutes dk';
   static const teacherLessonBadge = 'Öğretmeninden';

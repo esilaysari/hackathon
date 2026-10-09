@@ -55,7 +55,7 @@ class _LearningStyleTestScreenState extends State<LearningStyleTestScreen> {
       backgroundColor: AppColors.creamBase,
       appBar: AppBar(
         backgroundColor: AppColors.creamBase,
-        automaticallyImplyLeading: false,
+        foregroundColor: AppColors.grey900,
         title: const Text(AppStrings.testTitle, style: AppTextStyles.appBarTitle),
       ),
       body: FutureBuilder(
@@ -221,7 +221,11 @@ class _ResultView extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
         PrimaryButton(
           label: AppStrings.goToMyLessons,
-          onPressed: () => context.read<Session>().applyTestResult(result),
+          onPressed: () {
+            context.read<Session>().applyTestResult(result);
+            // Derslerim'den "yeniden belirle" ile açıldıysa geri dön.
+            if (Navigator.canPop(context)) Navigator.pop(context);
+          },
         ),
       ],
     );

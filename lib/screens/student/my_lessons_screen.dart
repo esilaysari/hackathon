@@ -10,6 +10,7 @@ import '../../strings.dart';
 import '../../theme/tokens.dart';
 import '../../widgets/app_buttons.dart';
 import '../classroom/join_class_screen.dart';
+import 'learning_style_test_screen.dart';
 import 'lesson_screen.dart';
 
 /// "Derslerim" (K50, K52): yalnızca öğrencinin katıldığı sınıfların dersleri, sınıf adı
@@ -46,16 +47,25 @@ class _MyLessonsScreenState extends State<MyLessonsScreen> {
             if (catalog == null || !userSnap.hasData) {
               return const Center(child: Text(AppStrings.myLessonsLoading, style: AppTextStyles.bodyLg));
             }
-            final classIds = AppUser.parseClassIds(userSnap.data!.data() ?? const {});
+            final userData = userSnap.data!.data() ?? const <String, dynamic>{};
+            final classIds = AppUser.parseClassIds(userData);
             return Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: AppLayout.studentMaxWidth),
                 child: ListView(
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   children: [
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: SecondaryButton(label: AppStrings.joinAnotherClass, onPressed: _joinClass),
+                    Wrap(
+                      alignment: WrapAlignment.end,
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: [
+                        SecondaryButton(
+                          label: AppStrings.retakeLearningStyleTest,
+                          onPressed: () => _retakeTest(AppUser.fromJson(widget.uid, userData)),
+                        ),
+                        SecondaryButton(label: AppStrings.joinAnotherClass, onPressed: _joinClass),
+                      ],
                     ),
                     if (classIds.isEmpty) ...[
                       const SizedBox(height: AppSpacing.lg),
@@ -77,6 +87,13 @@ class _MyLessonsScreenState extends State<MyLessonsScreen> {
       ),
     );
   }
+
+  /// Testi yeniden çözer (demo öğrenci dahil); sonuç `users/{uid}` ve tüm üyeliklere yazılır,
+  /// ders ekranı profili her açılışta okuduğu için sonraki derste hemen uygulanır.
+  void _retakeTest(AppUser user) => Navigator.push(
+        context,
+        MaterialPageRoute<void>(builder: (_) => LearningStyleTestScreen(user: user)),
+      );
 
   void _joinClass() => Navigator.push(
         context,

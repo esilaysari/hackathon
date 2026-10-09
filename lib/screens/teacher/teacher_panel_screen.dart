@@ -15,6 +15,7 @@ import '../../widgets/class_code_view.dart';
 import '../../widgets/form_widgets.dart';
 import '../../widgets/teacher/critical_list.dart';
 import '../../widgets/teacher/emergency_alert_card.dart';
+import '../../widgets/teacher/lesson_manager.dart';
 import '../../widgets/teacher/panel_card.dart';
 import '../../widgets/teacher/student_detail.dart';
 import '../../widgets/teacher/summary_strip.dart';
@@ -230,6 +231,8 @@ class _ClassPanelState extends State<_ClassPanel> {
       ),
       const SizedBox(height: AppSpacing.md),
       PanelCard(title: AppStrings.styleDistributionTitle, child: StyleDistribution(overview: overview)),
+      const SizedBox(height: AppSpacing.md),
+      PanelCard(title: AppStrings.uploadedLessonsTitle, child: LessonManager(classId: widget.classId)),
     ];
 
     return LayoutBuilder(

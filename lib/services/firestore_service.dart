@@ -162,6 +162,17 @@ abstract final class FirestoreService {
     await batch.commit();
   }
 
+  /// Öğretmenin yüklediği dersi siler; öğrencilerin Derslerim listesi `lessons`'ı canlı
+  /// dinlediği için ders hemen kalkar. Hazır dersler asset'tir, burada yoktur. Hata çağırana iletilir.
+  static Future<void> deleteLesson(String classId, String lessonId) async {
+    final classRef = _class(classId);
+    final batch = _db.batch()..delete(classRef.collection('lessons').doc(lessonId));
+    if ((await classRef.get()).data()?['activeLessonId'] == lessonId) {
+      batch.update(classRef, {'activeLessonId': null});
+    }
+    await batch.commit();
+  }
+
   // --- Öğrenci yazar -----------------------------------------------------
 
   /// Ders açıldığında üyelik belgesini sıfırlar (önceki oturumdan kalan Kritik silinir).
