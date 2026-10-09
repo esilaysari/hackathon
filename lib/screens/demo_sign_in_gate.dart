@@ -4,8 +4,8 @@ import '../services/auth_service.dart';
 import '../strings.dart';
 import '../theme/tokens.dart';
 
-/// Faz 5'teki giriş ekranına kadar: demo hesabıyla otomatik giriş yapar, ardından
-/// [builder]'a uid'yi verir.
+/// Demo kısayol adresleri (/#/teacher, /#/student, /#/student/demo): demo hesabıyla
+/// otomatik giriş yapar, ardından [builder]'a uid'yi verir (K42).
 class DemoSignInGate extends StatefulWidget {
   const DemoSignInGate({super.key, required this.email, required this.builder});
 

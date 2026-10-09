@@ -17,6 +17,8 @@ class StudentSummary {
     this.stuckFor,
     this.interactionCount,
     this.idleSeconds,
+    this.studentStyle,
+    this.readingSupport = false,
   });
 
   /// [elapsed]: panel açıldığından beri geçen süre; mock takılma süresi de canlı aksın.
@@ -44,7 +46,7 @@ class StudentSummary {
     final style = data['learningStyle'] as String?;
     return StudentSummary(
       id: id,
-      displayName: data['displayName'] as String,
+      displayName: data['displayName'] as String? ?? '',
       learningStyle: style == null ? LearningStyle.textual : LearningStyle.fromJson(style),
       status: status,
       topicTitle: data['currentTopicTitle'] as String? ?? '',
@@ -56,6 +58,8 @@ class StudentSummary {
           : null,
       interactionCount: data['interactionCount'] as int?,
       idleSeconds: idleSeconds,
+      studentStyle: data['studentStyle'] as String?,
+      readingSupport: data['readingSupport'] as bool? ?? false,
     );
   }
 
@@ -75,6 +79,10 @@ class StudentSummary {
   final Duration? stuckFor;
   final int? interactionCount;
   final int? idleSeconds;
+
+  /// Öğrenme stili testindeki sonuç (`visual` | `readwrite` | `kinesthetic`); mock'ta yok.
+  final String? studentStyle;
+  final bool readingSupport;
 }
 
 /// Panelin özet şeridi, kritik listesi ve stil dağılımı (DESIGN.md §8.7).

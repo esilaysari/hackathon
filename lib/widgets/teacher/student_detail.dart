@@ -26,7 +26,9 @@ class StudentDetail extends StatelessWidget {
         Text(
           [
             AppStrings.learningStyleName(s.learningStyle),
-            s.topicTitle,
+            if (s.studentStyle != null) AppStrings.studentStyleName(s.studentStyle!),
+            if (s.readingSupport) AppStrings.readingSupportOn,
+            if (s.topicTitle.isNotEmpty) s.topicTitle,
             AppStrings.focusStateName(s.status),
             if (s.stuckFor != null) AppStrings.stuckFor(s.stuckFor!),
           ].join(' · '),

@@ -14,11 +14,11 @@
 
 ## 1. Devamlılık — Şu An Neredeyiz
 
-**Son güncelleme:** 2026-10-09 22:27
+**Son güncelleme:** 2026-10-09 23:10
 
 **Tamamlanan:** INTENT.md, DESIGN.md, CLAUDE.md, TRD.md ve bu dosya birbiriyle hizalandı (K14–K39). `mock_students.json` K24'e göre uyarlandı (42 öğrenci, K38). Proje klasöründe henüz uygulama kodu yok.
 
-**Sıradaki adım:** Kullanıcı hazır dersleri ve "Derslerim"i doğrulayacak. Ardından ROADMAP Faz 5: Giriş/Kayıt, öğrenme stili testi, sınıf kodu; Faz 5b: öğretmenin ders + soru yüklemesi (Firestore `lessons`, "Derslerim" bunu zaten okuyor).
+**Sıradaki adım:** Kullanıcı Faz 5a'yı (Giriş/Kayıt + öğrenme stili testi) tarayıcıda doğrulayacak. Ardından sınıf kodu ile katılma (şimdilik herkes `demo_class`'ta) ve Faz 5b: öğretmenin ders + soru yüklemesi. DESIGN §8.1–8.2 ve TRD §3.1/§4.4 güncellemeleri sonda toplu yapılacak (aşağıdaki Yol Günlüğü notuna bak).
 
 **Bekleyen kararlar:** Yok — veri saklama, anlık iletişim, durum yönetimi ve içerik yükleme TRD.md ile karara bağlandı (K31–K34).
 
@@ -41,7 +41,7 @@
 | Öğretmen Paneli: kritik liste + Acil Müdahale + Sunum Modu | lib/screens/teacher/, lib/widgets/teacher/ | ✅ Tamamlandı — 2026-10-09 (iki pencereyle doğrulandı) |
 | Sokratik Rehber + PeerSwarm önerisi | lib/widgets/socratic_bubble.dart, lib/services/socratic_session.dart | ✅ Tamamlandı — 2026-10-09 |
 | Hazır dersler (3) + "Derslerim" + şemalar | assets/content/lessons/, lib/screens/student/my_lessons_screen.dart | 🔄 Kod tamam, 32 test geçiyor; kullanıcının tarayıcı testi bekleniyor |
-| Kayıt, öğrenme stili testi, sınıf kodu, içerik yükleme | — | ⬜ Başlanmadı (öncelik 3) |
+| Kayıt, öğrenme stili testi, sınıf kodu, içerik yükleme | lib/screens/auth_screen.dart, home_gate.dart, student/learning_style_test_screen.dart | 🔄 Faz 5a kod tamam (37 test); sınıf kodu ve içerik yükleme bekliyor |
 | Sunum provası (Altın Senaryo) | — | ⬜ Başlanmadı |
 
 ## 3. Karar Defteri
@@ -193,3 +193,11 @@
   - `demo_lesson.json` ve `socratic_hints.json` silindi; `pubspec.yaml`'a `lessons/` ve üç görsel klasörü eklendi.
   - `content_parsing_test.dart` index'teki her dersi, zincirleri, görsel dosyalarını ve pubspec tanımlarını denetliyor. TRD §3.2, §4.5 (yeni), §5; DESIGN §8.4, §8.5, §8.9a (yeni) güncellendi. K50.
   - Doğrulama: `flutter analyze` temiz, 32 test geçti.
+- **2026-10-09 23:10 — Faz 5a: Giriş/Kayıt ve Öğrenme Stili Testi**
+  - `provider` eklendi (K34/K44 karşılandı): `services/session.dart` (`Session` ChangeNotifier: `AppUser`, `activeClassId`). `activeClassId` sınıf kodu gelene kadar sabit `demo_class`.
+  - `/` artık `HomeGate`: giriş yoksa `AuthScreen` (iki sekme, rol kartları, zorunlu KVKK + "Ayrıntılar", demo butonları); öğretmen → panel; öğrenci `learningStyle == null` → test, değilse "Derslerim". `/#/teacher`, `/#/student`, `/#/student/demo` aynen çalışıyor (`routes.dart`). `role_chooser_screen.dart` silindi.
+  - Test: `models/learning_style_test.dart` JSON'u aynen okur ve `scoring` + `presentationProfileMap` ile puanlar; giriş notu → 12 soru (ilerleme: "Soru n / 12", %, aşama etiketi, çubuk, "k soru kaldı"; "Tam olarak" şıkkında sorunun ikonu) → sonuç (stil kartı, okuma desteği kartı, dipnot, "Derslerime Git").
+  - Firestore: `users/{uid}` → `learningStyle` (sunum profili), `studentStyle`, `readingSupport`; aynı alanlar + `displayName` aktif sınıfın `members/{uid}` belgesine yazılır. Öğretmen detayında "Görsel öğrenen · Okuma desteği açık" görünür. Demo öğrenci (Dislektik) testi atlar (K26).
+  - **Toplu belge güncellemesi için (DESIGN/TRD):** DESIGN §8.2 "Soru 3 / 6" → 12 soru + oyunlaştırılmış ilerleme, sonuç butonu "Sınıfıma Katıl" → "Derslerime Git", aşama etiketi Mint-300 rozet, ölçek şıklarında ikon; TRD §3.1 `users` ve `members`'a `studentStyle`, `readingSupport`; TRD §4.4 madde 0 (geçici adresler) artık demo kısayolları. Test hata metinleri Warning-Soft kutuda, input hata kenarı Warning (sert kırmızı yok).
+  - Bilinen risk: test ikonları emoji; Flutter Web (CanvasKit) emoji fontunu internetten çeker, internetsiz demoda kutucuk görünebilir (T9 ile çelişki adayı).
+  - Doğrulama: `flutter analyze` temiz, 37 test geçti (`learning_style_test_test.dart` yeni, `widget_test.dart` Giriş/Kayıt'a uyarlandı), `flutter build web` başarılı. Tarayıcı testi kullanıcıda.

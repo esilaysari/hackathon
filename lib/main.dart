@@ -1,15 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'demo_accounts.dart';
 import 'firebase_options.dart';
+import 'routes.dart';
 import 'screens/demo_sign_in_gate.dart';
-import 'screens/role_chooser_screen.dart';
+import 'screens/home_gate.dart';
 import 'screens/student/demo_lesson_launcher.dart';
 import 'screens/student/my_lessons_screen.dart';
 import 'screens/teacher/teacher_panel_screen.dart';
 import 'services/mock_data_service.dart';
+import 'services/session.dart';
 import 'strings.dart';
 import 'theme/tokens.dart';
 
@@ -23,35 +26,40 @@ Future<void> main() async {
     debugPrint('Mock öğrenci sayısı: ${students.length}');
   }
 
-  runApp(const EduSwarmApp());
+  runApp(EduSwarmApp(session: Session()..restore()));
 }
 
 class EduSwarmApp extends StatelessWidget {
-  const EduSwarmApp({super.key});
+  const EduSwarmApp({super.key, required this.session});
+
+  final Session session;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppStrings.appTitle,
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: AppFonts.roboto, scaffoldBackgroundColor: AppColors.creamBase),
-      // /#/teacher, /#/student ("Derslerim") ve /#/student/demo (doğrudan demo dersi)
-      // demo hesaplarıyla otomatik giriş yapar (Faz 5'e kadar; K42, K50).
-      routes: {
-        '/': (_) => const RoleChooserScreen(),
-        RoleChooserScreen.teacherRoute: (_) => DemoSignInGate(
-              email: DemoAccounts.teacherEmail,
-              builder: (_) => const TeacherPanelScreen(classId: DemoAccounts.classId),
-            ),
-        RoleChooserScreen.studentRoute: (_) => DemoSignInGate(
-              email: DemoAccounts.studentEmail,
-              builder: (uid) => MyLessonsScreen(uid: uid, classId: DemoAccounts.classId),
-            ),
-        RoleChooserScreen.studentDemoRoute: (_) => DemoSignInGate(
-              email: DemoAccounts.studentEmail,
-              builder: (uid) => DemoLessonLauncher(uid: uid, classId: DemoAccounts.classId),
-            ),
-      },
+    return ChangeNotifierProvider.value(
+      value: session,
+      child: MaterialApp(
+        title: AppStrings.appTitle,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: AppFonts.roboto, scaffoldBackgroundColor: AppColors.creamBase),
+        // `/` Giriş/Kayıt ve rol yönlendirmesi. /#/teacher, /#/student ("Derslerim") ve
+        // /#/student/demo (doğrudan demo dersi) demo hesaplarıyla otomatik giriş yapar (K42, K50).
+        routes: {
+          AppRoutes.home: (_) => const HomeGate(),
+          AppRoutes.teacher: (_) => DemoSignInGate(
+                email: DemoAccounts.teacherEmail,
+                builder: (_) => const TeacherPanelScreen(classId: DemoAccounts.classId),
+              ),
+          AppRoutes.student: (_) => DemoSignInGate(
+                email: DemoAccounts.studentEmail,
+                builder: (uid) => MyLessonsScreen(uid: uid, classId: DemoAccounts.classId),
+              ),
+          AppRoutes.studentDemo: (_) => DemoSignInGate(
+                email: DemoAccounts.studentEmail,
+                builder: (uid) => DemoLessonLauncher(uid: uid, classId: DemoAccounts.classId),
+              ),
+        },
+      ),
     );
   }
 }

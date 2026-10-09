@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
+import '../models/learning_style_test.dart';
 import '../models/lesson.dart';
 import 'telemetry.dart';
 
@@ -44,6 +45,47 @@ abstract final class FirestoreService {
       fullName: '${data['firstName'] ?? ''} ${data['lastName'] ?? ''}'.trim(),
       learningStyle: style == null ? null : LearningStyle.fromJson(style),
     );
+  }
+
+  /// `users/{uid}` belgesinin tamamı (yoksa boş).
+  static Future<Map<String, dynamic>> loadUser(String uid) async =>
+      (await _db.collection('users').doc(uid).get()).data() ?? const {};
+
+  // --- Kayıt ve test -----------------------------------------------------
+
+  /// Kayıtta profil belgesi; şifre yazılmaz (TRD §3.1, K37). Hata çağırana iletilir.
+  static Future<void> createUser(
+    String uid, {
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String role,
+  }) =>
+      _db.collection('users').doc(uid).set({
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'role': role,
+        'learningStyle': null,
+        'kvkkConsent': true,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+
+  /// Test sonucu: `learningStyle` sunum profili, ayrıca öğrencinin stili ve okuma desteği.
+  /// Aynı alanlar aktif sınıftaki üyelik belgesine kopyalanır; öğretmen detayda görür.
+  static Future<void> saveTestResult(String uid, String classId, String displayName, TestResult result) async {
+    final fields = {
+      'learningStyle': result.profile.name,
+      'studentStyle': result.studentStyle,
+      'readingSupport': result.readingSupport,
+    };
+    await _db.collection('users').doc(uid).set(fields, SetOptions(merge: true));
+    await _safe('üyelik → $classId', () => _members(classId).doc(uid).set({
+          ...fields,
+          'displayName': displayName,
+          'status': FocusState.focused.name,
+          'joinedAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true)));
   }
 
   // --- Öğrenci yazar -----------------------------------------------------

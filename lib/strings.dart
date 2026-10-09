@@ -23,13 +23,60 @@ abstract final class AppStrings {
   static String shortDuration(Duration d) =>
       d.inSeconds < 60 ? '${d.inSeconds} sn' : '${d.inMinutes} dk';
 
-  // Giriş / Kayıt (DESIGN.md §8.1) — Faz 5'e kadar demo rol seçimi
-  static const roleTeacher = 'Öğretmen Paneli';
-  static const roleStudent = 'Öğrenci Portalı';
+  // Giriş / Kayıt (DESIGN.md §8.1)
   static const signingIn = 'Giriş yapılıyor…';
   static String signInFailed(Object error) => 'Giriş yapılamadı: $error';
+  static const tabSignIn = 'Giriş Yap';
+  static const tabRegister = 'Kayıt Ol';
+  static const firstName = 'Ad';
+  static const lastName = 'Soyad';
+  static const email = 'E-posta';
+  static const password = 'Şifre';
+  static const signInButton = 'Giriş Yap';
+  static const registerButton = 'Devam Et';
+  static const roleTeacherOption = 'Öğretmen';
+  static const roleStudentOption = 'Öğrenci';
+  static const kvkkConsent =
+      'Öğrenme stilimin ve platformdaki etkileşim verilerimin yalnızca bana yardım etmek amacıyla öğretmenimle paylaşılmasını kabul ediyorum.';
+  static const kvkkDetails = 'Ayrıntılar';
+  static const kvkkDetailsText =
+      'EduSwarm bir prototiptir. Öğrenme stilin ve ders sırasındaki özet etkileşim bilgilerin (ör. hareketsiz kalınan süre) yalnızca öğretmeninin sana zamanında yardım edebilmesi için kullanılır. Ham veriler gösterilmez, üçüncü kişilerle paylaşılmaz.';
+  static const close = 'Kapat';
+  static const demoTeacher = 'Demo Öğretmen olarak gir';
+  static const demoStudent = 'Demo Öğrenci olarak gir';
+  static const requiredField = 'Bu alanı doldur';
+  static const invalidEmail = 'Geçerli bir e-posta yaz';
+  static const shortPassword = 'Şifre en az 6 karakter olmalı';
+  static const chooseRole = 'Bir rol seç';
+  static const kvkkRequired = 'Devam etmek için onay kutusunu işaretle';
+  static const errorWrongCredentials = 'E-posta veya şifre hatalı.';
+  static const errorEmailInUse = 'Bu e-postayla zaten bir hesap var; Giriş Yap sekmesini dene.';
+  static const errorWeakPassword = 'Şifre çok zayıf; en az 6 karakter kullan.';
+  static const errorInvalidEmail = 'E-posta adresi geçersiz.';
+  static String errorGeneric(Object error) => 'Bir sorun oluştu: $error';
 
   // Öğrenme Stili Testi (DESIGN.md §8.2)
+  static const testTitle = 'Öğrenme Stili Testi';
+  static const testLoading = 'Test yükleniyor…';
+  static String testLoadFailed(Object error) => 'Test açılamadı: $error';
+  static const testStart = 'Teste Başla';
+  static const testNext = 'İleri';
+  static const testBack = 'Geri';
+  static const testFinish = 'Sonucu Gör';
+  static String testPercent(int percent) => '%$percent';
+  static String testRemaining(int n) => '$n soru kaldı';
+  static const testSaveFailed = 'Sonuç kaydedilemedi; bağlantını kontrol edip tekrar dene.';
+  static const testResultTitle = 'Senin öğrenme stilin';
+  static const goToMyLessons = 'Derslerime Git';
+
+  /// Öğretmen detayında öğrencinin test sonucu (stil anahtarları test dosyasındaki boyutlar).
+  static String studentStyleName(String key) => switch (key) {
+        'visual' => 'Görsel öğrenen',
+        'readwrite' => 'Okuyarak-yazarak öğrenen',
+        'kinesthetic' => 'Kinestetik öğrenen',
+        _ => key,
+      };
+  static const readingSupportOn = 'Okuma desteği açık';
 
   // Sınıf ve İçerik (DESIGN.md §8.3)
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
+import '../models/learning_style_test.dart';
 import '../models/lesson.dart';
 import '../models/lesson_catalog.dart';
 
@@ -22,4 +23,8 @@ abstract final class ContentService {
     final json = jsonDecode(raw) as Map<String, dynamic>;
     return json.map((key, value) => MapEntry(key, (value as List).cast<String>()));
   }
+
+  /// Öğrenme stili testi (DESIGN.md §8.2); sorular dosyadan aynen gelir.
+  static Future<LearningStyleTest> loadLearningStyleTest() async => LearningStyleTest.fromJson(
+      jsonDecode(await rootBundle.loadString('assets/content/learning_style_test.json')) as Map<String, dynamic>);
 }
