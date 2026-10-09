@@ -41,7 +41,7 @@ Sahnede gösterilecek ve tüm geliştirme ile provaların odaklanacağı tek uç
 4. Öğretmen dersi gönderir; öğrencinin ekranında içerik dislektik dostu biçimde ama hâlâ uzun bir metin olarak açılır.
 5. Öğrenci, öğretmenin soruya verdiği etikete göre belirlenen süre boyunca etkileşimde bulunmaz (odak kaybı simülasyonu). Sözel/görsel sorularda bu süre **30 saniye**, işlem gerektiren sorularda daha uzundur (ör. 60 saniye).
 6. Arayüz akıcı bir geçişle metni **Flashcard/Story** formatına dönüştürür ve Sokratik Rehber cevabı vermek yerine ilk ipucu sorusunu sorar.
-7. Aynı anda Öğretmen Panelinde ilgili öğrenci için **"Acil Müdahale"** uyarısı belirir; uyarıda yardım edebilecek bir akran önerisi (PeerSwarm) yer alır. Öğretmen tek tıkla akranı eşleştirir (iki öğrenciye de bildirim gider) veya öğrenciye kısa bir mesaj gönderir.
+7. Aynı anda Öğretmen Panelinde ilgili öğrenci için **"Acil Müdahale"** uyarısı belirir; uyarıda yardım edebilecek bir akran önerisi (PeerSwarm) yer alır. Öğretmen tek tıkla akranı eşleştirir (iki öğrenciye de bildirim gider). Öğrenciye destek mesajını öğretmen değil, sistem otomatik gönderir.
 
 > **Sunum Modu:** Jüri karşısında akışın uzamaması için Öğretmen Panelinde bir "Sunum Modu" anahtarı bulunur. Açıkken hareketsizlik eşiği tüm soru tiplerinde **5 saniyeye** iner; böylece odak kaybı adımı birkaç saniyede gösterilebilir. Kapalıyken gerçek eşikler (30 sn / 60 sn) geçerlidir.
 
@@ -56,11 +56,11 @@ Sahnede gösterilecek ve tüm geliştirme ile provaların odaklanacağı tek uç
    - **Görsel:** kart düzeni, ikonlar, renkli vurgular; içerikteki görseller öne çıkarılır.
    - **Metinsel:** klasik, başlıklı ve yoğun okuma düzeni.
 6. **Morphing UI:** Odak kaybı tespit edildiğinde arayüz, düz metinden Flashcard/Story formatına pürüzsüz bir geçiş yapar.
-7. **Davranışsal telemetri ve erken uyarı:** Öğrenci ekranındaki basit bir hareketsizlik sayacı (sözel/görsel sorularda 30 sn, işlem gerektiren sorularda daha uzun; ayarlanabilir, Sunum Modunda 5 sn) odak kaybını tespit eder ve uyarı **gerçek zamanlı** olarak Öğretmen Paneline düşer. Tıklama sayısı da telemetri olarak kaydedilir ve panelde görünür, ancak bu sürümde karar mantığını etkilemez.
+7. **Davranışsal telemetri ve erken uyarı:** Öğrenci ekranındaki basit bir hareketsizlik sayacı (sözel/görsel sorularda 30 sn, işlem gerektiren sorularda daha uzun; ayarlanabilir, Sunum Modunda 5 sn) odak kaybını tespit eder ve uyarı **gerçek zamanlı** olarak Öğretmen Paneline düşer. Tıklama sayısı da telemetri olarak kaydedilir ve öğretmen bir öğrenciyi seçtiğinde yalnızca özet olarak (ör. "12 etkileşim · 45 sn hareketsiz") görünür; bu sürümde karar mantığını etkilemez.
 8. **Ölçek gösterimi ve odak seviyeleri:** Sınıf, gerçek kullanıcılara ek olarak önceden hazırlanmış **40+ öğrencilik mock veri setiyle** çalışır. Her öğrencinin üç seviyeli bir odak durumu vardır: **Odakta**, **Dikkat** (hareketsizlik eşiğin yarısını aştı) ve **Kritik** (eşik aşıldı). Mock öğrenciler bu seviyelere dağıtılır; Öğretmen Panelinde yalnızca "Kritik" seviyedeki öğrenciler uyarı olarak listelenir.
-9. **Sokratik yaklaşım:** Simüle AI rehberi doğrudan cevap vermez. Her soru için önceden hazırlanmış 2-3 ipucundan oluşan bir **ipucu zinciri** vardır: öğrenci "Bir ipucu daha" isteyebilir veya bir cevap seçip doğru/yanlış geri bildirimi alabilir.
+9. **Sokratik yaklaşım:** Simüle AI rehberi doğrudan cevap vermez. Her soru için önceden hazırlanmış 2-3 ipucundan oluşan bir **ipucu zinciri** vardır. Öğrenci "Anlamadım" derse sıradaki ipucu gelir (ipuçları biterse akran desteği önerilir); "Anladım" derse kısa bir kontrol sorusu açılır, doğruysa durum "Odakta"ya döner, yanlışsa sıradaki ipucu verilir.
 10. **PeerSwarm (hafif sürüm):** Mock öğrencilerin her konu için bir başarı skoru vardır. Uyarıda, o konuda skoru en yüksek olan ve durumu "Odakta" olan akran önerilir. Öğretmen öneriyi tek tıkla onaylayarak eşleştirmeyi başlatabilir.
-11. **Öğretmen müdahalesi:** Öğretmen "Acil Müdahale" uyarısından akran eşleştirebilir veya öğrenciye kısa bir mesaj (teşvik notu) gönderebilir.
+11. **Öğretmen müdahalesi ve otomatik destek:** Öğretmen "Acil Müdahale" uyarısından akran eşleştirebilir. Destek mesajlarını sistem, öğrencinin durumuna göre otomatik gönderir (Morphing anında "içeriği kolaylaştırdım", kontrol sorusu doğru cevaplandığında tebrik); öğretmenin elle mesaj yazması gerekmez.
 
 ## Kapsam Dışı
 
