@@ -14,11 +14,11 @@
 
 ## 1. Devamlılık — Şu An Neredeyiz
 
-**Son güncelleme:** 2026-10-09 21:13
+**Son güncelleme:** 2026-10-09 22:27
 
 **Tamamlanan:** INTENT.md, DESIGN.md, CLAUDE.md, TRD.md ve bu dosya birbiriyle hizalandı (K14–K39). `mock_students.json` K24'e göre uyarlandı (42 öğrenci, K38). Proje klasöründe henüz uygulama kodu yok.
 
-**Sıradaki adım:** Kullanıcı Faz 3'ü iki pencereyle doğrulayacak (`/#/teacher` + `/#/student`). Ardından ROADMAP Faz 4: Sokratik Rehber + PeerSwarm (Eşleştir, bildirimler).
+**Sıradaki adım:** Kullanıcı hazır dersleri ve "Derslerim"i doğrulayacak. Ardından ROADMAP Faz 5: Giriş/Kayıt, öğrenme stili testi, sınıf kodu; Faz 5b: öğretmenin ders + soru yüklemesi (Firestore `lessons`, "Derslerim" bunu zaten okuyor).
 
 **Bekleyen kararlar:** Yok — veri saklama, anlık iletişim, durum yönetimi ve içerik yükleme TRD.md ile karara bağlandı (K31–K34).
 
@@ -38,8 +38,9 @@
 | Ajan Kural Dosyaları | .claude/rules/ | ⬜ Başlanmadı |
 | Git deposu ve GitHub | github.com/esilaysari/hackathon | ✅ Kuruldu (commit'leri kullanıcı atar, K28) |
 | Öğrenci Portalı: Ağır Görev + Morphing + Story | lib/screens/student/, lib/widgets/ | ✅ Tamamlandı — 2026-10-09 (tarayıcıda doğrulandı) |
-| Öğretmen Paneli: kritik liste + Acil Müdahale + Sunum Modu | lib/screens/teacher/, lib/widgets/teacher/ | 🔄 Kod tamam, testler geçiyor; kullanıcının iki pencere testi bekleniyor (**öncelik 1**) |
-| Sokratik Rehber + PeerSwarm önerisi | — | ⬜ Başlanmadı (öncelik 2) |
+| Öğretmen Paneli: kritik liste + Acil Müdahale + Sunum Modu | lib/screens/teacher/, lib/widgets/teacher/ | ✅ Tamamlandı — 2026-10-09 (iki pencereyle doğrulandı) |
+| Sokratik Rehber + PeerSwarm önerisi | lib/widgets/socratic_bubble.dart, lib/services/socratic_session.dart | ✅ Tamamlandı — 2026-10-09 |
+| Hazır dersler (3) + "Derslerim" + şemalar | assets/content/lessons/, lib/screens/student/my_lessons_screen.dart | 🔄 Kod tamam, 32 test geçiyor; kullanıcının tarayıcı testi bekleniyor |
 | Kayıt, öğrenme stili testi, sınıf kodu, içerik yükleme | — | ⬜ Başlanmadı (öncelik 3) |
 | Sunum provası (Altın Senaryo) | — | ⬜ Başlanmadı |
 
@@ -91,6 +92,12 @@
 | K42 | 2026-10-09 | **Geçici demo adresleri:** Faz 5'teki Giriş/Kayıt'a kadar `/#/teacher` demo öğretmen, `/#/student` demo öğrenci hesabıyla otomatik giriş yapar; `/` iki role bağlantı verir. Firebase Auth oturumu sekmeye özeldir (`Persistence.SESSION`). | İki rolü aynı tarayıcıda iki pencerede test edebilmek; varsayılan (LOCAL) kalıcılıkta oturum sekmeler arasında paylaşıldığı için iki pencere aynı hesaba düşerdi. |
 | K43 | 2026-10-09 | **Öğrenci → Firestore:** Her durum geçişinde `members/{uid}.status` yazılır; Kritik'te ayrıca `stuckSince`, `interactionCount`, `idleSeconds` (özet). Uyarı id'si `{uid}_{topicKey}`: bir derste en fazla bir açık uyarı. "Basitleştir" hiçbir şey yazmaz. Sunum Modu sınıf belgesinden canlı okunur, değişince sayaç yeni eşikle yeniden başlar. Profil `users/{uid}.learningStyle`'dan okunur; `DevConfig.learningStyleOverride` (varsayılan null) test için kalır. | K17, K23, K29'un teknik karşılığı; uyarı yağmurunu önlemek için sorgu yerine deterministik belge id'si. |
 | K44 | 2026-10-09 | **K34 ertelendi:** `provider` bu fazda kullanılmadı; rolü adres, uid'yi giriş katmanı veriyor. Giriş yapan kullanıcı ve aktif sınıf için `provider` Faz 5'teki Giriş/Kayıt ile eklenecek. Firestore verisi için `StreamBuilder` kullanılıyor. | Faz 3'te paylaşılacak uygulama durumu yok; gereksiz katmandan kaçınmak (Önce Basitlik). |
+| K45 | 2026-10-09 | **Soru ekranı akışı:** şık seç → "Kontrol Et" → "Doğru!" (Mint-300) / "Tekrar düşünelim" (Warning-Soft) → "İleri". Yanlışta doğru cevap gösterilmez; "İpucu al" o sorunun Sokratik zincirini açar ve öğretmene uyarı üretmez. Bitiş özeti ilk denemelere göre. Üstte ilerleme çubuğu ve aşamaya göre sakin bir destek cümlesi. | Öğrenciyi cevaba değil düşünmeye yönlendirmek; tekrar denemeye izin verirken skoru dürüst tutmak. |
+| K46 | 2026-10-09 | **Sokratik zincirler soru başına:** `socratic_hints.json` anahtarları `reading` + soru id'leri; zincir takılınan ekrana göre seçilir. İpuçları bitince baloncuk yalnızca bilgi verir ("öğretmenin seni eşleştirebilir"), Firestore'a yazmaz. Story'de kontrol sorusu doğruysa ve Kritik'ten gelindiyse durum Odakta + `topicScores` +10. | K20'nin "her soru için" ifadesiyle uyum; okuma ekranında takılan öğrenciye de zincir sunmak. TRD'deki "konu başına zincir" ifadesinin yerini alır. |
+| K47 | 2026-10-09 | **PeerSwarm panelde hesaplanır:** öneri `ClassOverview.suggestPeer` ile canlı seçilir (Odakta, takılan öğrenci değil, skoru en yüksek, eşitlikte gerçek önce); uyarı belgesine `suggestedPeer` yazılmaz. "Eşleştir" tek batch: uyarı kapanır, öğrenciye (ve gerçekse akrana) `notifications`; mock akran için yalnızca simülasyon (SnackBar + konsol). | Öneri her zaman güncel veriyle seçilsin; mock öğrencilerin cihazı yok. |
+| K48 | 2026-10-09 | **Canlı süre:** Panel saniyede bir yeniden çizilir. Takılma süresi = şimdi − `stuckSince` + `idleSeconds` (uyarıda `createdAt` + `idleSeconds`); ilk anda "0 sn" yerine eşik süresi görünür (Sunum Modunda 5 sn, normalde 30/60 sn). Mock süreler panel açıldıktan sonra akar. Saat farkından doğan negatif süre sıfırlanır. | Öğretmenin öğrencinin gerçekte ne kadar süredir zorlandığını görmesi. |
+| K49 | 2026-10-09 | **El yapımı içerik ve kod gösterimi:** Kullanıcı `demo_lesson.json` ve `socratic_hints.json`'u elle güncelledi; kod içeriğe uyarlandı, içerik değiştirilmedi. `storyCards` varsa Story bunları kullanır (subtitle, code), yoksa kural tabanlı bölme. `code` alanları Lilac-100 kod kutusunda, gömülü Roboto Mono ile (14px / Story 20px); `optionsAreCode` şık başına liste; ipuçlarındaki ters tırnaklar satır içi monospace. Sokratik baloncuk metinleri `messages`'tan; çözülünce "solved" + "solvedNext" 3 sn görünür, baloncuk kapanır, Story'de "Soruya Dön" hemen görünür. Ayrı tebrik bildirim kartı kaldırıldı (aynı mesaj iki kez çıkmasın). | Kod örneklerinin okunabilirliği; içerik ekibinin metinleri koda dokunmadan düzenleyebilmesi. |
+| K50 | 2026-10-09 | **Hazır dersler ve "Derslerim":** İçerik `assets/content/lessons/` altında: `index.json` (ders listesi, `socraticMessages`, `defaultSocratic`, `demoLessonKey: pointers`) + ders başına dosya (içerik, `figures`, `storyCards`, 5 soru, `socratic`). `demo_lesson.json` ve `socratic_hints.json` taşındı ve silindi. Öğrenci `/#/student`'ta "Derslerim"i görür (hazır dersler + öğretmenin Firestore dersleri birleşik, öğretmeninkiler üstte, sayı sabit değil); `/#/student/demo` doğrudan demo dersini açar. Seçilen dersin topicKey/başlığı durum, uyarı ve PeerSwarm'da kullanılır. Konuya özel zinciri olmayan derslerde `index.json`'daki genel üst-bilişsel zincir (kontrol sorusu yok → "Anladım" doğrudan Odakta). Şemalar ilgili paragrafın altında; Görsel profilde tam genişlik ve öne çıkarılmış, diğerlerinde en fazla 220px; alt metinler yalnızca ekran okuyucuya. Aşama cümleleri soru sayısına göre (ilk · yarıdan önce "Güzel gidiyorsun, devam et!" · yarıdan sonra · son). | Birden fazla ders ve öğretmen içeriği için ölçeklenebilir yapı; Altın Senaryo kısayolu korunur; şemalar zaten açıklama içerdiği için alt metin ekranı kalabalıklaştırmaz. |
 
 ## 4. Bilinen Sorunlar ve Teknik Borç
 
@@ -164,3 +171,25 @@
   - `models/student_summary.dart` (`ClassOverview`), `models/alert.dart`; `test/student_summary_test.dart` eklendi.
   - Acil Müdahale kartında 🚨 yerine Material ikon kullanıldı (emoji yazı tipi internetten iner); DESIGN §7 ve §8.8, TRD §3.1 ve §4.4 güncellendi. K34 Faz 5'e ertelendi (K44).
   - Doğrulama: `flutter analyze` temiz, 12 test geçti, `flutter build web` başarılı. İki pencere testi kullanıcıda.
+- **2026-10-09 21:50 — ROADMAP Faz 4: Sokratik Rehber ve PeerSwarm**
+  - Faz 3 kullanıcı tarafından iki pencereyle doğrulandı (İlerleme Gözlemi ✅).
+  - Soru ekranı: ilerleme çubuğu, aşama cümlesi, "Kontrol Et" → Doğru!/Tekrar düşünelim, "İpucu al", bitişte "3 sorudan 2'sini doğru yaptın" (Türkçe belirtme eki sayıya göre seçiliyor) — K45.
+  - `socratic_hints.json` (reading + q1–q3, 2-3 ipucu + farklı kontrol sorusu), `models/socratic.dart`, `services/socratic_session.dart`, `widgets/socratic_bubble.dart` (Story'de Morphing'den sonra belirir), `widgets/option_tile.dart` — K46.
+  - Öğrenci bildirim kartı `widgets/student_notification.dart` (5 sn); tebrik ve akran eşleştirme bildirimleri.
+  - PeerSwarm: `ClassOverview.suggestPeer`, Acil Müdahale kartında Mint-300 öneri + "Eşleştir", mock akran simülasyonu; "Gördüm" Grey-900 metin linki — K47.
+  - Faz 3 düzeltmeleri: saniyelik canlı süre (ilk anda eşik süresi), kritik satırlar tam genişlik/eşit yükseklik — K48.
+  - Doğrulama: `flutter analyze` temiz, 20 test geçti (`socratic_session_test`, `student_summary_test` genişletildi), `flutter build web` başarılı. İki pencere testi kullanıcıda.
+- **2026-10-09 22:06 — İçerik Uyarlaması: Story Kartları, Kod Kutuları, Sokratik Mesajlar**
+  - `models/lesson.dart` (`StoryCard`, `Question.code`, `optionsAreCode`), `models/socratic.dart` (`CheckQuestion.code`, `SocraticMessages`, `SocraticContent`), `widgets/code_block.dart`; `LessonText` ters tırnakları monospace gösteriyor.
+  - Roboto Mono (Regular, Medium) resmi googlefonts/RobotoMono deposundan bir kez indirilip `assets/fonts/`'a gömüldü (OFL lisansıyla).
+  - Story: `storyCards` + subtitle + kod kutusu; Sokratik çözülünce "Soruya Dön" hemen görünür. "Bu adımı kendin çözdün." metni kaldırıldı.
+  - `test/content_parsing_test.dart`: gerçek JSON dosyalarını ayrıştırarak içerik-kod uyumunu koruyor.
+  - DESIGN §3.3 (yeni), §8.5, §8.6, §8.9 ve TRD ders/ipucu şeması güncellendi; K49.
+  - Doğrulama: `flutter analyze` temiz, 23 test geçti.
+- **2026-10-09 22:27 — Hazır Dersler, "Derslerim" ve Görseller**
+  - Kullanıcı 3 hazır ders (pointers, logic_gates, binary_search) ve 12 görsel ekledi; içerik değiştirilmedi. `index.json`'a kullanıcının izniyle `defaultSocratic` (genel üst-bilişsel zincir) eklendi.
+  - Model: `LessonFigure`, `StoryCard.image/imageAlt`, `Lesson.figures/socratic`; `models/lesson_catalog.dart` (`LessonEntry`, `LessonCatalog`). Servis: `ContentService.loadCatalog/loadBundledLesson`, `LessonRepository`, `FirestoreService.watchLessons/loadLesson`.
+  - Ekranlar: `my_lessons_screen.dart` ("Derslerim"), `demo_lesson_launcher.dart` (`/#/student/demo`); `LessonScreen` seçilen dersi alır, geri dönüşte durum Odakta yazılır. `widgets/lesson_image.dart` (Story görseli + okuma şeması, Semantics).
+  - `demo_lesson.json` ve `socratic_hints.json` silindi; `pubspec.yaml`'a `lessons/` ve üç görsel klasörü eklendi.
+  - `content_parsing_test.dart` index'teki her dersi, zincirleri, görsel dosyalarını ve pubspec tanımlarını denetliyor. TRD §3.2, §4.5 (yeni), §5; DESIGN §8.4, §8.5, §8.9a (yeni) güncellendi. K50.
+  - Doğrulama: `flutter analyze` temiz, 32 test geçti.

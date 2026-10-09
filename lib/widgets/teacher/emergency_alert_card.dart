@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
 
 import '../../models/alert.dart';
+import '../../models/student_summary.dart';
 import '../../strings.dart';
 import '../../theme/tokens.dart';
 import '../app_buttons.dart';
 
 /// "Acil Müdahale" kartı (DESIGN.md §8.8): 400ms kayarak girer, bir kez hafifçe
-/// büyüyüp küçülür; sürekli yanıp sönmez. PeerSwarm önerisi Faz 4'te eklenecek.
+/// büyüyüp küçülür; sürekli yanıp sönmez. PeerSwarm önerisi ve "Eşleştir" içerir.
 class EmergencyAlertCard extends StatefulWidget {
-  const EmergencyAlertCard({super.key, required this.alert, required this.onSeen});
+  const EmergencyAlertCard({
+    super.key,
+    required this.alert,
+    required this.now,
+    required this.peer,
+    required this.onMatch,
+    required this.onSeen,
+  });
 
   final EmergencyAlert alert;
+
+  /// Panelin saniyelik sayacı; süre canlı aksın (K48).
+  final DateTime now;
+
+  /// Önerilen akran; uygun kimse yoksa öneri bölümü gizlenir.
+  final StudentSummary? peer;
+  final VoidCallback onMatch;
   final VoidCallback onSeen;
 
   @override
@@ -41,6 +56,7 @@ class _EmergencyAlertCardState extends State<EmergencyAlertCard> with SingleTick
   @override
   Widget build(BuildContext context) {
     final alert = widget.alert;
+    final peer = widget.peer;
     final card = Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
@@ -69,15 +85,43 @@ class _EmergencyAlertCardState extends State<EmergencyAlertCard> with SingleTick
             [
               alert.lessonTitle,
               AppStrings.learningStyleName(alert.learningStyle),
-              AppStrings.shortDuration(DateTime.now().difference(alert.createdAt)),
+              AppStrings.stuckFor(alert.stuckFor(widget.now)),
             ].join(' · '),
             style: AppTextStyles.bodyLg,
           ),
           const Text(AppStrings.alertSystemAction, style: AppTextStyles.bodyLg),
-          const SizedBox(height: AppSpacing.sm),
+          if (peer != null) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppSpacing.sm),
+              decoration: BoxDecoration(
+                color: AppColors.mint300,
+                borderRadius: BorderRadius.circular(AppRadius.md),
+              ),
+              child: Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                alignment: WrapAlignment.spaceBetween,
+                children: [
+                  Text(AppStrings.peerSuggestion(peer.displayName), style: AppTextStyles.bodyLg),
+                  PrimaryButton(label: AppStrings.matchPeer, onPressed: widget.onMatch),
+                ],
+              ),
+            ),
+          ],
+          // "Gördüm" küçük metin linki; Lilac-700 şeftali zeminde 4.5:1'i sağlamadığı için Grey-900.
           Align(
             alignment: Alignment.centerRight,
-            child: SecondaryButton(label: AppStrings.alertSeen, onPressed: widget.onSeen),
+            child: TextButton(
+              onPressed: widget.onSeen,
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.grey900,
+                textStyle: AppTextStyles.button.copyWith(decoration: TextDecoration.underline),
+              ),
+              child: const Text(AppStrings.alertSeen),
+            ),
           ),
         ],
       ),

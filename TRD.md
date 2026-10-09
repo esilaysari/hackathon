@@ -38,7 +38,8 @@ Bu doküman EduSwarm'ın **nasıl inşa edileceğini** tanımlar: hangi verinin 
          ◄──── bildirim (akran eşleştirme) ─────     (öğretmen yazar)
 
   Yerel JSON (uygulamayla paketlenir):
-  mock_students.json · learning_style_test.json · socratic_hints.json · demo_lesson.json · support_messages.json
+  mock_students.json · learning_style_test.json · support_messages.json
+  lessons/index.json + lessons/{topicKey}.json (hazır dersler) · images/lessons/{topicKey}/*.png
 ```
 
 ## 2. Veri: Ne Nerede Duruyor?
@@ -52,8 +53,8 @@ Bu doküman EduSwarm'ın **nasıl inşa edileceğini** tanımlar: hangi verinin 
 | Akran eşleştirme bildirimleri | Firestore | Öğretmenden öğrenciye anlık iletim |
 | 40+ mock öğrenci | `assets/mock/mock_students.json` | Ölçek gösterimi; değişmez |
 | Öğrenme stili testi soruları | `assets/content/learning_style_test.json` | Statik içerik |
-| Sokratik ipucu soruları | `assets/content/socratic_hints.json` | Simüle AI (gerçek LLM yok) |
-| Demo dersi ve soruları (yedek içerik) | `assets/content/demo_lesson.json` | Sunumda yükleme adımı aksarsa hazır içerik |
+| Hazır ders listesi, Sokratik mesajlar, genel zincir, demo dersi | `assets/content/lessons/index.json` | Ders sayısı sabit değil; liste dosyadan gelir (K50) |
+| Hazır dersler (içerik, şemalar, Story kartları, sorular, Sokratik zincirler) | `assets/content/lessons/{topicKey}.json` + `assets/images/lessons/{topicKey}/` | Uygulamayla paketlenir; Firestore'a yazılmaz |
 | Otomatik destek mesajları | `assets/content/support_messages.json` | Sistem gönderir, öğretmen değil (MEMORY K22) |
 
 ## 3. Veri Modelleri
@@ -103,7 +104,11 @@ Bu doküman EduSwarm'ın **nasıl inşa edileceğini** tanımlar: hangi verinin 
 | `title` | String | Ders başlığı |
 | `topicKey` | String | Sokratik ipuçlarıyla eşleşme anahtarı (ör. `pointers`; mock veriyle aynı sözlük) |
 | `content` | String | Ders metni (Markdown destekli düz metin); okuma ekranının eşiği her zaman 30 sn |
-| `questions` | List<Map> | `{ id, text, options[3-4], correctIndex, type }` — `type`: `verbal_visual` (30 sn) \| `computational` (60 sn); eşiği o an açık olan soru belirler (MEMORY K16) |
+| `storyCards` | List<Map> \| yok | İsteğe bağlı, elle hazırlanmış Story kartları: `{ text, subtitle?, code?, image?, imageAlt? }`. Yoksa içerik kural tabanlı bölünür (§4.2). Hazır derslerde var; öğretmenin yüklediği derslerde genellikle yok |
+| `figures` | List<Map> \| yok | Okuma ekranı şemaları: `{ afterParagraph, image, alt }` |
+| `socratic` | Map \| yok | Konuya özel zincirler (`reading`, soru id'leri); yoksa `index.json` → `defaultSocratic` kullanılır (K50) |
+| `summary`, `icon`, `estimatedMinutes` | String / String / Int \| yok | "Derslerim" kartı için isteğe bağlı; yoksa özet içeriğin ilk cümlesi, varsayılan ikon, süre gizli |
+| `questions` | List<Map> | `{ id, text, code?, options[3-4], optionsAreCode?, correctIndex, type }` — `code`: metnin altında kod kutusu (çok satırlı, `\n` ile); `optionsAreCode`: şık başına bool listesi (ör. `[true, true, true, false]`), monospace gösterim; `type`: `verbal_visual` (30 sn) \| `computational` (60 sn); eşiği o an açık olan soru belirler (MEMORY K16) |
 | `sentAt` | Timestamp | |
 
 **`classes/{classId}/alerts/{alertId}`** — `alertId` = `{studentId}_{topicKey}`: aynı öğrenci için bir derste en fazla bir açık uyarı (`seen == false`) olur; öğretmen "Gördüm" dedikten sonra aynı belge yeniden açılabilir (K43). Panel açık uyarıları `where('seen', isEqualTo: false)` ile dinler, sıralamayı istemcide yapar (bileşik indeks gerekmez).
@@ -113,7 +118,8 @@ Bu doküman EduSwarm'ın **nasıl inşa edileceğini** tanımlar: hangi verinin 
 | `studentId`, `studentName` | String | Kimlik `studentId` ile; `studentName` tam ad |
 | `learningStyle` | Enum | |
 | `lessonTitle` | String | |
-| `suggestedPeer` | Map \| null | `{ id, name, isMock }` — PeerSwarm önerisi |
+| `topicKey` | String | PeerSwarm önerisi için konu anahtarı |
+| `idleSeconds` | Int | Uyarı anındaki hareketsizlik süresi (sn); kart süresi = şimdi − `createdAt` + `idleSeconds` (K48) |
 | `createdAt` | Timestamp | |
 | `seen` | Bool | Öğretmen "Gördüm" ya da "Eşleştir" deyince true |
 | `matchedPeerId` | String \| null | Öğretmen "Eşleştir"e bastıysa önerilen akranın `id`'si |
@@ -182,7 +188,7 @@ Bu doküman EduSwarm'ın **nasıl inşa edileceğini** tanımlar: hangi verinin 
 
 **Mevcut veri seti (42 kayıt, MEMORY K24):** 14 Görsel · 14 Dislektik · 14 Metinsel; 2 `critical`, 5 `attention`, 35 `focused`. Konu anahtarları: `pointers`, `logic_gates`, `memory_allocation`, `data_structures`, `binary_search`, `system_calls`. Her konu için skoru 90'ın üzerinde en az bir `focused` öğrenci vardır (ör. `pointers` → Pelin Turan, 98).
 
-> **Önemli:** PeerSwarm önerisinin mock öğrencilerden gelebilmesi için Altın Senaryo'daki demo dersinin `topicKey`'i bu altı anahtardan biri olmalıdır (öneri: `pointers`). `socratic_hints.json`'da da aynı anahtar için bir ipucu zinciri bulunmalıdır.
+> **Önemli:** PeerSwarm önerisinin mock öğrencilerden gelebilmesi için bir dersin `topicKey`'i bu altı anahtardan biri olmalıdır. Üç hazır ders (`pointers`, `logic_gates`, `binary_search`) bu koşulu sağlar; öneriler sırasıyla Pelin Turan, Bahar Çetin, Nazlı Acar.
 
 Kurallar: isimler uydurmadır; başlangıçta yaklaşık 2 `critical` ve 5 `attention` bulunur (MEMORY K24) — demodaki gerçek öğrencinin uyarısı kalabalıkta kaybolmasın; her konu için yüksek skorlu en az bir `focused` öğrenci bulunur (PeerSwarm önerisi boş kalmasın); profil dağılımı dengelidir. Ham telemetri alanları (stres puanı, tıklama sayısı) bulunmaz.
 
@@ -204,33 +210,44 @@ Kurallar: isimler uydurmadır; başlangıçta yaklaşık 2 `critical` ve 5 `atte
 
 Hesaplama: en çok puan alan profil seçilir; eşitlikte sıralama `dyslexic` > `visual` > `textual` (en destekleyici mod öncelikli).
 
-**`assets/content/socratic_hints.json`** — `topicKey` başına 2-3 adımlı ipucu zinciri ve bir kontrol sorusu (MEMORY K20):
+**Hazır dersler — `assets/content/lessons/` (K50).** Eski `demo_lesson.json` ve `socratic_hints.json` bu yapıya taşındı ve silindi.
+
+`index.json` — ders listesi ve dersler arası ortak içerik:
 
 ```json
 {
-  "pointers": {
-    "hints": [
-      "Bir değişkenin değeri ile bellekte durduğu yer arasında sence ne fark var?",
-      "Bir adresi saklayan değişken, o adresteki değere nasıl ulaşıyor olabilir?",
-      "`*p` ile `&x` yazdığında bilgisayardan farklı olarak ne istiyorsun?"
-    ],
-    "check": {
-      "text": "`int x = 5; int *p = &x;` ise `*p` neyi verir?",
-      "options": ["x'in adresini", "5 değerini", "p'nin adresini"],
-      "correctIndex": 1
-    }
-  },
-  "_default": {
-    "hints": [
-      "Bu metindeki en önemli kelime sence hangisi?",
-      "O kelimeyi kendi cümlenle anlatmaya çalışır mısın?"
-    ],
-    "check": null
+  "demoLessonKey": "pointers",
+  "lessons": [
+    { "topicKey": "pointers", "file": "assets/content/lessons/pointers.json", "title": "C: Pointer'lar",
+      "summary": "…", "icon": "memory", "estimatedMinutes": 10 }
+  ],
+  "socraticMessages": { "solved": "…", "solvedNext": "…", "wrongCheck": "…", "hintsExhausted": "…" },
+  "defaultSocratic": { "hints": ["Bu bölümde sence en önemli kavram hangisi?", "…", "…"], "check": null }
+}
+```
+
+- `icon`: Material ikon adı; uygulamadaki küçük bir eşleme tablosuyla çevrilir (`memory`, `account_tree`, `search`; bilinmeyen → kitap ikonu).
+- `defaultSocratic`: konuya özel zinciri olmayan derslerde (öğretmenin yüklediği) kullanılan genel üst-bilişsel zincir. `check` null olduğu için "Anladım" doğrudan Odakta'ya döndürür.
+
+`{topicKey}.json` — bir dersin tamamı:
+
+```json
+{
+  "title": "C: Pointer'lar", "topicKey": "pointers", "level": "…", "estimatedMinutes": 10,
+  "content": "Paragraf 1\n\nParagraf 2 …",
+  "figures": [ { "afterParagraph": 0, "image": "assets/images/lessons/pointers/01_bellek.png", "alt": "…" } ],
+  "storyCards": [ { "text": "…", "subtitle": "…", "code": "int x = 5;", "image": "…png", "imageAlt": "…" } ],
+  "questions": [ { "id": "q1", "text": "…", "code": "…", "options": ["…"], "optionsAreCode": [true, false], "correctIndex": 1, "type": "verbal_visual" } ],
+  "socratic": {
+    "reading": { "hints": ["…"], "check": { "text": "…", "code": "…", "options": ["…"], "optionsAreCode": [true], "correctIndex": 2 } },
+    "q1": { "hints": ["…"], "check": { … } }
   }
 }
 ```
 
-Zincir konu başınadır; o konudaki tüm sorular aynı zinciri kullanır. Öğretmenin yüklediği dersin `topicKey`'i dosyada yoksa `_default` kullanılır; `check` null ise "Anladım" doğrudan durumu `focused` yapar.
+- Sokratik zincir, öğrencinin takıldığı ekrana göre seçilir: okuma ekranında `reading`, soru ekranında o sorunun id'si; ders zinciri yoksa `defaultSocratic` (K46, K50). İpuçlarındaki `ters tırnak` içi kısımlar satır içi monospace gösterilir.
+- `figures[].afterParagraph` 0'dan başlar; aynı paragrafın altında birden fazla şema olabilir. `alt` ve `imageAlt` ekranda yazılmaz, yalnızca ekran okuyucuya verilir.
+- Her görsel klasörü (`assets/images/lessons/{topicKey}/`) `pubspec.yaml`'da ayrıca listelenir (Flutter asset klasörleri alt klasörleri kapsamaz).
 
 **`assets/content/support_messages.json`** — sistemin otomatik gönderdiği mesaj havuzu (DESIGN §8.9):
 
@@ -255,7 +272,8 @@ Zincir konu başınadır; o konudaki tüm sorular aynı zinciri kullanır. Öğr
    c. `alerts` koleksiyonuna yeni bir belge eklenir (PeerSwarm önerisiyle, bkz. 4.3).
    d. Sokratik Rehber baloncuğu ilk ipucuyla belirir.
 5. Öğrenci **"Basitleştir"e kendisi basarsa** yalnızca 4a (SnackBar hariç) ve 4d çalışır; Firestore'a durum veya uyarı yazılmaz (MEMORY K23).
-6. **Sokratik akış (MEMORY K20):** "Anlamadım" → sıradaki ipucu; zincir biterse baloncuk akran desteği önerir. "Anladım" → `check` sorusu; doğruysa `checkCorrect` mesajı, `status = "focused"`, `topicScores[topicKey]` artırılır; yanlışsa `checkWrong` + sıradaki ipucu.
+6. **Sokratik akış (MEMORY K20, K46):** "Anlamadım" → sıradaki ipucu; zincir biterse baloncuk "Öğretmenin seni bu konuda başarılı bir arkadaşınla eşleştirebilir" der (Firestore'a yazılmaz). "Anladım" → `check` sorusu; doğruysa `checkCorrect` bildirim kartı; Story'ye Kritik'ten gelindiyse ayrıca `status = "focused"`, `stuckSince = null`, `topicScores[topicKey] += 10` (`FieldValue.increment`). Yanlışsa `checkWrong` + sıradaki ipucu.
+   - **Soru ekranı (K45):** şık seç → "Kontrol Et" → doğruysa "Doğru!", yanlışsa "Tekrar düşünelim" + "İpucu al" (o sorunun zinciri, öğretmene uyarı üretmez; doğru cevap gösterilmez). Bitiş özeti ilk denemelere göre ("3 sorudan 2'sini doğru yaptın").
 7. **Story sonu (MEMORY K21):** Son karttaki "Soruya Dön" öğrenciyi takıldığı okuma/soru ekranına döndürür, sayaç sıfırlanır, Morphing ters yönde oynar.
 8. Eşik bir derste **en fazla bir kez** uyarı üretir (aynı öğrenci için uyarı yağmuru olmaz).
 
@@ -271,8 +289,9 @@ Zincir konu başınadır; o konudaki tüm sorular aynı zinciri kullanır. Öğr
 2. İki kaynak tek listede birleştirilir; yalnızca `status == "critical"` olanlar gösterilir. Gerçek öğrenciler en üstte.
 3. Sayaçlar ("42 öğrenci · 5 dikkat · 3 kritik") ve öğrenme stili dağılımı iki kaynağın toplamından hesaplanır. Bir öğrenci seçilince detayda profil, konu, durum ve özet ("12 etkileşim · 45 sn hareketsiz") gösterilir.
 4. Yeni bir `alerts` belgesi geldiğinde "Acil Müdahale" kartı DESIGN.md §7 animasyonuyla listenin en üstüne girer.
-5. **PeerSwarm önerisi (MEMORY K22):** Gerçek üyeler ve mock öğrenciler arasında, durumu `focused` olan ve `topicScores[topicKey]` değeri en yüksek kişi seçilir (eşitlikte gerçek üye önce). Kimse yoksa öneri bölümü gizlenir. Seçim isimle değil `id` ile yapılır.
-6. "Eşleştir" → `alerts/{id}.seen = true`, `matchedPeerId` yazılır; takılan öğrenciye ve akran gerçek bir üyeyse ona `notifications` belgesi eklenir. Kart listeden kalkar.
+5. **PeerSwarm önerisi (MEMORY K22, K47):** Panelde canlı hesaplanır (`ClassOverview.suggestPeer`), uyarı belgesine yazılmaz. Gerçek üyeler ve mock öğrenciler arasında, durumu `focused` olan, takılan öğrencinin kendisi olmayan ve `topicScores[topicKey]` değeri en yüksek kişi seçilir (eşitlikte gerçek üye önce). Kimse yoksa öneri bölümü gizlenir. Seçim isimle değil `id` ile yapılır.
+6. "Eşleştir" → tek bir batch ile `alerts/{id}.seen = true`, `matchedPeerId` yazılır; takılan öğrenciye ve akran gerçek bir üyeyse ona `notifications` belgesi eklenir. Akran mock ise bildirim yalnızca simüle edilir (öğretmene SnackBar + konsol). Kart listeden kalkar. Öğrenci `notifications`'ı `toUserId` ile dinler; yalnızca sayfa açıldıktan sonra gelenleri gösterir.
+   - **Canlı süre (K48):** Panel saniyede bir yeniden çizilir. Gerçek öğrencinin takılma süresi = şimdi − `stuckSince` + `idleSeconds`; mock öğrencinin = `stuckMinutes` + panel açıldığından beri geçen süre.
 7. "Gördüm" → `alerts/{id}.seen = true`, kart listeden kalkar. Öğretmenin elle mesaj yazma özelliği yoktur.
 
 ### 4.4 Kayıt, Test ve Sınıf
@@ -293,11 +312,11 @@ eduswarm/
 ├── assets/
 │   ├── fonts/                    # Roboto, Lexend (gömülü, T9)
 │   ├── mock/mock_students.json
+│   ├── images/lessons/{topicKey}/ # ders şemaları ve Story görselleri
 │   └── content/
 │       ├── learning_style_test.json
-│       ├── socratic_hints.json
 │       ├── support_messages.json
-│       └── demo_lesson.json
+│       └── lessons/              # index.json + {topicKey}.json (hazır dersler, K50)
 └── lib/
     ├── main.dart                 # uygulama girişi, yönlendirme
     ├── firebase_options.dart     # flutterfire configure ile otomatik oluşur
@@ -347,3 +366,11 @@ firebase deploy --only hosting
 | Açık güvenlik kuralları | Herkes veriyi okuyup yazabilir | Yalnızca uydurma veri kullan; jüriye kısıt olarak açıkla. |
 | Gerçek LLM yok | Sokratik ipuçları önceden yazılmış | Altın Senaryo'daki konu için zengin bir ipucu zinciri hazırla; mimarinin LLM'e bağlanmaya hazır olduğunu (ipucu servisi tek bir dosyada) göster. |
 | PDF/slayt desteklenmiyor | Öğretmen yalnızca metin yükleyebilir | Sunumda metin yükleme göster; PDF'i "sonraki adım" olarak anlat. |
+
+### 4.5 Derslerim ve Ders Seçimi (K50)
+
+1. `/#/student` → "Derslerim": `index.json`'daki hazır dersler ile `classes/{classId}/lessons` (canlı) **birleştirilir**; öğretmenin dersleri üstte. Ders sayısı hiçbir yerde sabit değildir. Firestore yanıt vermezse hazır dersler yine görünür.
+2. Karta dokununca ders kaynağına göre yüklenir (`LessonRepository`: asset ya da Firestore belgesi) ve `LessonScreen` bu dersle açılır.
+3. Seçilen dersin `topicKey` ve başlığı `members/{uid}` (`currentTopic`, `currentTopicTitle`) ve `alerts` belgelerine yazılır; panelde konu adı ve PeerSwarm önerisi bu derse göre çalışır.
+4. Üst bardaki geri butonu (ya da tarayıcı geri) "Derslerim"e döner: sayaç durur, durum `focused` yazılır.
+5. `/#/student/demo` → `demoLessonKey` dersi doğrudan açılır (Altın Senaryo kısayolu).

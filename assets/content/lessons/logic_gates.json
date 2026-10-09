@@ -1,0 +1,227 @@
+{
+  "title": "Mantık Kapıları",
+  "topicKey": "logic_gates",
+  "level": "Sayısal Tasarıma Giriş",
+  "estimatedMinutes": 10,
+  "content": "Bilgisayar her şeyi 0 ve 1 ile ifade eder. Mantık kapıları, bir veya iki girişi alıp tek bir çıkış üreten küçük devrelerdir. İşlemcideki her hesap, milyonlarca mantık kapısının birlikte çalışmasıyla yapılır.\n\nAND kapısının çıkışı, yalnızca iki girişi de 1 olduğunda 1 olur. Girişlerden biri bile 0 ise çıkış 0'dır. Bunu \"hem A hem B\" şeklinde düşünebilirsin.\n\nOR kapısının çıkışı, girişlerden en az biri 1 olduğunda 1 olur. Yalnızca iki giriş de 0 olduğunda çıkış 0'dır. Bunu \"A ya da B ya da ikisi\" şeklinde düşünebilirsin.\n\nNOT kapısının tek girişi vardır ve bu girişi tersine çevirir: 1 gelirse 0, 0 gelirse 1 verir.\n\nKapılar birbirine bağlanarak daha büyük devreler kurulur. `(A AND B) OR C` ifadesinde önce parantez içi hesaplanır, sonra sonuç C ile OR işlemine girer. Bir devrenin tüm olası giriş ve çıkışlarını gösteren tabloya doğruluk tablosu denir.",
+  "figures": [
+    {
+      "afterParagraph": 1,
+      "image": "assets/images/lessons/logic_gates/01_and.png",
+      "alt": "AND kapısı ve doğruluk tablosu: yalnızca A=1 ve B=1 olduğunda çıkış 1."
+    },
+    {
+      "afterParagraph": 2,
+      "image": "assets/images/lessons/logic_gates/02_or.png",
+      "alt": "OR kapısı ve doğruluk tablosu: girişlerden en az biri 1 olduğunda çıkış 1."
+    },
+    {
+      "afterParagraph": 3,
+      "image": "assets/images/lessons/logic_gates/03_not.png",
+      "alt": "NOT kapısı: 1 girişini 0'a, 0 girişini 1'e çeviriyor."
+    },
+    {
+      "afterParagraph": 4,
+      "image": "assets/images/lessons/logic_gates/04_birlesik.png",
+      "alt": "A=1, B=1, C=0 için (A AND B) OR C devresi: AND çıkışı 1, OR çıkışı 1."
+    }
+  ],
+  "storyCards": [
+    {
+      "text": "Mantık Kapıları",
+      "subtitle": "0 ve 1'lerle düşünmek."
+    },
+    {
+      "text": "Bilgisayar her şeyi 0 ve 1 ile ifade eder. Mantık kapıları bu değerlerle karar verir."
+    },
+    {
+      "text": "AND: İki giriş de 1 ise çıkış 1. Biri bile 0 ise çıkış 0.",
+      "image": "assets/images/lessons/logic_gates/01_and.png",
+      "imageAlt": "AND kapısı ve doğruluk tablosu."
+    },
+    {
+      "text": "OR: Girişlerden en az biri 1 ise çıkış 1.",
+      "image": "assets/images/lessons/logic_gates/02_or.png",
+      "imageAlt": "OR kapısı ve doğruluk tablosu."
+    },
+    {
+      "text": "NOT: Tek girişi tersine çevirir. 1 gelirse 0, 0 gelirse 1 verir.",
+      "image": "assets/images/lessons/logic_gates/03_not.png",
+      "imageAlt": "NOT kapısı ve doğruluk tablosu."
+    },
+    {
+      "text": "Kapılar birleştirilebilir. Önce parantez içi, sonra dışı hesaplanır.",
+      "image": "assets/images/lessons/logic_gates/04_birlesik.png",
+      "imageAlt": "(A AND B) OR C devresi."
+    },
+    {
+      "text": "Bir devrenin tüm giriş ve çıkışlarını gösteren tabloya doğruluk tablosu denir."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "text": "A = 1 ve B = 0 iken A AND B kaçtır?",
+      "code": "A = 1, B = 0\nQ = A AND B",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "Belirsiz"
+      ],
+      "correctIndex": 0,
+      "type": "verbal_visual"
+    },
+    {
+      "id": "q2",
+      "text": "Hangi kapı, girişlerinden en az biri 1 olduğunda 1 verir?",
+      "options": [
+        "AND",
+        "OR",
+        "NOT",
+        "Hiçbiri"
+      ],
+      "correctIndex": 1,
+      "type": "verbal_visual"
+    },
+    {
+      "id": "q3",
+      "text": "Bu devrenin çıkışı kaçtır?",
+      "code": "A = 1, B = 1, C = 0\nQ = (A AND B) OR C",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "C'ye eşittir"
+      ],
+      "correctIndex": 1,
+      "type": "computational"
+    },
+    {
+      "id": "q4",
+      "text": "Bu ifadenin sonucu kaçtır?",
+      "code": "A = 0, B = 1\nQ = NOT (A OR B)",
+      "options": [
+        "0",
+        "1",
+        "A'ya eşittir",
+        "B'ye eşittir"
+      ],
+      "correctIndex": 0,
+      "type": "computational"
+    },
+    {
+      "id": "q5",
+      "text": "NOT kapısının kaç girişi vardır?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "İstenildiği kadar"
+      ],
+      "correctIndex": 0,
+      "type": "verbal_visual"
+    }
+  ],
+  "socratic": {
+    "reading": {
+      "hints": [
+        "Bir kapı kaç farklı değerle çalışıyor olabilir? Bilgisayarın dili sence hangi iki rakamdan oluşur?",
+        "\"Hem A hem B\" ile \"A ya da B\" arasındaki fark, kapıların hangisini anlatıyor olabilir?",
+        "Tek bir girişi tersine çeviren bir kapı olsaydı, 1 gelince ne verirdi?"
+      ],
+      "check": {
+        "text": "A = 1 ve B = 1 iken A OR B kaçtır?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "Belirsiz"
+        ],
+        "correctIndex": 1
+      }
+    },
+    "q1": {
+      "hints": [
+        "AND için \"hem A hem B\" demiştik. Burada B'nin değeri ne?",
+        "Girişlerden biri bile 0 olduğunda AND kapısı ne verir?"
+      ],
+      "check": {
+        "text": "A = 0 ve B = 1 iken A AND B kaçtır?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "Belirsiz"
+        ],
+        "correctIndex": 0
+      }
+    },
+    "q2": {
+      "hints": [
+        "\"A ya da B ya da ikisi\" diye düşündüğümüz kapı hangisiydi?",
+        "Bu kapının çıkışı yalnızca hangi durumda 0 oluyor?"
+      ],
+      "check": {
+        "text": "Yalnızca iki girişi de 0 olduğunda 0 veren kapı hangisidir?",
+        "options": [
+          "AND",
+          "OR",
+          "NOT",
+          "Hiçbiri"
+        ],
+        "correctIndex": 1
+      }
+    },
+    "q3": {
+      "hints": [
+        "Önce parantez içini hesapla: A AND B kaç?",
+        "Şimdi o sonucu C ile OR işlemine sok. OR için girişlerden biri 1 ise ne olur?"
+      ],
+      "check": {
+        "text": "Bu devrenin çıkışı kaçtır?",
+        "code": "A = 0, B = 1, C = 0\nQ = (A AND B) OR C",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "B'ye eşittir"
+        ],
+        "correctIndex": 0
+      }
+    },
+    "q4": {
+      "hints": [
+        "Önce parantez içi: A OR B kaç?",
+        "NOT, gelen değeri tersine çevirir. Parantezden çıkan sonucun tersi nedir?"
+      ],
+      "check": {
+        "text": "Bu ifadenin sonucu kaçtır?",
+        "code": "A = 0, B = 0\nQ = NOT (A OR B)",
+        "options": [
+          "0",
+          "1",
+          "A'ya eşittir",
+          "Belirsiz"
+        ],
+        "correctIndex": 1
+      }
+    },
+    "q5": {
+      "hints": [
+        "NOT kapısı bir değeri \"tersine çeviriyor\". Tersine çevirmek için kaç değere ihtiyaç var?",
+        "Şemada NOT kapısına kaç tel giriyordu?"
+      ],
+      "check": {
+        "text": "NOT kapısına 0 verilirse çıkış kaç olur?",
+        "options": [
+          "0",
+          "1",
+          "2",
+          "Belirsiz"
+        ],
+        "correctIndex": 1
+      }
+    }
+  }
+}

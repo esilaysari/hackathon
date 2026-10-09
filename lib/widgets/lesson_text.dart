@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// Ders metnini gösterir; `ters tırnak` içindeki kod parçaları kalın yazılır.
+import '../theme/tokens.dart';
+
+/// Ders metnini gösterir; `ters tırnak` içindeki kısımlar satır içinde monospace yazılır.
 class LessonText extends StatelessWidget {
   const LessonText(this.text, {super.key, required this.style, this.textAlign});
 
@@ -18,7 +20,7 @@ class LessonText extends StatelessWidget {
           for (var i = 0; i < parts.length; i++)
             TextSpan(
               text: parts[i],
-              style: i.isOdd ? const TextStyle(fontWeight: FontWeight.w700) : null,
+              style: i.isOdd ? const TextStyle(fontFamily: AppFonts.mono) : null,
             ),
         ],
       ),

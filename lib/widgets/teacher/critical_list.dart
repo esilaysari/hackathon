@@ -22,7 +22,9 @@ class CriticalList extends StatelessWidget {
     if (overview.criticalStudents.isEmpty) {
       return const Text(AppStrings.noCriticalStudents, style: AppTextStyles.bodyLg);
     }
+    // Satırlar listenin tam genişliğinde ve eşit yükseklikte (her satır tek satırlık iki metin).
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final student in overview.criticalStudents)
           Padding(
@@ -68,14 +70,18 @@ class _Row extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text.rich(TextSpan(
-                text: student.displayName,
-                style: AppTextStyles.bodyLg.copyWith(fontWeight: FontWeight.w700),
-                children: [
-                  if (suffix != null) TextSpan(text: ' · $suffix', style: AppTextStyles.caption),
-                ],
-              )),
-              Text(details, style: AppTextStyles.bodyLg),
+              Text.rich(
+                TextSpan(
+                  text: student.displayName,
+                  style: AppTextStyles.bodyLg.copyWith(fontWeight: FontWeight.w700),
+                  children: [
+                    if (suffix != null) TextSpan(text: ' · $suffix', style: AppTextStyles.caption),
+                  ],
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(details, style: AppTextStyles.bodyLg, maxLines: 1, overflow: TextOverflow.ellipsis),
             ],
           ),
         ),

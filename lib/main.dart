@@ -6,7 +6,8 @@ import 'demo_accounts.dart';
 import 'firebase_options.dart';
 import 'screens/demo_sign_in_gate.dart';
 import 'screens/role_chooser_screen.dart';
-import 'screens/student/lesson_screen.dart';
+import 'screens/student/demo_lesson_launcher.dart';
+import 'screens/student/my_lessons_screen.dart';
 import 'screens/teacher/teacher_panel_screen.dart';
 import 'services/mock_data_service.dart';
 import 'strings.dart';
@@ -34,7 +35,8 @@ class EduSwarmApp extends StatelessWidget {
       title: AppStrings.appTitle,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: AppFonts.roboto, scaffoldBackgroundColor: AppColors.creamBase),
-      // /#/teacher ve /#/student demo hesaplarıyla otomatik giriş yapar (Faz 5'e kadar).
+      // /#/teacher, /#/student ("Derslerim") ve /#/student/demo (doğrudan demo dersi)
+      // demo hesaplarıyla otomatik giriş yapar (Faz 5'e kadar; K42, K50).
       routes: {
         '/': (_) => const RoleChooserScreen(),
         RoleChooserScreen.teacherRoute: (_) => DemoSignInGate(
@@ -43,7 +45,11 @@ class EduSwarmApp extends StatelessWidget {
             ),
         RoleChooserScreen.studentRoute: (_) => DemoSignInGate(
               email: DemoAccounts.studentEmail,
-              builder: (uid) => LessonScreen(uid: uid, classId: DemoAccounts.classId),
+              builder: (uid) => MyLessonsScreen(uid: uid, classId: DemoAccounts.classId),
+            ),
+        RoleChooserScreen.studentDemoRoute: (_) => DemoSignInGate(
+              email: DemoAccounts.studentEmail,
+              builder: (uid) => DemoLessonLauncher(uid: uid, classId: DemoAccounts.classId),
             ),
       },
     );

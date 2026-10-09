@@ -75,6 +75,8 @@ Renk paleti, öğrencinin stresini azaltmak ve uygulamanın modern hissettirmesi
 | Lilac-500 → Mint-500 gradient | Grey-900 | Story modu kartı |
 | Warning #FFB347 | Grey-900 | Uyarı kartları, SnackBar |
 | Success #2E7D32 | Beyaz | Başarı SnackBar |
+| Mint-300 | Grey-900 | "Doğru!" geri bildirimi, PeerSwarm öneri bölümü, öğrenci bildirim kartı |
+| Warning-Soft | Grey-900 | Kritik öğrenci satırı, "Tekrar düşünelim" geri bildirimi |
 | Grey-400 | Grey-900 | Devre dışı birincil buton (ör. şık seçilmeden "İleri"); kontrast ~9.8:1 |
 
 ## 3. Tipografi (Typography)
@@ -101,6 +103,16 @@ Renk paleti, öğrencinin stresini azaltmak ve uygulamanın modern hissettirmesi
 | **Metinsel** | Standart ölçek. Roboto, satır yüksekliği 1.5. |
 | **Görsel** | Standart ölçek; metin blokları kısa tutulur, yüklenen slaytlardaki görseller metnin önünde ve büyük gösterilir. |
 | **Dislektik** | Lexend; gövde metni **18px**; satır yüksekliği **1.8**; harf aralığı **+0.5px**; kelime aralığı geniş; paragraflar en fazla 3-4 satır; **yalnızca sola hizalı** (iki yana yaslama yok); italik ve tamamı büyük harf kullanılmaz; zemin Cream-Base (saf beyaz yok) — **kart yüzeyleri dahil**: Dislektik profilde kartlar Cream-Surface yerine Cream-Base zeminlidir ve Shadow/Light ile ayrışır. |
+
+### 3.3 Kod Gösterimi
+
+| Öğe | Kural |
+| :--- | :--- |
+| **Kod kutusu** | Ders kartı, soru veya kontrol sorusunda `code` alanı varsa metnin altında ayrı kutu: Lilac-100 zemin, Grey-900 metin, radius-md, spacing-sm iç boşluk. Satırlar korunur, sola hizalanır; uzun satır yatay kaydırılır (alt satıra kaydırılmaz). |
+| **Yazı tipi** | **Roboto Mono** (projeye gömülü, `assets/fonts/`; çalışma anında indirilmez — K29). |
+| **Boyut** | Gövde metninin yanında **14px** (satır yüksekliği 1.5); Story kartında **20px** (satır yüksekliği 1.4). |
+| **Satır içi kod** | Metindeki `ters tırnak` içi kısımlar aynı boyutta Roboto Mono ile gösterilir. |
+| **Kod şıkları** | `optionsAreCode` true olan şıklar Roboto Mono ile gösterilir. |
 
 ## 4. Düzen & Izgara (Layout & Spacing)
 
@@ -150,7 +162,7 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 | **Öğretmen uyarı kartı** | 400ms Slide-In + hafif nabız | Yeni "Acil Müdahale" kartı listenin en üstüne kayarak girer ve bir kez yumuşakça büyüyüp küçülür (1.0 → 1.03 → 1.0, giriş 400ms + nabız 400ms). Sürekli yanıp sönme yapılmaz. |
 | **Ters Morphing** | 600ms Fade & Scale | Story sonunda "Soruya Dön" ile normal görünüme dönüş; Morphing'in tersi. |
 | **Sokratik baloncuk** | 250ms Fade + Slide-Up | Morphing tamamlandıktan sonra belirir. |
-| **Öğrenci bildirim kartı** | 300ms Slide-Down | Üstten kayarak girer, birkaç saniye sonra yukarı kayarak çıkar. |
+| **Öğrenci bildirim kartı** | 300ms Slide-Down, 5 sn görünür | Üstten kayarak girer, 5 saniye sonra yukarı kayarak çıkar. |
 | **Hareket azaltma** | — | Tarayıcıda "hareketi azalt" tercihi açıksa ölçek animasyonları kapatılır, yalnızca fade kullanılır. |
 
 ## 8. Bileşen Kuralları (Component Rules)
@@ -186,6 +198,8 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 - **Zemin:** Cream-Surface kart, Cream-Base arka plan. Dislektik profilde kart da Cream-Base olur (bkz. 3.2).
 - **İçerik:** Üstte ikon (Lilac-500), ortada başlık (Task Title), altta gövde metni (profil tipografi kurallarına göre, bkz. 3.2).
 - **Etkileşim:** Altta iki buton. Birincil: "Hemen Başla" (Lilac-700 zemin, beyaz metin). İkincil: "Basitleştir" (beyaz zemin, Lilac-700 kenarlık ve metin).
+- **Şemalar (okuma ekranı):** Ders dosyasındaki `figures` ilgili paragrafın hemen altında gösterilir; köşeler radius-md, alt metin ekranda yazılmaz (yalnızca ekran okuyucu). Metinsel ve Dislektik profilde sade ve en fazla **220px** yükseklikte, ortalanmış. **Görsel** profilde tam genişlikte, Lilac-100 zeminli, Lilac-300 kenarlıklı ve Shadow/Light ile öne çıkarılmış bir kutuda.
+- **Soru ekranı:** Üstte "Soru 2 / 3" (Caption), ince ilerleme çubuğu (4px, Lilac-700/Lilac-100) ve Grey-600 renkli aşama cümlesi ("Hadi başlayalım!" · "Yarısını geçtin, harika gidiyorsun!" · "Son soru, neredeyse bitti!"); büyük animasyon yok. Akış: şık seç → "Kontrol Et" → doğruysa Mint-300 zeminde "Doğru!", yanlışsa Warning-Soft zeminde "Tekrar düşünelim" + "İpucu al" (Sokratik baloncuk sorunun altında açılır; doğru cevap gösterilmez) → "İleri". Bitişte "3 sorudan 2'sini doğru yaptın" özeti (ilk denemeler). Story kartı en az ekran yüksekliğinin yarısı kadardır; altındaki baloncukla birlikte görünüm kayar.
 - **Akış (içerik → sorular):** Öğrenci önce ders metnini okur; "Hemen Başla" onu öğretmenin eklediği sorulara geçirir. Sorular, test ekranıyla aynı düzende gösterilir (her ekranda tek soru, büyük şık kartları, üstte "Soru 2 / 5"). "Basitleştir" butonu soru ekranlarında da bulunur.
 - **"Basitleştir"e basılırsa:** Story moduna geçilir ama öğretmene uyarı gönderilmez; öğrenci yardımı kendisi istemiştir.
 - **Otomatik tetikleyici (telemetri):** Hareketsizlik sayacı hem okuma hem soru ekranlarında çalışır; öğrenci etkileşimde bulunmazsa sistem Story moduna geçer ve öğretmene uyarı gönderir. Eşikler:
@@ -202,7 +216,9 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 - **Ana kart:** Büyük kart (radius-xl), Lilac-500 → Mint-500 **linear gradient** zemin, Shadow/Colored.
 - **Metin:** Kartın ortasında Story Display (32px, Bold), **Grey-900**. Dislektik profilde Lexend kullanılır.
 - **Etkileşim:** Ekrana dokunulduğunda metin değişir, ilerleme çubuğu bir adım ilerler. Altta "Devam etmek için dokun →" (Grey-600).
-- **İçerik bölme:** Kartlar, yüklenen içeriğin başlık/paragraf bazında kural tabanlı bölünmesiyle oluşur; her kart tek bir fikir taşır.
+- **İçerik bölme:** Ders dosyasında elle hazırlanmış `storyCards` varsa onlar kullanılır; yoksa (öğretmenin yüklediği içerik) kartlar başlık/paragraf bazında kural tabanlı bölünmeyle oluşur. Her kart tek bir fikir taşır.
+- **Kart görseli:** `image` varsa metnin (ve alt başlığın) altında, kart genişliğine sığacak şekilde, köşeleri radius-md; `imageAlt` yalnızca ekran okuyucuya verilir.
+- **Kart içeriği:** Ana metin Story Display; `subtitle` varsa altında daha küçük (18px, Regular, Grey-900); `code` varsa altında kod kutusu (bkz. 3.3).
 - **Story sonu:** Son kartta tek birincil buton: "Soruya Dön". Öğrenci takıldığı ekrana döner, hareketsizlik sayacı sıfırlanır; geçişte Morphing animasyonu ters yönde oynar.
 
 ### 8.6 Sokratik Rehber Baloncuğu
@@ -211,7 +227,7 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 - Metin Body-Lg, Grey-900. Rehber **asla doğrudan cevap vermez**; tek bir ipucu sorusu sorar (ör. "Bitkiler güneş ışığını neden bu kadar önemsiyor olabilir?").
 - Altta iki küçük buton: **"Anlamadım"** (ikincil) ve **"Anladım"** (birincil).
   - **Anlamadım:** Zincirdeki bir sonraki ipucu gelir (her soru için 2-3 ipucu; adım adım derinleşir). İpuçları bittiğinde baloncuk "Bir akranınla çalışmak ister misin?" sorusunu sorar (PeerSwarm).
-  - **Anladım:** Baloncukta 3-4 şıklı kısa bir **kontrol sorusu** açılır. Doğruysa otomatik tebrik mesajı gelir (bkz. 8.9) ve durum "Odakta"ya döner; yanlışsa şefkatli bir dille ("Çok yaklaştın, şuna bir bak:") sıradaki ipucu verilir.
+  - **Anladım:** Baloncukta 3-4 şıklı kısa bir **kontrol sorusu** açılır. Doğruysa baloncuk tebrik eder ("Harika, bunu kendin çözdün!" + "Hazır olduğunda kaldığın yere dönebilirsin.") ve 3 saniye sonra kapanır; Story modundaysa "Soruya Dön" hemen görünür ve durum "Odakta"ya döner. Yanlışsa şefkatli bir dille ("Çok yaklaştın, şuna bir bak:") sıradaki ipucu verilir. Baloncuğun bütün cümleleri `lessons/index.json` → `socraticMessages` bölümünden gelir.
 
 ### 8.7 Öğretmen Paneli
 
@@ -225,7 +241,14 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 
 - **Uyarı kartı:** Warning (#FFB347) zemin, Grey-900 metin, Shadow/Warning, radius-lg. İçerik: uyarı ikonu (Material `warning_amber_rounded`, Grey-900; emoji kullanılmaz, çünkü Flutter Web emoji yazı tipini çalışma anında internetten indirir — K29), "Ayşe Yılmaz bu konuda zorlanıyor", konu adı, süre ve "Sistem içeriği Story moduna dönüştürdü ve destek mesajı gönderdi" bilgisi.
 - **PeerSwarm önerisi:** Kartın içinde Mint-300 zeminli küçük bir alt bölüm: "Yardım edebilecek akran: Mehmet Çelik (bu konuda başarılı)" + "Eşleştir" butonu.
-- **Eylemler:** "Eşleştir" (birincil) ve küçük bir "Gördüm" metin linki. Eşleştirilen ya da "Gördüm" denen kart listeden kalkar. Öğretmen öğrenciye elle mesaj yazmaz; destek mesajlarını sistem otomatik gönderir (bkz. 8.9).
+- **Eylemler:** "Eşleştir" (birincil) ve küçük bir "Gördüm" metin linki (Grey-900, altı çizili; Lilac-700 şeftali zeminde 4.5:1'i sağlamaz). Süre saniyede bir güncellenir ve ilk anda öğrencinin hareketsiz kaldığı süreyi gösterir. Eşleştirilen ya da "Gördüm" denen kart listeden kalkar. Öğretmen öğrenciye elle mesaj yazmaz; destek mesajlarını sistem otomatik gönderir (bkz. 8.9).
+
+### 8.9a "Derslerim" Ekranı
+
+- Öğrenci Portalı düzeninde (en fazla 480px sütun). Üst bar başlığı "Derslerim".
+- Her ders bir kart: Cream-Surface, radius-lg, Shadow/Light. Solda Lilac-500 ikon (40px); sağda başlık (18px Bold, Grey-900), kısa açıklama (Body-Lg, Grey-600) ve Caption satırı ("~10 dk", öğretmenin dersiyse "· Öğretmeninden").
+- Öğretmenin yüklediği dersler listenin üstünde; ders sayısı sabit değildir.
+- Ders ekranında üst barda geri oku ("Derslerim" ipucu) bulunur.
 
 ### 8.9 Öğrenci Bildirim Kartı ve Otomatik Destek Mesajları
 
@@ -233,5 +256,5 @@ Animasyonlar, Morphing UI özelliğinin kalbidir; sistemin öğrenciye yardım e
 - **Akran eşleştirme:** Öğretmen "Eşleştir"e bastığında iki öğrenciye de bildirim kartı gelir (ör. "Mehmet Çelik sana bu konuda yardım edecek").
 - **Otomatik destek mesajları (sistem gönderir, öğretmen değil):**
   - **Morphing anında:** Şeftali SnackBar — "Biraz zorlandın gibi, içeriği kolaylaştırdım."
-  - **Kontrol sorusu doğru cevaplandığında:** Bildirim kartı — "Harika! Zor kısmı aştın."
+  - **Kontrol sorusu doğru cevaplandığında:** Tebrik Sokratik baloncuğun içinde gösterilir (bkz. 8.6); ayrı bildirim kartı açılmaz (K49).
 - Mesajlar destekleyici ve yargılamayan bir dille yazılır; hazır bir mesaj havuzundan seçilir.

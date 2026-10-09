@@ -12,12 +12,15 @@ class StudentSummary {
     required this.status,
     required this.topicTitle,
     required this.isMock,
+    required this.topicKey,
+    required this.topicScores,
     this.stuckFor,
     this.interactionCount,
     this.idleSeconds,
   });
 
-  factory StudentSummary.fromMock(Map<String, dynamic> json) {
+  /// [elapsed]: panel açıldığından beri geçen süre; mock takılma süresi de canlı aksın.
+  factory StudentSummary.fromMock(Map<String, dynamic> json, {Duration elapsed = Duration.zero}) {
     final stuckMinutes = json['stuckMinutes'] as int?;
     return StudentSummary(
       id: json['id'] as String,
@@ -26,13 +29,18 @@ class StudentSummary {
       status: FocusState.values.byName(json['status'] as String),
       topicTitle: json['currentTopicTitle'] as String,
       isMock: true,
-      stuckFor: stuckMinutes == null ? null : Duration(minutes: stuckMinutes),
+      topicKey: json['currentTopic'] as String?,
+      topicScores: _scores(json['topicScores']),
+      stuckFor: stuckMinutes == null ? null : Duration(minutes: stuckMinutes) + elapsed,
     );
   }
 
+  /// Takılma süresi = şimdi − `stuckSince` + `idleSeconds`: ilk anda "0 sn" yerine
+  /// öğrencinin o ana kadar hareketsiz kaldığı süre görünür (K48).
   factory StudentSummary.fromMember(String id, Map<String, dynamic> data, DateTime now) {
     final status = FocusState.values.byName(data['status'] as String? ?? 'focused');
     final stuckSince = (data['stuckSince'] as Timestamp?)?.toDate();
+    final idleSeconds = data['idleSeconds'] as int?;
     final style = data['learningStyle'] as String?;
     return StudentSummary(
       id: id,
@@ -41,11 +49,20 @@ class StudentSummary {
       status: status,
       topicTitle: data['currentTopicTitle'] as String? ?? '',
       isMock: false,
-      stuckFor: status == FocusState.critical && stuckSince != null ? now.difference(stuckSince) : null,
+      topicKey: data['currentTopic'] as String?,
+      topicScores: _scores(data['topicScores']),
+      stuckFor: status == FocusState.critical && stuckSince != null
+          ? _nonNegative(now.difference(stuckSince)) + Duration(seconds: idleSeconds ?? 0)
+          : null,
       interactionCount: data['interactionCount'] as int?,
-      idleSeconds: data['idleSeconds'] as int?,
+      idleSeconds: idleSeconds,
     );
   }
+
+  static Duration _nonNegative(Duration d) => d.isNegative ? Duration.zero : d;
+
+  static Map<String, int> _scores(Object? raw) =>
+      (raw as Map<String, dynamic>? ?? const {}).map((k, v) => MapEntry(k, (v as num).toInt()));
 
   final String id;
   final String displayName;
@@ -53,6 +70,8 @@ class StudentSummary {
   final FocusState status;
   final String topicTitle;
   final bool isMock;
+  final String? topicKey;
+  final Map<String, int> topicScores;
   final Duration? stuckFor;
   final int? interactionCount;
   final int? idleSeconds;
@@ -101,6 +120,19 @@ class ClassOverview {
 
   int get total => all.length;
   int get criticalCount => criticalStudents.length;
+
+  /// PeerSwarm (K22, K47): durumu Odakta olan ve [topicKey]'de skoru en yüksek akran;
+  /// eşitlikte gerçek öğrenci önce. Takılan öğrencinin kendisi seçilmez.
+  StudentSummary? suggestPeer(String topicKey, {required String excludeId}) {
+    StudentSummary? best;
+    for (final s in all) {
+      final score = s.topicScores[topicKey];
+      if (s.id == excludeId || s.status != FocusState.focused || score == null) continue;
+      final bestScore = best?.topicScores[topicKey] ?? -1;
+      if (score > bestScore || (score == bestScore && best!.isMock && !s.isMock)) best = s;
+    }
+    return best;
+  }
 
   StudentSummary? byId(String? id) {
     for (final s in all) {

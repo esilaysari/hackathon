@@ -43,6 +43,7 @@ abstract final class AppColors {
 abstract final class AppFonts {
   static const roboto = 'Roboto';
   static const lexend = 'Lexend'; // Dislektik mod.
+  static const mono = 'RobotoMono'; // Kod kutuları ve satır içi kod.
 }
 
 abstract final class AppTextStyles {
@@ -54,6 +55,13 @@ abstract final class AppTextStyles {
   static const bodyLg = TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.grey900);
   static const button = TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
   static const caption = TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: AppColors.grey600);
+
+  /// Story kartında başlığın altındaki alt başlık.
+  static const storySubtitle = TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: AppColors.grey900);
+
+  /// Kod kutusu (Lilac-100 zemin): metinden küçük, monospace, satırlar korunur.
+  static const code = TextStyle(fontFamily: AppFonts.mono, fontSize: 14, height: 1.5, color: AppColors.grey900);
+  static const storyCode = TextStyle(fontFamily: AppFonts.mono, fontSize: 20, height: 1.4, color: AppColors.grey900);
 }
 
 /// DESIGN.md §3.2 — Profil bazlı gövde metni kuralları.
@@ -80,6 +88,8 @@ abstract final class AppLayout {
   static const studentMaxWidth = 480.0; // Öğrenci Portalı ortalanmış sütun.
   static const storyProgressHeight = 4.0;
   static const storyProgressGap = 4.0; // Story ilerleme çubukları arası ince boşluk.
+  static const storyCardHeightFactor = 0.5; // Story kartı en az ekran yüksekliğinin yarısı.
+  static const figureMaxHeight = 220.0; // Okuma ekranı şeması (Görsel profilde sınır yok, tam genişlik).
 }
 
 /// DESIGN.md §5 — Köşe yarıçapı.
@@ -110,6 +120,8 @@ abstract final class AppDurations {
   static const teacherAlertSlideIn = Duration(milliseconds: 400);
   static const socraticBubble = Duration(milliseconds: 250);
   static const studentNotification = Duration(milliseconds: 300);
+  static const notificationVisible = Duration(seconds: 5); // Bildirim kartı ekranda kalma süresi.
+  static const socraticSolvedVisible = Duration(seconds: 3); // Çözüldü mesajı, sonra baloncuk kapanır.
 
   /// Morphing'de ekranın küçüldüğü / büyümeye başladığı ölçek.
   static const morphScaleBegin = 0.85;

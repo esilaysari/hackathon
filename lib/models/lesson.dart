@@ -1,3 +1,5 @@
+import 'socratic.dart';
+
 /// Öğrenme profili (TRD §3.1 `learningStyle`).
 enum LearningStyle {
   visual,
@@ -19,6 +21,49 @@ enum QuestionType {
       };
 }
 
+/// `optionsAreCode`: şık başına liste (`[true, false, …]`) ya da hepsi için tek bool.
+List<bool> parseOptionsAreCode(Object? raw, int optionCount) => switch (raw) {
+      List<dynamic> list => [for (var i = 0; i < optionCount; i++) i < list.length && list[i] == true],
+      bool all => List.filled(optionCount, all),
+      _ => List.filled(optionCount, false),
+    };
+
+/// Elle hazırlanmış Story kartı (TRD §3.2 `storyCards`).
+class StoryCard {
+  const StoryCard({required this.text, this.subtitle, this.code, this.image, this.imageAlt});
+
+  factory StoryCard.fromJson(Map<String, dynamic> json) => StoryCard(
+        text: json['text'] as String,
+        subtitle: json['subtitle'] as String?,
+        code: json['code'] as String?,
+        image: json['image'] as String?,
+        imageAlt: json['imageAlt'] as String?,
+      );
+
+  final String text;
+  final String? subtitle;
+  final String? code;
+
+  /// Asset yolu; metnin altında gösterilir. [imageAlt] yalnızca ekran okuyucuya verilir.
+  final String? image;
+  final String? imageAlt;
+}
+
+/// Okuma ekranında [afterParagraph]. paragrafın (0'dan) hemen altında gösterilen şema.
+class LessonFigure {
+  const LessonFigure({required this.afterParagraph, required this.image, required this.alt});
+
+  factory LessonFigure.fromJson(Map<String, dynamic> json) => LessonFigure(
+        afterParagraph: json['afterParagraph'] as int,
+        image: json['image'] as String,
+        alt: json['alt'] as String,
+      );
+
+  final int afterParagraph;
+  final String image;
+  final String alt;
+}
+
 class Question {
   const Question({
     required this.id,
@@ -26,19 +71,28 @@ class Question {
     required this.options,
     required this.correctIndex,
     required this.type,
+    this.code,
+    this.optionsAreCode = const [],
   });
 
-  factory Question.fromJson(Map<String, dynamic> json) => Question(
-        id: json['id'] as String,
-        text: json['text'] as String,
-        options: (json['options'] as List).cast<String>(),
-        correctIndex: json['correctIndex'] as int,
-        type: QuestionType.fromJson(json['type'] as String),
-      );
+  factory Question.fromJson(Map<String, dynamic> json) {
+    final options = (json['options'] as List).cast<String>();
+    return Question(
+      id: json['id'] as String,
+      text: json['text'] as String,
+      code: json['code'] as String?,
+      options: options,
+      optionsAreCode: parseOptionsAreCode(json['optionsAreCode'], options.length),
+      correctIndex: json['correctIndex'] as int,
+      type: QuestionType.fromJson(json['type'] as String),
+    );
+  }
 
   final String id;
   final String text;
+  final String? code;
   final List<String> options;
+  final List<bool> optionsAreCode;
   final int correctIndex;
   final QuestionType type;
 }
@@ -49,19 +103,41 @@ class Lesson {
     required this.topicKey,
     required this.content,
     required this.questions,
+    this.storyCards,
+    this.figures = const [],
+    this.socratic = const {},
   });
 
+  /// Hazır ders dosyası (`assets/content/lessons/*.json`) ya da öğretmenin Firestore'a
+  /// yüklediği ders; ikincisinde storyCards, figures ve socratic olmayabilir.
   factory Lesson.fromJson(Map<String, dynamic> json) => Lesson(
         title: json['title'] as String,
         topicKey: json['topicKey'] as String,
         content: json['content'] as String,
-        questions: (json['questions'] as List)
-            .map((q) => Question.fromJson(q as Map<String, dynamic>))
+        storyCards: (json['storyCards'] as List?)
+            ?.map((c) => StoryCard.fromJson(c as Map<String, dynamic>))
             .toList(),
+        figures: [
+          for (final f in json['figures'] as List? ?? const []) LessonFigure.fromJson(f as Map<String, dynamic>),
+        ],
+        questions: [
+          for (final q in json['questions'] as List? ?? const []) Question.fromJson(q as Map<String, dynamic>),
+        ],
+        socratic: {
+          for (final entry in (json['socratic'] as Map<String, dynamic>? ?? const {}).entries)
+            entry.key: SocraticChain.fromJson(entry.value as Map<String, dynamic>),
+        },
       );
 
   final String title;
   final String topicKey;
   final String content;
+
+  /// Elle hazırlanmış kartlar; null ise (öğretmenin yüklediği içerik) kurala göre bölünür.
+  final List<StoryCard>? storyCards;
+  final List<LessonFigure> figures;
   final List<Question> questions;
+
+  /// Ders başına Sokratik zincirler: `reading` ve soru id'leri (K46). Boşsa genel zincir.
+  final Map<String, SocraticChain> socratic;
 }

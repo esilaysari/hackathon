@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../models/alert.dart';
@@ -12,8 +14,9 @@ import '../../widgets/teacher/panel_card.dart';
 import '../../widgets/teacher/student_detail.dart';
 import '../../widgets/teacher/summary_strip.dart';
 
-/// Öğretmen Paneli (DESIGN.md §8.7–8.8, ROADMAP Faz 3). Firestore'u canlı dinler,
+/// Öğretmen Paneli (DESIGN.md §8.7–8.8, ROADMAP Faz 3–4). Firestore'u canlı dinler,
 /// mock öğrencileri bir kez okur ve ikisini tek listede birleştirir (K32).
+/// Saniyede bir yeniden çizilir; takılma süreleri canlı akar (K48).
 class TeacherPanelScreen extends StatefulWidget {
   const TeacherPanelScreen({super.key, required this.classId});
 
@@ -24,13 +27,27 @@ class TeacherPanelScreen extends StatefulWidget {
 }
 
 class _TeacherPanelScreenState extends State<TeacherPanelScreen> {
-  late final Future<List<StudentSummary>> _mocks = MockDataService.loadStudents()
-      .then((list) => list.map(StudentSummary.fromMock).toList());
+  late final Future<List<Map<String, dynamic>>> _mocks = MockDataService.loadStudents();
+  final DateTime _openedAt = DateTime.now();
+  DateTime _now = DateTime.now();
+  late final Timer _ticker;
   late final _classStream = FirestoreService.watchClass(widget.classId);
   late final _membersStream = FirestoreService.watchMembers(widget.classId);
   late final _alertsStream = FirestoreService.watchOpenAlerts(widget.classId);
 
   String? _selectedId;
+
+  @override
+  void initState() {
+    super.initState();
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) => setState(() => _now = DateTime.now()));
+  }
+
+  @override
+  void dispose() {
+    _ticker.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,12 +71,12 @@ class _TeacherPanelScreenState extends State<TeacherPanelScreen> {
                 if (!mocks.hasData || classData == null || !membersSnap.hasData) {
                   return const Center(child: Text(AppStrings.panelLoading, style: AppTextStyles.bodyLg));
                 }
-                final now = DateTime.now();
+                final elapsed = _now.difference(_openedAt);
                 final overview = ClassOverview.build(
                   real: [
-                    for (final doc in membersSnap.data!.docs) StudentSummary.fromMember(doc.id, doc.data(), now),
+                    for (final doc in membersSnap.data!.docs) StudentSummary.fromMember(doc.id, doc.data(), _now),
                   ],
-                  mocks: mocks.data!,
+                  mocks: [for (final json in mocks.data!) StudentSummary.fromMock(json, elapsed: elapsed)],
                 );
                 final alerts = [
                   for (final doc in alertsSnap.data?.docs ?? const [])
@@ -98,6 +115,9 @@ class _TeacherPanelScreenState extends State<TeacherPanelScreen> {
           child: EmergencyAlertCard(
             key: ValueKey(alert.id),
             alert: alert,
+            now: _now,
+            peer: overview.suggestPeer(alert.topicKey, excludeId: alert.studentId),
+            onMatch: () => _match(alert, overview.suggestPeer(alert.topicKey, excludeId: alert.studentId)!),
             onSeen: () => FirestoreService.markAlertSeen(widget.classId, alert.id),
           ),
         ),
@@ -143,5 +163,32 @@ class _TeacherPanelScreenState extends State<TeacherPanelScreen> {
         );
       },
     );
+  }
+
+  /// PeerSwarm "Eşleştir" (K22, K47). Mock akrana bildirim yalnızca simüle edilir.
+  void _match(EmergencyAlert alert, StudentSummary peer) {
+    FirestoreService.matchPeer(
+      widget.classId,
+      alertId: alert.id,
+      studentId: alert.studentId,
+      studentName: alert.studentName,
+      peerId: peer.id,
+      peerName: peer.displayName,
+      peerIsMock: peer.isMock,
+      studentText: AppStrings.peerWillHelp(peer.displayName),
+      peerText: AppStrings.peerAskedToHelp(alert.studentName),
+    );
+    if (peer.isMock) {
+      debugPrint('PeerSwarm simülasyonu: ${peer.displayName} (${peer.id}) bildirimi gönderildi');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.success,
+          content: Text(
+            AppStrings.mockPeerNotified(peer.displayName),
+            style: AppTextStyles.bodyLg.copyWith(color: AppColors.onDark),
+          ),
+        ),
+      );
+    }
   }
 }

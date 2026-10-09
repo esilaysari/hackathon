@@ -1,0 +1,264 @@
+{
+  "title": "C: Pointer'lar",
+  "topicKey": "pointers",
+  "level": "Programlamaya Giriş",
+  "estimatedMinutes": 10,
+  "content": "Bilgisayarın belleğini, her birinin kendine ait bir adresi olan küçük kutucuklar gibi düşünebilirsin. C'de bir değişken tanımladığında değeri bu kutucuklardan birinde saklanır ve o kutucuğun bir adresi vardır.\n\n`&` operatörü bir değişkenin adresini verir. `int x = 5;` tanımından sonra `&x`, x'in bellekte durduğu yerin adresidir. x'in değeri ise hâlâ 5'tir.\n\nPointer, bir adres saklamak için kullanılan değişkendir. `int *p = &x;` satırı, int türünde bir değeri gösteren p adlı bir pointer tanımlar ve ona x'in adresini atar.\n\n`*` operatörü, pointer'ın gösterdiği adresteki değere ulaşır; buna dereference denir. `*p` ifadesi 5 değerini verir. `*p = 10;` yazarsan x'in değeri de 10 olur, çünkü p doğrudan x'in kutucuğunu gösterir.\n\nHiçbir yeri göstermeyen bir pointer'a `NULL` atanır. NULL ya da başlatılmamış bir pointer'ı dereference etmek tanımsız davranıştır ve programın çökmesine yol açabilir. Bir pointer'ı kullanmadan önce geçerli bir adresi gösterdiğinden emin ol.",
+  "figures": [
+    {
+      "afterParagraph": 0,
+      "image": "assets/images/lessons/pointers/01_bellek.png",
+      "alt": "Bellek kutucukları: x değişkeni 0x1004 adresindeki kutucukta 5 değerini tutuyor."
+    },
+    {
+      "afterParagraph": 2,
+      "image": "assets/images/lessons/pointers/02_pointer.png",
+      "alt": "p pointer'ı x'in adresi olan 0x1004'ü saklıyor; p'den x'e bir ok uzanıyor."
+    },
+    {
+      "afterParagraph": 3,
+      "image": "assets/images/lessons/pointers/03_dereference.png",
+      "alt": "Önce x'in değeri 5; *p = 10 satırından sonra aynı kutucukta 10 var."
+    },
+    {
+      "afterParagraph": 4,
+      "image": "assets/images/lessons/pointers/04_null.png",
+      "alt": "q pointer'ı NULL değerinde; ok hiçbir yeri göstermiyor."
+    }
+  ],
+  "storyCards": [
+    {
+      "text": "C: Pointer'lar",
+      "subtitle": "Küçük adımlarla, birlikte."
+    },
+    {
+      "text": "Belleği yan yana dizilmiş kutucuklar gibi düşün. Her kutucuğun kendine ait bir adresi var."
+    },
+    {
+      "text": "Bir değişken tanımladığında, değeri bu kutucuklardan birine konur.",
+      "image": "assets/images/lessons/pointers/01_bellek.png",
+      "imageAlt": "Bellek kutucukları: x değişkeni 0x1004 adresindeki kutucukta 5 değerini tutuyor."
+    },
+    {
+      "text": "& işareti bir değişkenin adresini verir. Yani x'in kutucuğunun nerede olduğunu söyler.",
+      "code": "&x"
+    },
+    {
+      "text": "Pointer, adres saklayan bir değişkendir. Burada p, x'in adresini tutuyor.",
+      "image": "assets/images/lessons/pointers/02_pointer.png",
+      "imageAlt": "p pointer'ı x'in adresi olan 0x1004'ü saklıyor; p'den x'e bir ok uzanıyor."
+    },
+    {
+      "text": "* işareti, pointer'ın gösterdiği kutucuğun içine bakar. Burada *p, 5'e eşittir.",
+      "code": "*p"
+    },
+    {
+      "text": "*p'ye yeni bir değer yazarsan x de değişir. Çünkü p, x'in kutucuğunu gösteriyor.",
+      "image": "assets/images/lessons/pointers/03_dereference.png",
+      "imageAlt": "Önce x'in değeri 5; *p = 10 satırından sonra aynı kutucukta 10 var."
+    },
+    {
+      "text": "NULL, \"hiçbir yeri göstermiyor\" demektir. NULL bir pointer'ın içine bakmak programı çökertebilir.",
+      "image": "assets/images/lessons/pointers/04_null.png",
+      "imageAlt": "q pointer'ı NULL değerinde; ok hiçbir yeri göstermiyor."
+    },
+    {
+      "text": "Altın kural: Bir pointer'ı kullanmadan önce geçerli bir yeri gösterdiğinden emin ol.",
+      "code": "if (p != NULL) { ... }"
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Bu iki satırdan sonra p neyi saklar?",
+      "code": "int x = 5;\nint *p = &x;",
+      "options": [
+        "5 değerini",
+        "x'in bellekteki adresini",
+        "p'nin kendi adresini",
+        "NULL değerini"
+      ],
+      "correctIndex": 1,
+      "type": "verbal_visual"
+    },
+    {
+      "id": "q2",
+      "text": "Bu kod ekrana ne yazdırır?",
+      "code": "int a = 3;\nint *q = &a;\n*q = *q + 4;\nprintf(\"%d\", a);",
+      "options": [
+        "3",
+        "4",
+        "7",
+        "Derleme hatası verir"
+      ],
+      "correctIndex": 2,
+      "type": "computational"
+    },
+    {
+      "id": "q3",
+      "text": "NULL değerli bir pointer'ın gösterdiği yere bakmaya (dereference etmeye) çalışırsan ne olur?",
+      "options": [
+        "Her zaman 0 değerini verir",
+        "Tanımsız davranıştır; program çökebilir",
+        "Pointer otomatik olarak geçerli bir adrese atanır",
+        "Derleyici bunu her zaman yakalayıp hata verir"
+      ],
+      "correctIndex": 1,
+      "type": "verbal_visual"
+    },
+    {
+      "id": "q4",
+      "text": "Bu kod ekrana ne yazdırır?",
+      "code": "int x = 5;\nint *p = &x;\nint y = *p;\nx = 20;\nprintf(\"%d\", y);",
+      "options": [
+        "5",
+        "20",
+        "x'in adresi",
+        "Derleme hatası verir"
+      ],
+      "correctIndex": 0,
+      "type": "computational"
+    },
+    {
+      "id": "q5",
+      "text": "p, int *p; şeklinde tanımlı. Hangi satır p'nin x'i göstermesini sağlar?",
+      "options": [
+        "p = x;",
+        "p = &x;",
+        "*p = &x;",
+        "&p = x;"
+      ],
+      "optionsAreCode": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "correctIndex": 1,
+      "type": "verbal_visual"
+    }
+  ],
+  "socratic": {
+    "reading": {
+      "hints": [
+        "Bir değişkenin değeri ile bellekte durduğu yer sence aynı şey mi?",
+        "`&` işaretini bir değişkenin önüne koyduğunda, değerini mi yoksa onunla ilgili başka bir bilgiyi mi istemiş olursun?",
+        "Adres saklayan bir değişkenden, o adresteki değere ulaşmak için hangi işarete ihtiyacın olabilir?"
+      ],
+      "check": {
+        "text": "Bu iki satırdan sonra hangi ifade 8 değerini verir?",
+        "code": "int y = 8;\nint *r = &y;",
+        "options": [
+          "r",
+          "&r",
+          "*r",
+          "&y"
+        ],
+        "optionsAreCode": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "correctIndex": 2
+      }
+    },
+    "q1": {
+      "hints": [
+        "`int *p` tanımındaki `*`, p'nin sıradan bir int olmadığını söylüyor. Sence p ne tür bir bilgiyi tutmak için tasarlanmış?",
+        "Sağ taraftaki `&x` ifadesi x'in değerini mi verir, yoksa x hakkında başka bir bilgiyi mi?",
+        "Atamada sağ taraftaki değer sol taraftaki değişkene kopyalanır. Buna göre p'ye ne kopyalanmış olur?"
+      ],
+      "check": {
+        "text": "Bu iki satırdan sonra dp neyi saklar?",
+        "code": "double d = 2.5;\ndouble *dp = &d;",
+        "options": [
+          "2.5 değerini",
+          "d'nin bellekteki adresini",
+          "dp'nin kendi adresini",
+          "0 değerini"
+        ],
+        "correctIndex": 1
+      }
+    },
+    "q2": {
+      "hints": [
+        "q, a'nın adresini tutuyor. `*q` yazıldığında hangi değişkenin kutucuğuna bakılıyor olabilir?",
+        "`*q = *q + 4;` satırında önce sağ taraf hesaplanır. O anda `*q` kaça eşit?",
+        "Soldaki `*q`'ya yazılan sonuç hangi değişkenin kutucuğuna gider? printf de o değişkeni yazdırıyor."
+      ],
+      "check": {
+        "text": "Bu satırlardan sonra b kaçtır?",
+        "code": "int b = 10;\nint *s = &b;\n*s = *s - 3;",
+        "options": [
+          "10",
+          "3",
+          "7",
+          "13"
+        ],
+        "correctIndex": 2
+      }
+    },
+    "q3": {
+      "hints": [
+        "NULL değerli bir pointer, bellekte geçerli bir kutucuğu gösteriyor mu?",
+        "Var olmayan bir kutucuğun içine bakmaya çalışmak nasıl bir sonuç doğurabilir? C bu durumda ne olacağını garanti ediyor mu?"
+      ],
+      "check": {
+        "text": "Bir pointer'ın gösterdiği yere bakmadan önce hangisi güvenli bir kontroldür?",
+        "options": [
+          "if (p != NULL)",
+          "if (*p != 0)",
+          "if (&p != NULL)",
+          "Hiçbir kontrol gerekmez"
+        ],
+        "optionsAreCode": [
+          true,
+          true,
+          true,
+          false
+        ],
+        "correctIndex": 0
+      }
+    },
+    "q4": {
+      "hints": [
+        "`int y = *p;` satırında y'ye ne kopyalanıyor: bir adres mi, yoksa o anda kutucukta duran değer mi?",
+        "y, kendi kutucuğu olan ayrı bir değişken. x sonradan değiştiğinde y'nin kutucuğu bundan etkilenir mi?"
+      ],
+      "check": {
+        "text": "Bu satırlardan sonra b kaçtır?",
+        "code": "int a = 1;\nint *p = &a;\nint b = *p;\n*p = 9;",
+        "options": [
+          "1",
+          "9",
+          "a'nın adresi",
+          "0"
+        ],
+        "correctIndex": 0
+      }
+    },
+    "q5": {
+      "hints": [
+        "p bir adres saklıyor. Öyleyse sağ tarafta da bir adres olmalı. x'in adresini hangi işaretle alırız?",
+        "Soldaki `*p`, p'nin kendisini değil, gösterdiği kutucuğun içini ifade eder. Pointer'ın kendisine bir adres atarken `*` kullanır mıyız?"
+      ],
+      "check": {
+        "text": "int k = 4; ve int *t; tanımlı. Hangi satır t'nin k'yı göstermesini sağlar?",
+        "options": [
+          "t = &k;",
+          "*t = k;",
+          "t = k;",
+          "&t = k;"
+        ],
+        "optionsAreCode": [
+          true,
+          true,
+          true,
+          true
+        ],
+        "correctIndex": 0
+      }
+    }
+  }
+}

@@ -9,7 +9,8 @@ class RoleChooserScreen extends StatelessWidget {
   const RoleChooserScreen({super.key});
 
   static const teacherRoute = '/teacher';
-  static const studentRoute = '/student';
+  static const studentRoute = '/student'; // "Derslerim"
+  static const studentDemoRoute = '/student/demo'; // Doğrudan demo dersi (Altın Senaryo)
 
   @override
   Widget build(BuildContext context) {

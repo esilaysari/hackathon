@@ -28,6 +28,15 @@ abstract final class FirestoreService {
   static Stream<QuerySnapshot<Map<String, dynamic>>> watchOpenAlerts(String classId) =>
       _alerts(classId).where('seen', isEqualTo: false).snapshots();
 
+  /// Öğretmenin sınıfa yüklediği dersler (Faz 5b'de dolacak; K50).
+  static Stream<QuerySnapshot<Map<String, dynamic>>> watchLessons(String classId) =>
+      _class(classId).collection('lessons').snapshots();
+
+  static Future<Lesson> loadLesson(String classId, String lessonId) async {
+    final doc = await _class(classId).collection('lessons').doc(lessonId).get();
+    return Lesson.fromJson(doc.data()!);
+  }
+
   static Future<({String fullName, LearningStyle? learningStyle})> loadProfile(String uid) async {
     final data = (await _db.collection('users').doc(uid).get()).data() ?? const {};
     final style = data['learningStyle'] as String?;
@@ -71,6 +80,7 @@ abstract final class FirestoreService {
     required String studentName,
     required LearningStyle learningStyle,
     required Lesson lesson,
+    required int idleSeconds,
   }) =>
       _safe('uyarı', () async {
         final ref = _alerts(classId).doc('${studentId}_${lesson.topicKey}');
@@ -85,14 +95,58 @@ abstract final class FirestoreService {
           'learningStyle': learningStyle.name,
           'lessonTitle': lesson.title,
           'topicKey': lesson.topicKey,
-          'suggestedPeer': null,
+          'idleSeconds': idleSeconds,
           'matchedPeerId': null,
           'seen': false,
           'createdAt': FieldValue.serverTimestamp(),
         });
       });
 
+  /// Sokratik kontrol sorusu doğru: durum Odakta, konu skoru +[scoreGain] (K20, K22).
+  static Future<void> markRecovered(String classId, String uid, String topicKey, int scoreGain) =>
+      _safe('toparlandı → focused', () => _members(classId).doc(uid).set({
+            'status': FocusState.focused.name,
+            'stuckSince': null,
+            'topicScores': {topicKey: FieldValue.increment(scoreGain)},
+          }, SetOptions(merge: true)));
+
+  /// Öğrenciye gelen bildirimler (DESIGN.md §8.9).
+  static Stream<QuerySnapshot<Map<String, dynamic>>> watchNotifications(String classId, String uid) =>
+      _class(classId).collection('notifications').where('toUserId', isEqualTo: uid).snapshots();
+
   // --- Öğretmen yazar ----------------------------------------------------
+
+  /// "Eşleştir": uyarı kapanır, takılan öğrenciye ve (gerçekse) akrana bildirim gider.
+  /// Mock akrana bildirim yazılmaz; simülasyon çağıran tarafta gösterilir (K47).
+  static Future<void> matchPeer(
+    String classId, {
+    required String alertId,
+    required String studentId,
+    required String studentName,
+    required String peerId,
+    required String peerName,
+    required bool peerIsMock,
+    required String studentText,
+    required String peerText,
+  }) =>
+      _safe('eşleştirme → $peerName', () async {
+        final batch = _db.batch();
+        final notifications = _class(classId).collection('notifications');
+        batch.update(_alerts(classId).doc(alertId), {'seen': true, 'matchedPeerId': peerId});
+        batch.set(notifications.doc(), {
+          'toUserId': studentId,
+          'text': studentText,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+        if (!peerIsMock) {
+          batch.set(notifications.doc(), {
+            'toUserId': peerId,
+            'text': peerText,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+        await batch.commit();
+      });
 
   static Future<void> setPresentationMode(String classId, bool enabled) =>
       _safe('Sunum Modu → $enabled', () => _class(classId).update({'presentationMode': enabled}));

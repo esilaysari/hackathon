@@ -1,0 +1,43 @@
+{
+  "demoLessonKey": "pointers",
+  "lessons": [
+    {
+      "topicKey": "pointers",
+      "file": "assets/content/lessons/pointers.json",
+      "title": "C: Pointer'lar",
+      "summary": "Bellek, adres ve pointer kavramlarını adım adım öğren.",
+      "icon": "memory",
+      "estimatedMinutes": 10
+    },
+    {
+      "topicKey": "logic_gates",
+      "file": "assets/content/lessons/logic_gates.json",
+      "title": "Mantık Kapıları",
+      "summary": "AND, OR ve NOT kapılarıyla 0 ve 1'lerle düşünmeyi öğren.",
+      "icon": "account_tree",
+      "estimatedMinutes": 10
+    },
+    {
+      "topicKey": "binary_search",
+      "file": "assets/content/lessons/binary_search.json",
+      "title": "İkili Arama",
+      "summary": "Sıralı bir dizide her adımda yarısını eleyerek hızlıca ara.",
+      "icon": "search",
+      "estimatedMinutes": 10
+    }
+  ],
+  "socraticMessages": {
+    "solved": "Harika, bunu kendin çözdün!",
+    "solvedNext": "Hazır olduğunda kaldığın yere dönebilirsin.",
+    "wrongCheck": "Çok yaklaştın, şuna bir bak:",
+    "hintsExhausted": "Öğretmenin seni bu konuda başarılı bir arkadaşınla eşleştirebilir."
+  },
+  "defaultSocratic": {
+    "hints": [
+      "Bu bölümde sence en önemli kavram hangisi?",
+      "O kavramı kendi cümlelerinle bir arkadaşına nasıl anlatırdın?",
+      "Aklına gelen bir örnek var mı?"
+    ],
+    "check": null
+  }
+}

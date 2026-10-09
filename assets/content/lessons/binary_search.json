@@ -1,0 +1,228 @@
+{
+  "title": "İkili Arama",
+  "topicKey": "binary_search",
+  "level": "Algoritmalara Giriş",
+  "estimatedMinutes": 10,
+  "content": "Bir dizide bir sayıyı aramanın en basit yolu, baştan başlayıp her elemana tek tek bakmaktır. Buna doğrusal arama denir. 1000 elemanlı bir dizide en kötü durumda 1000 elemana bakmak gerekebilir.\n\nİkili arama yalnızca sıralı dizilerde çalışır ve çok daha hızlıdır. Önce ortadaki elemana bakılır. Aranan sayı ortadakinden küçükse sol yarıda, büyükse sağ yarıda aramaya devam edilir. Eşitse sayı bulunmuştur.\n\nÖrneğin `[3, 8, 12, 17, 25, 31, 40]` dizisinde 25'i arayalım. Ortadaki eleman 17'dir. 25, 17'den büyük olduğu için sağ yarıya geçilir: `[25, 31, 40]`. Bu kısmın ortası 31'dir. 25, 31'den küçük olduğu için sola bakılır ve 25 bulunur. Yalnızca 3 karşılaştırma yetti.\n\nHer adımda arama alanı yarıya iner. 16 elemanlı bir dizi 8'e, sonra 4'e, 2'ye ve 1'e iner; yani en fazla 5 karşılaştırma yeterlidir. Dizi büyüdükçe bu fark çok daha belirgin hâle gelir.\n\nUnutma: Dizi sıralı değilse ikili arama yanlış sonuç verebilir. Ortadaki elemana bakıp \"aranan sağda olmalı\" diyebilmek için elemanların sıralı olması gerekir.",
+  "figures": [
+    {
+      "afterParagraph": 1,
+      "image": "assets/images/lessons/binary_search/01_adim1.png",
+      "alt": "1. adım: 7 elemanlı dizide ortadaki eleman 17; 25 daha büyük olduğu için sağ yarıya geçiliyor."
+    },
+    {
+      "afterParagraph": 2,
+      "image": "assets/images/lessons/binary_search/02_adim2.png",
+      "alt": "2. adım: kalan 25, 31, 40 içinde ortadaki 31; 25 daha küçük olduğu için sola bakılıyor."
+    },
+    {
+      "afterParagraph": 2,
+      "image": "assets/images/lessons/binary_search/03_bulundu.png",
+      "alt": "3. adım: 25 bulundu; yalnızca 3 karşılaştırma yapıldı."
+    },
+    {
+      "afterParagraph": 3,
+      "image": "assets/images/lessons/binary_search/04_yariya.png",
+      "alt": "Her adımda arama alanı yarıya iniyor: 16, 8, 4, 2, 1."
+    }
+  ],
+  "storyCards": [
+    {
+      "text": "İkili Arama",
+      "subtitle": "Her adımda yarısını ele."
+    },
+    {
+      "text": "Doğrusal aramada elemanlara tek tek bakılır. Dizi büyüdükçe bu çok yavaşlar."
+    },
+    {
+      "text": "İkili arama önce ortadaki elemana bakar. Aranan daha büyükse sağ yarıya geçer.",
+      "image": "assets/images/lessons/binary_search/01_adim1.png",
+      "imageAlt": "1. adım: ortadaki eleman 17."
+    },
+    {
+      "text": "Kalan kısmın yine ortasına bakar. Aranan daha küçükse sola geçer.",
+      "image": "assets/images/lessons/binary_search/02_adim2.png",
+      "imageAlt": "2. adım: ortadaki eleman 31."
+    },
+    {
+      "text": "25 bulundu! 7 elemanlı dizide yalnızca 3 karşılaştırma yetti.",
+      "image": "assets/images/lessons/binary_search/03_bulundu.png",
+      "imageAlt": "3. adım: 25 bulundu."
+    },
+    {
+      "text": "Her adımda arama alanı yarıya iner. 16 elemanda en fazla 5 karşılaştırma yeter.",
+      "image": "assets/images/lessons/binary_search/04_yariya.png",
+      "imageAlt": "Arama alanı 16, 8, 4, 2, 1 şeklinde küçülüyor."
+    },
+    {
+      "text": "Altın kural: İkili arama yalnızca sıralı dizilerde doğru çalışır."
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "text": "İkili aramanın doğru çalışması için dizi nasıl olmalıdır?",
+      "options": [
+        "Sıralı olmalı",
+        "Tek sayıda eleman içermeli",
+        "Yalnızca pozitif sayılardan oluşmalı",
+        "En az 10 elemanlı olmalı"
+      ],
+      "correctIndex": 0,
+      "type": "verbal_visual"
+    },
+    {
+      "id": "q2",
+      "text": "Bu dizide 27 aranırken ilk bakılan eleman hangisidir?",
+      "code": "[2, 5, 9, 14, 20, 27, 33]",
+      "options": [
+        "2",
+        "14",
+        "20",
+        "33"
+      ],
+      "correctIndex": 1,
+      "type": "computational"
+    },
+    {
+      "id": "q3",
+      "text": "Aynı dizide 27'yi bulmak için toplam kaç karşılaştırma yapılır?",
+      "code": "[2, 5, 9, 14, 20, 27, 33]",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "7"
+      ],
+      "correctIndex": 1,
+      "type": "computational"
+    },
+    {
+      "id": "q4",
+      "text": "İkili aramada her adımda arama alanına ne olur?",
+      "options": [
+        "Bir eleman azalır",
+        "Yarıya iner",
+        "İki katına çıkar",
+        "Değişmez"
+      ],
+      "correctIndex": 1,
+      "type": "verbal_visual"
+    },
+    {
+      "id": "q5",
+      "text": "32 elemanlı sıralı bir dizide ikili arama en fazla kaç karşılaştırmada sonuca ulaşır?",
+      "options": [
+        "5",
+        "6",
+        "16",
+        "32"
+      ],
+      "correctIndex": 1,
+      "type": "computational"
+    }
+  ],
+  "socratic": {
+    "reading": {
+      "hints": [
+        "Bir sözlükte kelime ararken sayfaları tek tek mi çevirirsin, yoksa ortalardan bir yerden mi açarsın?",
+        "Ortadaki elemana baktıktan sonra, aradığın sayının hangi yarıda olduğunu nasıl anlarsın?",
+        "Her adımda yarısını elersen, 16 eleman kaç adımda 1'e iner?"
+      ],
+      "check": {
+        "text": "Bu dizide 8 aranıyor. İlk bakılan eleman hangisidir?",
+        "code": "[3, 8, 12, 17, 25, 31, 40]",
+        "options": [
+          "3",
+          "8",
+          "17",
+          "40"
+        ],
+        "correctIndex": 2
+      }
+    },
+    "q1": {
+      "hints": [
+        "Ortadaki elemana bakıp \"aradığım sayı sağda olmalı\" diyebilmek için elemanlar hakkında ne bilmemiz gerekir?",
+        "Dizi karışık olsaydı, ortadaki elemandan büyük bir sayının sağda olacağını garanti edebilir miydin?"
+      ],
+      "check": {
+        "text": "Hangi dizide ikili arama doğrudan kullanılabilir?",
+        "code": "A: [7, 2, 9, 4]\nB: [2, 4, 7, 9]",
+        "options": [
+          "Yalnızca A",
+          "Yalnızca B",
+          "İkisi de",
+          "Hiçbiri"
+        ],
+        "correctIndex": 1
+      }
+    },
+    "q2": {
+      "hints": [
+        "Dizide 7 eleman var. İndisleri 0'dan 6'ya kadar. Ortadaki indis kaçtır?",
+        "3. indisteki eleman hangisi?"
+      ],
+      "check": {
+        "text": "Bu dizide ilk bakılan eleman hangisidir?",
+        "code": "[1, 4, 6, 10, 15]",
+        "options": [
+          "1",
+          "4",
+          "6",
+          "15"
+        ],
+        "correctIndex": 2
+      }
+    },
+    "q3": {
+      "hints": [
+        "İlk karşılaştırma 14 ile yapıldı. 27, 14'ten büyük mü küçük mü? Hangi yarıya geçilir?",
+        "Kalan kısım [20, 27, 33]. Bu kısmın ortası hangisi ve aradığımız sayıya eşit mi?"
+      ],
+      "check": {
+        "text": "Bu dizide 20'yi bulmak için kaç karşılaştırma gerekir?",
+        "code": "[1, 4, 6, 10, 15, 20, 25]",
+        "options": [
+          "1",
+          "2",
+          "3",
+          "7"
+        ],
+        "correctIndex": 1
+      }
+    },
+    "q4": {
+      "hints": [
+        "Ortadaki elemana baktıktan sonra dizinin bir yarısını tamamen eliyoruz. Geriye ne kadar kalıyor?",
+        "16 elemandan başladık. İlk adımdan sonra kaç eleman kaldı?"
+      ],
+      "check": {
+        "text": "64 elemanlı bir dizide ilk karşılaştırmadan sonra yaklaşık kaç eleman kalır?",
+        "options": [
+          "63",
+          "32",
+          "16",
+          "1"
+        ],
+        "correctIndex": 1
+      }
+    },
+    "q5": {
+      "hints": [
+        "32'yi her adımda ikiye böl: 32, 16, ... Kaç adımda 1'e iniyorsun?",
+        "Son kalan tek elemana da bakmak gerekir. Saydığın her boyut bir karşılaştırmaya karşılık geliyor."
+      ],
+      "check": {
+        "text": "8 elemanlı sıralı bir dizide ikili arama en fazla kaç karşılaştırma yapar?",
+        "options": [
+          "3",
+          "4",
+          "8",
+          "2"
+        ],
+        "correctIndex": 1
+      }
+    }
+  }
+}
