@@ -14,15 +14,15 @@
 
 ## 1. Devamlılık — Şu An Neredeyiz
 
-**Son güncelleme:** 2026-10-09 18:50
+**Son güncelleme:** 2026-10-09 19:20
 
 **Tamamlanan:** INTENT.md, DESIGN.md, CLAUDE.md, TRD.md ve bu dosya birbiriyle hizalandı (K14–K39). `mock_students.json` K24'e göre uyarlandı (42 öğrenci, K38). Proje klasöründe henüz uygulama kodu yok.
 
-**Sıradaki adım:** ROADMAP Blok 0: Kurulum (Flutter, Firebase projesi, `flutterfire configure`, paketler, gömülü fontlar). ROADMAP.md henüz klasörde yok; kullanıcı ekleyecek. Zaman planı ve 04:30 kod dondurma kararı ROADMAP.md eklenince Karar Defteri'ne yazılacak.
+**Sıradaki adım:** Blok 0'ın kalanı: Firebase bağlantısı (kullanıcı terminalden `flutterfire configure` ile kuracak), Roboto + Lexend font dosyalarının `assets/fonts/`'a eklenip `pubspec.yaml`'da tanımlanması. ROADMAP.md henüz klasörde yok; zaman planı ve 04:30 kod dondurma kararı eklenince Karar Defteri'ne yazılacak.
 
 **Bekleyen kararlar:** Yok — veri saklama, anlık iletişim, durum yönetimi ve içerik yükleme TRD.md ile karara bağlandı (K31–K34).
 
-**Blokaj:** Flutter SDK bu bilgisayarda PATH'te değil; kod yazımına başlamadan kurulmalı (K30).
+**Blokaj:** Yok. Flutter 3.47.7 kurulu; `flutter analyze` temiz.
 
 ## 2. İlerleme Gözlemi
 
@@ -124,3 +124,9 @@
   - DESIGN.md eski sürümle değiştirilmişti; güncel sürüm geri getirildi ve tam ad değişiklikleri eklendi (S3).
   - `mock_students.json` 42 öğrenciye uyarlandı (K38).
   - K15 ve K25 iptal edildi; K31–K39 eklendi; bekleyen kararlar kapandı. Flutter Web + Firebase için `.gitignore` eklendi.
+- **2026-10-09 19:20 — ROADMAP Blok 0: Flutter İskeleti**
+  - `flutter create --platforms web --project-name eduswarm .` ile proje oluşturuldu; .md dosyaları ve `.gitignore` korundu.
+  - `mock_students.json` → `assets/mock/`; `assets/content/` ve `assets/fonts/` klasörleri açıldı, `pubspec.yaml`'a mock ve content eklendi.
+  - Paketler: firebase_core, firebase_auth, cloud_firestore, provider, file_picker. `shared_preferences` ve `google_fonts` eklenmedi (K37, K29).
+  - `lib/theme/tokens.dart` (DESIGN.md token'ları), `lib/strings.dart` iskeleti, sade `main.dart` (Cream-Base zemin + "EduSwarm") ve buna uygun widget testi yazıldı.
+  - Doğrulama: `flutter analyze` → No issues found; `flutter test` → geçti; `flutter build web` → başarılı.
